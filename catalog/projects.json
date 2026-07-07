@@ -544,24 +544,26 @@
       "name": "LovArt Explorer",
       "category": "Data Browsers & Scrapers",
       "tagline": "Deep-traversal art platform explorer",
-      "description": "An art-platform explorer with deep traversal and 3-category media separation, built from scraped LovArt data. Its Vercel deployment redirects to a lapsed holodeckos.com domain (expired TLS), so it is offline until the domain is detached — source and ~74MB of media remain in the original folder.",
+      "description": "An art-platform explorer with deep traversal — 174 projects, 211 agent threads, and full chat histories with generated media, snapshotted 2026-07-07 from the live LovArt API and baked into 52MB of static JSON. Media streams from LovArt's CDN; no server or tokens needed.",
       "tech": [
-        "Vite",
         "React",
-        "API Scraping"
+        "Vite",
+        "Static Snapshot",
+        "LovArt CDN"
       ],
-      "status": "code-only",
+      "status": "live",
       "embed": {
-        "type": "none"
+        "type": "local",
+        "path": "p/lovart-explorer/"
       },
-      "links": [
-        {
-          "label": "Deployment (offline — domain lapsed)",
-          "url": "https://anti-gravity-lake.vercel.app"
-        }
-      ],
+      "links": [],
       "source": "AntiGravity/Scraper/LovArt",
-      "thumbnail": "thumbnails/lovart-explorer.jpg"
+      "thumbnail": "thumbnails/lovart-explorer.jpg",
+      "highlights": [
+        "174 projects / 211 threads / full chat + artifact history",
+        "Chat histories lazy-load per thread — fast first paint",
+        "Captured in-browser: auth token never left Chrome"
+      ]
     },
     {
       "slug": "air-ui-study",

@@ -79,6 +79,13 @@ sed -i '' -e 's|href="/style.css"|href="./style.css"|' \
           -e 's|src="/agent-demo.webp"|src="./public/agent-demo.webp"|' \
   "$DEST/rive-showcase/index.html"
 sed -i '' "s|'/rive-button.riv'|'./public/rive-button.riv'|" "$DEST/rive-showcase/main.js"
+# air-ui-study: lovart.ai CDN 403s on non-lovart Referer — send none
+python3 -c "
+p='$DEST/air-ui-study/index.html'; s=open(p).read()
+if 'name=\"referrer\"' not in s:
+    s=s.replace('<meta charset=\"UTF-8\">','<meta charset=\"UTF-8\">\n    <meta name=\"referrer\" content=\"no-referrer\">',1)
+    open(p,'w').write(s)
+"
 # cloud-dashboard: initApp referenced before its defining script block
 sed -i '' 's|addEventListener("DOMContentLoaded", initApp)|addEventListener("DOMContentLoaded", () => initApp())|' \
   "$DEST/cloud-dashboard/index.html"
