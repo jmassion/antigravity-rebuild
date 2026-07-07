@@ -85,7 +85,7 @@ function filtered() {
 function cardHTML(p) {
   const media = p.thumbnail
     ? `<img src="${p.thumbnail}" alt="${p.name} screenshot" loading="lazy"
-         onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'fallback',textContent:'${initials(p.name)}'}));this.closest('.card-media').style.background='${gradientFor(p.slug)}'">`
+         onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'fallback',textContent:'${initials(p.name)}'}))">`
     : `<div class="fallback">${initials(p.name)}</div>`;
   return `
   <article class="card" data-slug="${p.slug}" tabindex="0" role="button" aria-label="${p.name}">
