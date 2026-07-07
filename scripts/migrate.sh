@@ -69,7 +69,6 @@ copy "playground/Root Dashboard"           nexus-dashboard
 copy "Utilities/SwipeRate"                 swiperate
 copy "Utilities/agent-manager-dashboard"   agent-manager
 copy "Utilities/Annotation Studio/app"     annotation-studio
-copy "MCP/Vercel"                          vercel-mcp
 copy "cloud_dashboard/public"              cloud-dashboard
 copy "Utilities/Stream Deck Project/_project.streamdeck-ai/packages/website" streamdeck-ai
 

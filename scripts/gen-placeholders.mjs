@@ -3,6 +3,7 @@
 // so no image libraries are needed.
 import { createRequire } from 'node:module';
 import { readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -27,6 +28,8 @@ function hueFor(slug) {
 }
 
 for (const p of targets) {
+  const out = path.join(root, `assets/thumbnails/${p.slug}.jpg`);
+  if (existsSync(out) && !process.argv.includes('--force')) continue;
   const h = hueFor(p.slug);
   const initials = p.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
   await page.setContent(`
@@ -52,7 +55,7 @@ for (const p of targets) {
     <div class="grid"></div>
     <div class="wrap"><div class="init">${initials}</div>
       <div class="name">${p.name}</div><div class="tag">source project</div></div>`);
-  await page.screenshot({ path: path.join(root, `assets/thumbnails/${p.slug}.jpg`), type: 'jpeg', quality: 80 });
+  await page.screenshot({ path: out, type: 'jpeg', quality: 80 });
   console.log(`✓ ${p.slug}`);
 }
 

@@ -27,9 +27,20 @@
       "category": "Platforms & OS",
       "tagline": "Multi-dimensional agent workspace",
       "description": "A dockable-panel operating environment for AI agents: FlexLayout window management, 3D solar-system visualizations of the OS file structure, mission control, device profiles, and a tag-based folder system. The most ambitious platform prototype in the collection.",
-      "tech": ["React", "Three.js", "React Three Fiber", "Zustand", "FlexLayout", "Framer Motion", "Vite"],
+      "tech": [
+        "React",
+        "Three.js",
+        "React Three Fiber",
+        "Zustand",
+        "FlexLayout",
+        "Framer Motion",
+        "Vite"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/agentworld/" },
+      "embed": {
+        "type": "local",
+        "path": "p/agentworld/"
+      },
       "source": "AntiGravity/AgentWorld",
       "thumbnail": "thumbnails/agentworld.jpg",
       "highlights": [
@@ -44,9 +55,16 @@
       "category": "Platforms & OS",
       "tagline": "Cross-platform OS folder structure explorer",
       "description": "A file-explorer UI over a cross-platform OS folder structure — device profiles, preferences, and control panels expressed as JSON. Acts as the data backbone that AgentWorld renders in 3D.",
-      "tech": ["HTML", "JSON", "File System"],
+      "tech": [
+        "HTML",
+        "JSON",
+        "File System"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/os-solar-system/" },
+      "embed": {
+        "type": "local",
+        "path": "p/os-solar-system/"
+      },
       "source": "AntiGravity/OS Solar System",
       "thumbnail": "thumbnails/os-solar-system.jpg"
     },
@@ -56,9 +74,16 @@
       "category": "Platforms & OS",
       "tagline": "One world. Every device. Infinite resolution.",
       "description": "A universal OS experience layer built from first principles: one language to replace HTML/CSS/JS, one state model synced across devices, one rendering pipeline scaling from watches to VR. The generative vision page is the product — plus a full PRD, phased plan, and methodology wiki.",
-      "tech": ["HTML", "Design Language", "PRD"],
+      "tech": [
+        "HTML",
+        "Design Language",
+        "PRD"
+      ],
       "status": "concept",
-      "embed": { "type": "local", "path": "p/oneos/" },
+      "embed": {
+        "type": "local",
+        "path": "p/oneos/"
+      },
       "source": "AntiGravity/playground/oneOS",
       "thumbnail": "thumbnails/oneos.jpg"
     },
@@ -68,9 +93,17 @@
       "category": "Platforms & OS",
       "tagline": "Nexus command center CMS",
       "description": "A full zero-dependency CMS platform: chat system, people and teams, feedback boards, file manager, credit tracking, and a marketing site — all vanilla JS modules with localStorage persistence, bundled by Vite.",
-      "tech": ["Vanilla JS", "Vite", "localStorage", "SPA Router"],
+      "tech": [
+        "Vanilla JS",
+        "Vite",
+        "localStorage",
+        "SPA Router"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/mission-control/" },
+      "embed": {
+        "type": "local",
+        "path": "p/mission-control/"
+      },
       "source": "AntiGravity/Utilities/Mission Control Center",
       "thumbnail": "thumbnails/mission-control.jpg"
     },
@@ -80,9 +113,16 @@
       "category": "Platforms & OS",
       "tagline": "The imagination engine — wish worlds into existence",
       "description": "A modular spatial-computing engine concept with World, Senses, SpaceML, Foundation, and Life systems. Ships with a landing page and its own wiki documenting the engine architecture.",
-      "tech": ["Node.js", "Three.js", "SpaceML"],
+      "tech": [
+        "Node.js",
+        "Three.js",
+        "SpaceML"
+      ],
       "status": "concept",
-      "embed": { "type": "local", "path": "p/game-engine/" },
+      "embed": {
+        "type": "local",
+        "path": "p/game-engine/"
+      },
       "source": "AntiGravity/Utilities/GameEngine",
       "thumbnail": "thumbnails/game-engine.jpg"
     },
@@ -92,9 +132,17 @@
       "category": "Platforms & OS",
       "tagline": "Building a better web browser",
       "description": "Multiplayer browser concept with CDP streaming, a 3D sphere tab view, 8 view modes, and agent orchestration. The static site presents the vision; the full build drives Chrome via Playwright and WebSockets.",
-      "tech": ["Three.js", "WebSocket", "CDP", "Playwright"],
+      "tech": [
+        "Three.js",
+        "WebSocket",
+        "CDP",
+        "Playwright"
+      ],
       "status": "wip",
-      "embed": { "type": "local", "path": "p/webbrowser/" },
+      "embed": {
+        "type": "local",
+        "path": "p/webbrowser/"
+      },
       "source": "AntiGravity/Utilities/WebBrowser",
       "thumbnail": "thumbnails/browser.jpg"
     },
@@ -104,25 +152,46 @@
       "category": "3D & Interaction Demos",
       "tagline": "Shared shape sandbox in the dark — rebuilt 2026",
       "description": "v2 rebuild on the Spatial Lab engine: place, drag, rotate, recolor, and scale primitives in an infinite dark grid. State persists, and other open tabs mirror every change live over BroadcastChannel — the original's collaborative soul, kept. Original combined edition and 26-device guide preserved as variants.",
-      "tech": ["Three.js", "BroadcastChannel", "Vite"],
+      "tech": [
+        "Three.js",
+        "BroadcastChannel",
+        "Vite"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/spatial-lab/#void" },
+      "embed": {
+        "type": "local",
+        "path": "p/spatial-lab/#void"
+      },
       "source": "AntiGravity Rebuild/apps/spatial",
       "thumbnail": "thumbnails/void-room.jpg",
       "variants": [
-        { "label": "Original (combined)", "path": "p/void-room/" },
-        { "label": "Original device guide", "path": "p/void-room/device-guide.html" }
+        {
+          "label": "Original (combined)",
+          "path": "p/void-room/"
+        },
+        {
+          "label": "Original device guide",
+          "path": "p/void-room/device-guide.html"
+        }
       ]
     },
     {
       "slug": "browser-platformer",
-      "name": "Browser Platformer",
+      "name": "AG Orchestrator",
       "category": "Platforms & OS",
-      "tagline": "3D platformer game in the browser",
-      "description": "A Next.js 3D platformer built with React Three Fiber, with Clerk authentication, a voice controller component, and a self-documenting wiki memory system for AI agent sessions. Requires a server and auth keys, so it ships here as source.",
-      "tech": ["Next.js", "React Three Fiber", "Three.js", "Clerk", "Framer Motion"],
-      "status": "code-only",
-      "embed": { "type": "none" },
+      "tagline": "3D agent pipeline on a rail",
+      "description": "A Next.js + React Three Fiber visualization of an AI agent pipeline: work travels a 3D rail through Genesis, Processing, and Delivery stations, with station task lists, live agent diagnostics, and a voice-command bar. Playable static export (Clerk auth and server logging stripped; full source in the original BrowserPlatformer folder).",
+      "tech": [
+        "Next.js",
+        "React Three Fiber",
+        "Three.js",
+        "Static Export"
+      ],
+      "status": "live",
+      "embed": {
+        "type": "local",
+        "path": "p/browser-platformer/"
+      },
       "source": "AntiGravity/BrowserPlatformer",
       "thumbnail": "thumbnails/browser-platformer.jpg"
     },
@@ -132,12 +201,25 @@
       "category": "Sites & Case Studies",
       "tagline": "Modular OS interface & documentation wiki",
       "description": "An advanced modular OS interface, AI workspace, and the AntiGravity documentation wiki (HolodeckOS docs). One of the earliest and most complete case studies.",
-      "tech": ["HTML", "JS", "CSS", "Wiki"],
+      "tech": [
+        "HTML",
+        "JS",
+        "CSS",
+        "Wiki"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/noahos/" },
+      "embed": {
+        "type": "local",
+        "path": "p/noahos/"
+      },
       "source": "AntiGravity/Case-Studies/NoahOS",
       "thumbnail": "thumbnails/noahos.jpg",
-      "links": [{ "label": "Vercel deploy", "url": "https://noahos.vercel.app" }]
+      "links": [
+        {
+          "label": "Vercel deploy",
+          "url": "https://noahos.vercel.app"
+        }
+      ]
     },
     {
       "slug": "garfield",
@@ -145,12 +227,23 @@
       "category": "Sites & Case Studies",
       "tagline": "Every day is Monday (when you're home)",
       "description": "A cinematic static site for Project Garfield — narrative scroll design and architecture pages.",
-      "tech": ["HTML", "CSS"],
+      "tech": [
+        "HTML",
+        "CSS"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/garfield/" },
+      "embed": {
+        "type": "local",
+        "path": "p/garfield/"
+      },
       "source": "AntiGravity/Case-Studies/Garfield",
       "thumbnail": "thumbnails/garfield.jpg",
-      "links": [{ "label": "Vercel deploy", "url": "https://garfield-ten.vercel.app" }]
+      "links": [
+        {
+          "label": "Vercel deploy",
+          "url": "https://garfield-ten.vercel.app"
+        }
+      ]
     },
     {
       "slug": "aluzina",
@@ -158,10 +251,21 @@
       "category": "Sites & Case Studies",
       "tagline": "Design explorer with LovArt scraper API",
       "description": "A standalone design-explorer UI integrating the LovArt Scraper API, backed by ~360MB of curated imagery. Its Vercel deployment redirects to a lapsed holodeckos.com domain (expired TLS), so it is offline until the domain is detached — source and media remain in the original folder.",
-      "tech": ["HTML", "JS", "Express API"],
+      "tech": [
+        "HTML",
+        "JS",
+        "Express API"
+      ],
       "status": "code-only",
-      "embed": { "type": "none" },
-      "links": [{ "label": "Deployment (offline — domain lapsed)", "url": "https://aluzina.vercel.app" }],
+      "embed": {
+        "type": "none"
+      },
+      "links": [
+        {
+          "label": "Deployment (offline — domain lapsed)",
+          "url": "https://aluzina.vercel.app"
+        }
+      ],
       "source": "AntiGravity/Case-Studies/Aluzina",
       "thumbnail": "thumbnails/aluzina.jpg"
     },
@@ -171,9 +275,17 @@
       "category": "Sites & Case Studies",
       "tagline": "Developing unicorns — premium brand site rebuild",
       "description": "A premium dark-mode single-page rebuild of the AlphaUnicorn.io brand site — the VirtuOS product story, venture portfolio, scroll animations, and marquee ticker.",
-      "tech": ["HTML", "JS", "CSS", "Scroll Animations"],
+      "tech": [
+        "HTML",
+        "JS",
+        "CSS",
+        "Scroll Animations"
+      ],
       "status": "wip",
-      "embed": { "type": "local", "path": "p/alphaunicorn/" },
+      "embed": {
+        "type": "local",
+        "path": "p/alphaunicorn/"
+      },
       "source": "AntiGravity/Scraper/siteground/AlphaUnicorn",
       "thumbnail": "thumbnails/alphaunicorn.jpg"
     },
@@ -183,9 +295,17 @@
       "category": "Sites & Case Studies",
       "tagline": "High-fidelity creative-ops platform recreation",
       "description": "A pixel-faithful recreation of air.inc — 3D glassy logo animation, a four-state theme system, scroll animations, and a content.config.js enabling one-click brand swaps.",
-      "tech": ["HTML", "JS", "Three.js", "CSS Themes"],
+      "tech": [
+        "HTML",
+        "JS",
+        "Three.js",
+        "CSS Themes"
+      ],
       "status": "wip",
-      "embed": { "type": "local", "path": "p/air-rebuild/" },
+      "embed": {
+        "type": "local",
+        "path": "p/air-rebuild/"
+      },
       "source": "AntiGravity/playground/air-rebuild",
       "thumbnail": "thumbnails/air-rebuild.jpg"
     },
@@ -194,12 +314,25 @@
       "name": "Media Engine",
       "category": "Sites & Case Studies",
       "tagline": "AI-powered content factory",
-      "description": "Marketing site for an AI content factory — 3D characters, pricing, and competitive positioning, with ~60MB of generated brand imagery. Embedded from its live Vercel deployment.",
-      "tech": ["Vite", "AI Image Gen", "3D Characters"],
+      "description": "Marketing site for an AI content factory — 3D characters, pricing, and competitive positioning. Self-hosted here with its hero imagery transcoded from 59MB of PNGs to lightweight JPEGs.",
+      "tech": [
+        "Vite",
+        "AI Image Gen",
+        "3D Characters"
+      ],
       "status": "live",
-      "embed": { "type": "remote", "url": "https://media-engine-zeta.vercel.app" },
+      "embed": {
+        "type": "local",
+        "path": "p/media-engine/"
+      },
       "source": "AntiGravity/Utilities/contentengine",
-      "thumbnail": "thumbnails/media-engine.jpg"
+      "thumbnail": "thumbnails/media-engine.jpg",
+      "links": [
+        {
+          "label": "Old Vercel deploy",
+          "url": "https://media-engine-zeta.vercel.app"
+        }
+      ]
     },
     {
       "slug": "franchiseos",
@@ -207,18 +340,43 @@
       "category": "Sites & Case Studies",
       "tagline": "One template system, six franchise sites",
       "description": "A hub-and-spokes template system for spinning up franchise sites fast. The hub links six implementations: CoPlay, Skool, Petrock Hotel, Barry's Tickets, CoHost Company, and KittyBird Blooms.",
-      "tech": ["HTML", "CSS", "Template System"],
+      "tech": [
+        "HTML",
+        "CSS",
+        "Template System"
+      ],
       "status": "wip",
-      "embed": { "type": "local", "path": "p/franchiseos/" },
+      "embed": {
+        "type": "local",
+        "path": "p/franchiseos/"
+      },
       "source": "AntiGravity/FranchiseOS",
       "thumbnail": "thumbnails/franchiseos.jpg",
       "variants": [
-        { "label": "CoPlay", "path": "p/franchiseos/CoPlay/" },
-        { "label": "Skool", "path": "p/franchiseos/Skool/" },
-        { "label": "Petrock Hotel", "path": "p/franchiseos/Petrock Hotel/" },
-        { "label": "Barry's Tickets", "path": "p/franchiseos/Barry's Tickets/" },
-        { "label": "CoHost Company", "path": "p/franchiseos/CoHost Company/" },
-        { "label": "KittyBird Blooms", "path": "p/franchiseos/KittyBird Blooms/" }
+        {
+          "label": "CoPlay",
+          "path": "p/franchiseos/CoPlay/"
+        },
+        {
+          "label": "Skool",
+          "path": "p/franchiseos/Skool/"
+        },
+        {
+          "label": "Petrock Hotel",
+          "path": "p/franchiseos/Petrock Hotel/"
+        },
+        {
+          "label": "Barry's Tickets",
+          "path": "p/franchiseos/Barry's Tickets/"
+        },
+        {
+          "label": "CoHost Company",
+          "path": "p/franchiseos/CoHost Company/"
+        },
+        {
+          "label": "KittyBird Blooms",
+          "path": "p/franchiseos/KittyBird Blooms/"
+        }
       ]
     },
     {
@@ -227,12 +385,24 @@
       "category": "3D & Interaction Demos",
       "tagline": "Rate anything in 3D space",
       "description": "An XY/XYZ spatial rating engine with swipe gestures, a drag engine, and multi-user annotation support. Landing page plus the full rating app.",
-      "tech": ["HTML", "JS", "Drag Engine"],
+      "tech": [
+        "HTML",
+        "JS",
+        "Drag Engine"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/swiperate/" },
+      "embed": {
+        "type": "local",
+        "path": "p/swiperate/"
+      },
       "source": "AntiGravity/Utilities/SwipeRate",
       "thumbnail": "thumbnails/swiperate.jpg",
-      "variants": [{ "label": "Rating App", "path": "p/swiperate/app/" }]
+      "variants": [
+        {
+          "label": "Rating App",
+          "path": "p/swiperate/app/"
+        }
+      ]
     },
     {
       "slug": "agent-manager",
@@ -240,9 +410,16 @@
       "category": "Developer Tools",
       "tagline": "Track every AI agent conversation",
       "description": "A dashboard tracking AI agent conversations, workspace statuses, and project threads across the whole AntiGravity effort.",
-      "tech": ["HTML", "JS", "CSS"],
+      "tech": [
+        "HTML",
+        "JS",
+        "CSS"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/agent-manager/" },
+      "embed": {
+        "type": "local",
+        "path": "p/agent-manager/"
+      },
       "source": "AntiGravity/Utilities/agent-manager-dashboard",
       "thumbnail": "thumbnails/agent-manager.jpg"
     },
@@ -252,9 +429,15 @@
       "category": "Developer Tools",
       "tagline": "Review, comment, annotate",
       "description": "A lightweight review tool for commenting and annotating work in progress.",
-      "tech": ["HTML", "JS"],
+      "tech": [
+        "HTML",
+        "JS"
+      ],
       "status": "wip",
-      "embed": { "type": "local", "path": "p/annotation-studio/" },
+      "embed": {
+        "type": "local",
+        "path": "p/annotation-studio/"
+      },
       "source": "AntiGravity/Utilities/Annotation Studio",
       "thumbnail": "thumbnails/annotation-studio.jpg"
     },
@@ -264,9 +447,16 @@
       "category": "Wikis & Knowledge",
       "tagline": "AI agent concepts, stripped of jargon",
       "description": "An interactive knowledge dashboard for learning AI agent concepts — visual diagrams, plain language, and progress tracking in localStorage.",
-      "tech": ["HTML", "JS", "localStorage"],
+      "tech": [
+        "HTML",
+        "JS",
+        "localStorage"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/lessons/" },
+      "embed": {
+        "type": "local",
+        "path": "p/lessons/"
+      },
       "source": "AntiGravity/lessons",
       "thumbnail": "thumbnails/lessons.jpg"
     },
@@ -276,9 +466,17 @@
       "category": "Wikis & Knowledge",
       "tagline": "Liquid Glass wiki/CMS with agent orchestration",
       "description": "A complete wiki/CMS system: 50+ structured markdown files covering agents, skills, styles, rules, brand, publishing, and CRM — browsed through a Liquid Glass SPA with a backlink system. Also includes a Sanity Studio and Next.js frontend (source only).",
-      "tech": ["Vanilla JS SPA", "Markdown", "Sanity", "Next.js"],
+      "tech": [
+        "Vanilla JS SPA",
+        "Markdown",
+        "Sanity",
+        "Next.js"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/sanity-wiki/" },
+      "embed": {
+        "type": "local",
+        "path": "p/sanity-wiki/"
+      },
       "source": "AntiGravity/Sanity",
       "thumbnail": "thumbnails/sanity-wiki.jpg"
     },
@@ -288,9 +486,17 @@
       "category": "Wikis & Knowledge",
       "tagline": "Philosophy-to-validation master plan wiki",
       "description": "A 13-chapter wiki covering an entire system vision — philosophy, interfaces, foundation, agents, connections, orchestration, z-space simulation, 3D quality pipeline, ledger, evolution, build procedure, module catalog, and validation — with diagrams and a master plan.",
-      "tech": ["HTML", "JS", "Markdown", "Diagrams"],
+      "tech": [
+        "HTML",
+        "JS",
+        "Markdown",
+        "Diagrams"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/living-canvas-wiki/" },
+      "embed": {
+        "type": "local",
+        "path": "p/living-canvas-wiki/"
+      },
       "source": "AntiGravity/living-canvas-wiki",
       "thumbnail": "thumbnails/living-canvas-wiki.jpg"
     },
@@ -300,9 +506,16 @@
       "category": "Wikis & Knowledge",
       "tagline": "The previous portfolio — preserved",
       "description": "The original AntiGravity dashboard this portfolio replaces: glass-morphism project gallery with grid/list views and a Three.js 3D spatial mode. Kept as a working artifact of the collection's own history.",
-      "tech": ["HTML", "Three.js", "CSS Glass"],
+      "tech": [
+        "HTML",
+        "Three.js",
+        "CSS Glass"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/holodeck-gallery/" },
+      "embed": {
+        "type": "local",
+        "path": "p/holodeck-gallery/"
+      },
       "source": "AntiGravity/index.html + ag-assets",
       "thumbnail": "thumbnails/holodeck-gallery.jpg"
     },
@@ -312,9 +525,17 @@
       "category": "Data Browsers & Scrapers",
       "tagline": "3,184 real CDN assets, one browser",
       "description": "A media browser over the Higgsfield asset library — loads 3,184 real assets from CloudFront with video playback, boards, favorites, and detail views. Backed by scraping scripts and a sync pipeline.",
-      "tech": ["HTML", "JS", "CloudFront CDN", "Express"],
+      "tech": [
+        "HTML",
+        "JS",
+        "CloudFront CDN",
+        "Express"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/higgsfield/" },
+      "embed": {
+        "type": "local",
+        "path": "p/higgsfield/"
+      },
       "source": "AntiGravity/Scraper/Higgsfield",
       "thumbnail": "thumbnails/higgsfield.jpg"
     },
@@ -324,10 +545,21 @@
       "category": "Data Browsers & Scrapers",
       "tagline": "Deep-traversal art platform explorer",
       "description": "An art-platform explorer with deep traversal and 3-category media separation, built from scraped LovArt data. Its Vercel deployment redirects to a lapsed holodeckos.com domain (expired TLS), so it is offline until the domain is detached — source and ~74MB of media remain in the original folder.",
-      "tech": ["Vite", "React", "API Scraping"],
+      "tech": [
+        "Vite",
+        "React",
+        "API Scraping"
+      ],
       "status": "code-only",
-      "embed": { "type": "none" },
-      "links": [{ "label": "Deployment (offline — domain lapsed)", "url": "https://anti-gravity-lake.vercel.app" }],
+      "embed": {
+        "type": "none"
+      },
+      "links": [
+        {
+          "label": "Deployment (offline — domain lapsed)",
+          "url": "https://anti-gravity-lake.vercel.app"
+        }
+      ],
       "source": "AntiGravity/Scraper/LovArt",
       "thumbnail": "thumbnails/lovart-explorer.jpg"
     },
@@ -337,9 +569,17 @@
       "category": "Data Browsers & Scrapers",
       "tagline": "High-fidelity DAM browser rebuild",
       "description": "A from-scratch rebuild of the Air.inc digital-asset-manager UI: infinite scroll, filter rail, metadata panel, and 16,625 assets of LovArt/Higgsfield provenance data. Note: lovart.ai now blocks hotlinked media, so many tiles render as placeholders — the UI, data, and interactions are fully intact.",
-      "tech": ["HTML", "Vanilla JS", "CSS", "Air API"],
+      "tech": [
+        "HTML",
+        "Vanilla JS",
+        "CSS",
+        "Air API"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/air-ui-study/" },
+      "embed": {
+        "type": "local",
+        "path": "p/air-ui-study/"
+      },
       "source": "AntiGravity/Scraper/LovartHiggsFieldAirOrganizer/AirUIStudy",
       "thumbnail": "thumbnails/air-ui-study.jpg"
     },
@@ -349,9 +589,16 @@
       "category": "Data Browsers & Scrapers",
       "tagline": "Cross-source asset organizer",
       "description": "An organizer that unifies LovArt and Higgsfield scraped assets into Air.inc — upload pipelines and provenance tracking.",
-      "tech": ["Node.js", "Air API", "HTML"],
+      "tech": [
+        "Node.js",
+        "Air API",
+        "HTML"
+      ],
       "status": "wip",
-      "embed": { "type": "local", "path": "p/air-organizer/" },
+      "embed": {
+        "type": "local",
+        "path": "p/air-organizer/"
+      },
       "source": "AntiGravity/Scraper/LovartHiggsFieldAirOrganizer",
       "thumbnail": "thumbnails/air-organizer.jpg"
     },
@@ -361,9 +608,15 @@
       "category": "Data Browsers & Scrapers",
       "tagline": "Hyper Weave canvas exploration",
       "description": "A Lovable-exported canvas exploration — Hyper Weave generative visuals.",
-      "tech": ["HTML", "JS"],
+      "tech": [
+        "HTML",
+        "JS"
+      ],
       "status": "concept",
-      "embed": { "type": "local", "path": "p/lovable-aurora/" },
+      "embed": {
+        "type": "local",
+        "path": "p/lovable-aurora/"
+      },
       "source": "AntiGravity/Scraper/lovable/aurora-builder",
       "thumbnail": "thumbnails/lovable-aurora.jpg"
     },
@@ -373,9 +626,15 @@
       "category": "Data Browsers & Scrapers",
       "tagline": "Lovable app exploration",
       "description": "A Lovable-exported art app exploration — cosmic dreamscape visuals.",
-      "tech": ["HTML", "JS"],
+      "tech": [
+        "HTML",
+        "JS"
+      ],
       "status": "concept",
-      "embed": { "type": "local", "path": "p/lovable-dreamscape/" },
+      "embed": {
+        "type": "local",
+        "path": "p/lovable-dreamscape/"
+      },
       "source": "AntiGravity/Scraper/lovable/cosmic-dreamscape-arts",
       "thumbnail": "thumbnails/lovable-dreamscape.jpg"
     },
@@ -385,9 +644,15 @@
       "category": "Data Browsers & Scrapers",
       "tagline": "Project Muse cloud pipeline",
       "description": "A Lovable-exported production-pipeline UI for the VirtuOS concept.",
-      "tech": ["HTML", "JS"],
+      "tech": [
+        "HTML",
+        "JS"
+      ],
       "status": "concept",
-      "embed": { "type": "local", "path": "p/lovable-muse/" },
+      "embed": {
+        "type": "local",
+        "path": "p/lovable-muse/"
+      },
       "source": "AntiGravity/Scraper/lovable/project-muse-cloud",
       "thumbnail": "thumbnails/lovable-muse.jpg"
     },
@@ -397,12 +662,24 @@
       "category": "3D & Interaction Demos",
       "tagline": "The portfolio as a constellation — rebuilt 2026",
       "description": "v2 rebuild of the Immersive Gallery on the Spatial Lab engine: every project floats in space and morphs live between ring, helix, wall, and sphere formations — orbit, zoom, and click any panel for project info. Original multi-mode prototype preserved as a variant.",
-      "tech": ["Three.js", "Vite", "WebGL"],
+      "tech": [
+        "Three.js",
+        "Vite",
+        "WebGL"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/spatial-lab/#orbit" },
+      "embed": {
+        "type": "local",
+        "path": "p/spatial-lab/#orbit"
+      },
       "source": "AntiGravity Rebuild/apps/spatial",
       "thumbnail": "thumbnails/immersive-gallery.jpg",
-      "variants": [{ "label": "Original (8-mode prototype)", "path": "p/immersive-gallery/" }]
+      "variants": [
+        {
+          "label": "Original (8-mode prototype)",
+          "path": "p/immersive-gallery/"
+        }
+      ]
     },
     {
       "slug": "corridors",
@@ -410,9 +687,16 @@
       "category": "3D & Interaction Demos",
       "tagline": "The portfolio as architecture — rebuilt 2026",
       "description": "v2 rebuild of the Spatial Corridors studies on the shared Spatial Lab engine: a living vaulted corridor where every alcove holds a real project from this portfolio — scroll-momentum travel, god rays, glow pools, fireflies, and click-through to each project. Originals preserved as variants.",
-      "tech": ["Three.js", "Vite", "WebGL"],
+      "tech": [
+        "Three.js",
+        "Vite",
+        "WebGL"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/spatial-lab/#corridor" },
+      "embed": {
+        "type": "local",
+        "path": "p/spatial-lab/#corridor"
+      },
       "source": "AntiGravity Rebuild/apps/spatial",
       "thumbnail": "thumbnails/corridors.jpg",
       "highlights": [
@@ -421,9 +705,18 @@
         "Category wings with color-coded glow pools"
       ],
       "variants": [
-        { "label": "Original v4.1", "path": "p/corridors/v4.1-3d.html" },
-        { "label": "Original v5 config 1", "path": "p/corridors/v5-3d_1.html" },
-        { "label": "Original v5 config 5 (Living Gallery)", "path": "p/corridors/v5-3d_5.html" }
+        {
+          "label": "Original v4.1",
+          "path": "p/corridors/v4.1-3d.html"
+        },
+        {
+          "label": "Original v5 config 1",
+          "path": "p/corridors/v5-3d_1.html"
+        },
+        {
+          "label": "Original v5 config 5 (Living Gallery)",
+          "path": "p/corridors/v5-3d_5.html"
+        }
       ]
     },
     {
@@ -432,24 +725,50 @@
       "category": "3D & Interaction Demos",
       "tagline": "Four camera souls — rebuilt 2026",
       "description": "v2 rebuild of 3D Mouse Mastery on the Spatial Lab engine: one obstacle field, four control schemes to feel the difference — orbit, WASD pointer-lock fly, cinematic rail scrub, and damped chase-cam hunting a comet. Raycast hover feedback throughout. Original v3.15 study preserved as a variant.",
-      "tech": ["Three.js", "Pointer Lock", "Vite"],
+      "tech": [
+        "Three.js",
+        "Pointer Lock",
+        "Vite"
+      ],
       "status": "live",
-      "embed": { "type": "local", "path": "p/spatial-lab/#motion" },
+      "embed": {
+        "type": "local",
+        "path": "p/spatial-lab/#motion"
+      },
       "source": "AntiGravity Rebuild/apps/spatial",
       "thumbnail": "thumbnails/mouse-mastery.jpg",
-      "variants": [{ "label": "Original v3.15", "path": "p/mouse-mastery/3d-mastery-v3_15.html" }]
+      "variants": [
+        {
+          "label": "Original v3.15",
+          "path": "p/mouse-mastery/3d-mastery-v3_15.html"
+        }
+      ]
     },
     {
       "slug": "visual-terminal",
       "name": "Visual Terminal",
       "category": "3D & Interaction Demos",
       "tagline": "Every response is an image",
-      "description": "An image-first AI terminal: every response is a generated image with clickable hotspots for visual exploration, powered by Gemini. Embedded from its live Vercel deployment.",
-      "tech": ["React", "Vite", "Gemini AI", "Image Gen"],
+      "description": "An image-first AI terminal: every response is a generated image with clickable hotspots for visual exploration. Self-hosted; bring your own Gemini API key — it is requested once and stored only in your browser (the previously hardcoded key was removed from the bundle).",
+      "tech": [
+        "React",
+        "Vite",
+        "Gemini AI",
+        "Image Gen"
+      ],
       "status": "live",
-      "embed": { "type": "remote", "url": "https://visual-terminal.vercel.app" },
+      "embed": {
+        "type": "local",
+        "path": "p/visual-terminal/"
+      },
       "source": "AntiGravity/playground/visual-terminal",
-      "thumbnail": "thumbnails/visual-terminal.jpg"
+      "thumbnail": "thumbnails/visual-terminal.jpg",
+      "links": [
+        {
+          "label": "Old Vercel deploy",
+          "url": "https://visual-terminal.vercel.app"
+        }
+      ]
     },
     {
       "slug": "rive-showcase",
@@ -457,9 +776,16 @@
       "category": "3D & Interaction Demos",
       "tagline": "State machines you can feel",
       "description": "Rive-native interactive demos — an agent mission-control dashboard and an animated button system built entirely in Rive with programmatic state-machine control.",
-      "tech": ["Rive", "JS", "State Machines"],
+      "tech": [
+        "Rive",
+        "JS",
+        "State Machines"
+      ],
       "status": "wip",
-      "embed": { "type": "local", "path": "p/rive-showcase/" },
+      "embed": {
+        "type": "local",
+        "path": "p/rive-showcase/"
+      },
       "source": "AntiGravity/playground/rive-showcase",
       "thumbnail": "thumbnails/rive-showcase.jpg"
     },
@@ -469,28 +795,28 @@
       "category": "3D & Interaction Demos",
       "tagline": "Multi-panel design-system prototype",
       "description": "A next-generation dashboard layout prototype — multi-panel design system with handoff rules and design tokens.",
-      "tech": ["HTML", "CSS", "Design Tokens"],
+      "tech": [
+        "HTML",
+        "CSS",
+        "Design Tokens"
+      ],
       "status": "concept",
-      "embed": { "type": "local", "path": "p/nexus-dashboard/nexus-dashboard-v4.html" },
+      "embed": {
+        "type": "local",
+        "path": "p/nexus-dashboard/nexus-dashboard-v4.html"
+      },
       "source": "AntiGravity/playground/Root Dashboard",
       "thumbnail": "thumbnails/nexus-dashboard.jpg",
       "variants": [
-        { "label": "Dashboard v4", "path": "p/nexus-dashboard/nexus-dashboard-v4.html" },
-        { "label": "Handoff Rules", "path": "p/nexus-dashboard/nexus-handoff-rules.html" }
+        {
+          "label": "Dashboard v4",
+          "path": "p/nexus-dashboard/nexus-dashboard-v4.html"
+        },
+        {
+          "label": "Handoff Rules",
+          "path": "p/nexus-dashboard/nexus-handoff-rules.html"
+        }
       ]
-    },
-    {
-      "slug": "vercel-mcp",
-      "name": "Vercel MCP Hub",
-      "category": "Developer Tools",
-      "tagline": "Deployment mapping & domain tracker",
-      "description": "An integration hub mapping Vercel deployments to projects and domains, with a deployment-manager dashboard.",
-      "tech": ["HTML", "JS", "Vercel SDK"],
-      "status": "wip",
-      "embed": { "type": "local", "path": "p/vercel-mcp/" },
-      "source": "AntiGravity/MCP/Vercel",
-      "thumbnail": "thumbnails/vercel-mcp.jpg",
-      "variants": [{ "label": "Deployment Manager", "path": "p/vercel-mcp/dashboard/" }]
     },
     {
       "slug": "cloud-dashboard",
@@ -498,9 +824,16 @@
       "category": "Developer Tools",
       "tagline": "AWS cost & EC2 control panel",
       "description": "An Express dashboard for controlling cloud infrastructure — AWS Cost Explorer and EC2 via the AWS SDK, with Clerk auth and a memory vault. The UI is embedded here; live AWS data requires running the server with credentials.",
-      "tech": ["Express", "AWS SDK", "Clerk"],
+      "tech": [
+        "Express",
+        "AWS SDK",
+        "Clerk"
+      ],
       "status": "wip",
-      "embed": { "type": "local", "path": "p/cloud-dashboard/" },
+      "embed": {
+        "type": "local",
+        "path": "p/cloud-dashboard/"
+      },
       "source": "AntiGravity/cloud_dashboard",
       "thumbnail": "thumbnails/cloud-dashboard.jpg"
     },
@@ -510,64 +843,19 @@
       "category": "Native & Hardware",
       "tagline": "Context-aware Stream Deck plugin",
       "description": "A Stream Deck plugin with context detection, an AI Style Lab, device shop, and Stripe billing — plus the marketing site embedded here.",
-      "tech": ["Stream Deck SDK", "TypeScript", "Rollup", "Stripe"],
+      "tech": [
+        "Stream Deck SDK",
+        "TypeScript",
+        "Rollup",
+        "Stripe"
+      ],
       "status": "wip",
-      "embed": { "type": "local", "path": "p/streamdeck-ai/" },
+      "embed": {
+        "type": "local",
+        "path": "p/streamdeck-ai/"
+      },
       "source": "AntiGravity/Utilities/Stream Deck Project",
       "thumbnail": "thumbnails/streamdeck-ai.jpg"
-    },
-    {
-      "slug": "trump-newsom",
-      "name": "Liquid Glass (SwiftUI)",
-      "category": "Native & Hardware",
-      "tagline": "Native liquid-glass UI experiment",
-      "description": "A SwiftUI experiment in liquid-glass materials — LiquidGlassView, animations, and a multi-toolkit view. Native iOS/macOS source; not embeddable in the browser.",
-      "tech": ["Swift", "SwiftUI"],
-      "status": "code-only",
-      "embed": { "type": "none" },
-      "source": "AntiGravity/Trump Newsom",
-      "thumbnail": "thumbnails/trump-newsom.jpg"
-    },
-    {
-      "slug": "autoaccept",
-      "name": "AntiGravity AutoAccept",
-      "category": "Developer Tools",
-      "tagline": "40,000+ installs — auto-accept agent steps",
-      "description": "Community extension (by Yazan Baker) kept in this collection: auto-accepts agent steps, terminal commands, file edits, and permission prompts in Google's Antigravity IDE. Dual strategy: native VS Code commands plus CDP + MutationObserver injection. 40k+ installs.",
-      "tech": ["VS Code Extension", "CDP", "JavaScript"],
-      "status": "live",
-      "embed": { "type": "none" },
-      "source": "AntiGravity/AntiGravity-AutoAccept",
-      "thumbnail": "thumbnails/autoaccept.jpg"
-    },
-    {
-      "slug": "better-antigravity",
-      "name": "Better Antigravity",
-      "category": "Developer Tools",
-      "tagline": "Community fixes for Antigravity IDE",
-      "description": "Community project (by Kanezal) kept in this collection: a VS Code extension and npm CLI that fixes known bugs and adds quality-of-life features to Antigravity IDE — auto-applied fixes on startup, chat rename, and SDK-powered features.",
-      "tech": ["VS Code Extension", "npm CLI", "TypeScript"],
-      "status": "live",
-      "embed": { "type": "none" },
-      "source": "AntiGravity/better-antigravity",
-      "thumbnail": "thumbnails/better-antigravity.jpg",
-      "links": [
-        { "label": "Open VSX", "url": "https://open-vsx.org/extension/kanezal/better-antigravity" },
-        { "label": "npm", "url": "https://www.npmjs.com/package/better-antigravity" }
-      ]
-    },
-    {
-      "slug": "antigravity-sdk",
-      "name": "Antigravity SDK",
-      "category": "Developer Tools",
-      "tagline": "Build extensions for Antigravity IDE",
-      "description": "Community SDK (by Kanezal) kept in this collection: TypeScript SDK for building VS Code extensions that extend Antigravity IDE — programmatic access to agent conversations, preferences, step control, activity monitoring, and declarative Agent View UI integration.",
-      "tech": ["TypeScript", "npm", "VS Code API"],
-      "status": "live",
-      "embed": { "type": "none" },
-      "source": "AntiGravity/antigravity-sdk",
-      "thumbnail": "thumbnails/antigravity-sdk.jpg",
-      "links": [{ "label": "npm", "url": "https://www.npmjs.com/package/antigravity-sdk" }]
     }
   ]
 }

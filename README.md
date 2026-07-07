@@ -59,9 +59,26 @@ Center**. To rebuild them: copy source from the original folder, `npm install`,
 
 ## Deploying
 
-- **Vercel**: `vercel` from this folder — `vercel.json` runs the build and serves `dist/`.
-- **GitHub Pages**: push to a repo with Pages enabled (Settings → Pages → GitHub Actions);
-  the included workflow builds and deploys on every push to `main`.
+- **GitHub Pages** (current): every push to `main` builds and deploys via the included
+  workflow → https://jmassion.github.io/antigravity-rebuild/
+- **Vercel** (alternative): `vercel` from this folder — `vercel.json` runs the build and
+  serves `dist/`.
+
+### Single custom domain (ag.holodeckos.com)
+
+The whole portfolio is one origin — every project is a **path**, not a subdomain
+(`/p/<slug>/`). Zero remote embeds remain. To serve it at `ag.holodeckos.com`:
+
+1. At the DNS provider for holodeckos.com: change the `ag` record from the old
+   `*.vercel-dns-017.com` CNAME to `CNAME ag jmassion.github.io`.
+2. In the repo: add a file `apps/home/CNAME` containing exactly `ag.holodeckos.com`
+   (the build copies it to dist root), push.
+3. GitHub repo → Settings → Pages → Custom domain: `ag.holodeckos.com`, wait for the
+   DNS check, enable "Enforce HTTPS" (cert auto-provisions).
+
+After that: portfolio at `https://ag.holodeckos.com/`, every project at
+`https://ag.holodeckos.com/p/<slug>/`. Do step 1 before step 2 — setting the custom
+domain while DNS still points at Vercel breaks the site.
 
 ## Portfolio inventory (41 projects)
 
