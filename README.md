@@ -11,6 +11,8 @@ The original `AntiGravity/` folder is untouched; this is the reorganized, hosted
 ```
 AntiGravity Rebuild/
 ├── apps/home/          The portfolio UI (vanilla HTML/CSS/JS — no build step)
+├── apps/spatial/       Spatial Lab v2 — the rebuilt 3D demos (Vite + Three.js source;
+│                       builds into projects/spatial-lab; scenes: #corridor #orbit #void #motion)
 ├── catalog/
 │   └── projects.json   ★ Single source of truth: every project's name, description,
 │                         tech, status, category, embed strategy, source location
@@ -69,7 +71,7 @@ Center**. To rebuild them: copy source from the original folder, `npm install`,
 | Sites & Case Studies | NoahOS Wiki, Garfield, Aluzina Explorer, AlphaUnicorn.io, Air.inc Rebuild, Media Engine, FranchiseOS (+6 franchise sites) |
 | Wikis & Knowledge | AG Lessons, Sanity Wiki, The Living Canvas, HolodeckOS Gallery v1 (the previous portfolio, preserved) |
 | Data Browsers & Scrapers | Higgsfield Media Browser, LovArt Explorer, Air UI Asset Library, Air Organizer, 3 Lovable experiments |
-| 3D & Interaction Demos | SwipeRate, Void Room, Immersive Gallery, Spatial Corridors (3 variants), 3D Mouse Mastery, Visual Terminal, Rive Showcase, Nexus Dashboard |
+| 3D & Interaction Demos | SwipeRate, Void Room v2, Orbit Formations v2, Corridor Gallery v2, Motion Lab v2 (all four rebuilt on the shared Spatial Lab engine, originals preserved as variants), Visual Terminal, Rive Showcase, Nexus Dashboard |
 | Developer Tools | AutoAccept (40k+ installs), Better Antigravity, Antigravity SDK, Agent Manager, Annotation Studio, Vercel MCP Hub, Cloud Control |
 | Native & Hardware | AI Autopilot Stream Deck, Liquid Glass (SwiftUI) |
 

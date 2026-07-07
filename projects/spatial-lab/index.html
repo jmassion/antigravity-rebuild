@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spatial Lab — AntiGravity</title>
+  <meta name="description" content="Rebuilt 3D experiments: corridor gallery, orbit formations, void sandbox, and a camera-motion playground.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+  <style>
+    :root {
+      --void: #07070d;
+      --glass: rgba(12, 12, 22, 0.72);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --text: #eef0f6;
+      --dim: #9aa1b5;
+      --faint: #5c6378;
+      --accent: #7c6cff;
+      --accent-2: #06b6d4;
+      --fd: 'Outfit', system-ui, sans-serif;
+      --fb: 'Inter', system-ui, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--void); color: var(--text); font-family: var(--fb); }
+    #stage { position: fixed; inset: 0; display: block; }
+
+    .glass {
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: 14px; backdrop-filter: blur(14px);
+    }
+
+    /* ── Launcher ── */
+    #launcher {
+      position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
+      background: radial-gradient(ellipse 80% 60% at 50% 20%, rgba(124,108,255,0.12), transparent 70%), var(--void);
+      transition: opacity 0.45s, visibility 0.45s;
+    }
+    #launcher.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+    .launch-inner { width: min(880px, 92vw); text-align: center; }
+    .launch-inner h1 {
+      font-family: var(--fd); font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800;
+      background: linear-gradient(120deg, #fff 30%, #a5b4fc 70%, #67e8f9);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .launch-inner > p { color: var(--dim); margin: 0.6rem 0 2.2rem; }
+    .scene-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.9rem; }
+    .scene-card {
+      padding: 1.3rem 1.1rem 1.2rem; cursor: pointer; text-align: left;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .scene-card:hover {
+      transform: translateY(-4px); border-color: rgba(124,108,255,0.6);
+      box-shadow: 0 18px 40px -18px rgba(124,108,255,0.4);
+    }
+    .scene-card .ico { font-size: 1.6rem; }
+    .scene-card h3 { font-family: var(--fd); font-size: 1rem; margin: 0.55rem 0 0.3rem; }
+    .scene-card p { font-size: 0.76rem; color: var(--dim); line-height: 1.5; }
+    .scene-card .v1 { display: inline-block; margin-top: 0.6rem; font-size: 0.64rem; color: var(--faint); }
+    .launch-foot { margin-top: 2rem; font-size: 0.72rem; color: var(--faint); }
+    .launch-foot a { color: var(--dim); }
+
+    /* ── HUD ── */
+    #hud {
+      position: fixed; top: 1rem; left: 1rem; right: 1rem; z-index: 40;
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+      pointer-events: none;
+    }
+    #hud > * { pointer-events: auto; }
+    #hud-left { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.9rem; }
+    #hud-left b { font-family: var(--fd); font-size: 0.86rem; font-weight: 700; }
+    #hud-left span { font-size: 0.68rem; color: var(--faint); }
+    #hud-right { display: flex; gap: 0.45rem; flex-wrap: wrap; justify-content: flex-end; }
+    .hbtn {
+      font: 500 0.74rem var(--fb); color: var(--dim); cursor: pointer;
+      padding: 0.5rem 0.85rem; border-radius: 10px;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      backdrop-filter: blur(14px); transition: all 0.18s;
+    }
+    .hbtn:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+    .hbtn.on { color: #fff; background: linear-gradient(120deg, rgba(124,108,255,0.4), rgba(6,182,212,0.3)); border-color: rgba(124,108,255,0.65); }
+
+    #hint {
+      position: fixed; bottom: 1.1rem; left: 50%; transform: translateX(-50%); z-index: 40;
+      padding: 0.55rem 1rem; font-size: 0.72rem; color: var(--dim); white-space: nowrap;
+      max-width: 94vw; overflow: hidden; text-overflow: ellipsis;
+    }
+    #hint kbd {
+      font: 600 0.66rem var(--fb); color: var(--text);
+      background: rgba(255,255,255,0.09); border: 1px solid var(--glass-border);
+      border-radius: 5px; padding: 0.1rem 0.4rem; margin: 0 0.1rem;
+    }
+
+    /* ── Info card (project focus) ── */
+    #info {
+      position: fixed; right: 1rem; bottom: 1rem; z-index: 45; width: min(320px, 90vw);
+      padding: 1.1rem 1.2rem; transform: translateY(12px); opacity: 0; visibility: hidden;
+      transition: all 0.3s;
+    }
+    #info.show { transform: none; opacity: 1; visibility: visible; }
+    #info .cat { font-size: 0.62rem; color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.14em; }
+    #info h3 { font-family: var(--fd); font-size: 1.1rem; margin: 0.25rem 0 0.35rem; }
+    #info p { font-size: 0.78rem; color: var(--dim); line-height: 1.55; }
+    #info .row { display: flex; gap: 0.5rem; margin-top: 0.8rem; }
+    #info a, #info button {
+      font: 600 0.74rem var(--fb); cursor: pointer; text-decoration: none; text-align: center;
+      padding: 0.5rem 0.9rem; border-radius: 9px; color: #fff;
+      background: linear-gradient(120deg, var(--accent), var(--accent-2)); border: none;
+    }
+    #info button.ghost { background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); color: var(--dim); }
+
+    #crosshair {
+      position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 30;
+      width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.8);
+      box-shadow: 0 0 8px rgba(124,108,255,0.9); display: none; pointer-events: none;
+    }
+
+    #fade { position: fixed; inset: 0; z-index: 60; background: var(--void); opacity: 0; pointer-events: none; transition: opacity 0.35s; }
+    #fade.on { opacity: 1; pointer-events: auto; }
+
+    @media (max-width: 640px) {
+      #hud-left span { display: none; }
+      #hint { display: none; }
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/index-Cc-99oKE.js"></script>
+</head>
+<body>
+  <canvas id="stage"></canvas>
+
+  <div id="launcher">
+    <div class="launch-inner">
+      <h1>Spatial Lab</h1>
+      <p>The AntiGravity 3D experiments, rebuilt on a shared engine — v2.</p>
+      <div class="scene-grid">
+        <div class="scene-card glass" data-scene="corridor">
+          <div class="ico">🏛️</div>
+          <h3>Corridor Gallery</h3>
+          <p>Walk a living corridor where every alcove holds a project from the portfolio. Scroll to travel.</p>
+          <span class="v1">rebuilds “Spatial Corridors v4–v5”</span>
+        </div>
+        <div class="scene-card glass" data-scene="orbit">
+          <div class="ico">🪐</div>
+          <h3>Orbit Formations</h3>
+          <p>The whole portfolio as a constellation — morph between ring, helix, wall, and sphere.</p>
+          <span class="v1">rebuilds “Immersive Gallery”</span>
+        </div>
+        <div class="scene-card glass" data-scene="void">
+          <div class="ico">🌌</div>
+          <h3>Void Room</h3>
+          <p>A shared sandbox in the dark. Place shapes, move them, and watch other tabs mirror you live.</p>
+          <span class="v1">rebuilds “Void Room”</span>
+        </div>
+        <div class="scene-card glass" data-scene="motion">
+          <div class="ico">🎥</div>
+          <h3>Motion Lab</h3>
+          <p>Four camera souls — orbit, fly, rail, chase — in one obstacle field. Feel the difference.</p>
+          <span class="v1">rebuilds “3D Mouse Mastery”</span>
+        </div>
+      </div>
+      <p class="launch-foot"><a href="../../">← back to portfolio</a> · originals preserved under Demos in the catalog</p>
+    </div>
+  </div>
+
+  <div id="hud" hidden>
+    <div id="hud-left" class="glass"><b id="hud-title"></b><span id="hud-sub"></span></div>
+    <div id="hud-right"></div>
+  </div>
+  <div id="hint" class="glass" hidden></div>
+  <div id="info" class="glass"></div>
+  <div id="crosshair"></div>
+  <div id="fade"></div>
+
+</body>
+</html>

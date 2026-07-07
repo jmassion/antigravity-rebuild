@@ -102,13 +102,17 @@
       "slug": "void-room",
       "name": "Void Room",
       "category": "3D & Interaction Demos",
-      "tagline": "Immersive browser-based virtual room",
-      "description": "An immersive 3D void-space environment with a device guide and spatial layout controls — an exploration of presence and spatial UI in the browser.",
-      "tech": ["HTML", "JS", "CSS 3D"],
-      "status": "concept",
-      "embed": { "type": "local", "path": "p/void-room/" },
-      "source": "AntiGravity/playground/void-room-package",
-      "thumbnail": "thumbnails/void-room.jpg"
+      "tagline": "Shared shape sandbox in the dark — rebuilt 2026",
+      "description": "v2 rebuild on the Spatial Lab engine: place, drag, rotate, recolor, and scale primitives in an infinite dark grid. State persists, and other open tabs mirror every change live over BroadcastChannel — the original's collaborative soul, kept. Original combined edition and 26-device guide preserved as variants.",
+      "tech": ["Three.js", "BroadcastChannel", "Vite"],
+      "status": "live",
+      "embed": { "type": "local", "path": "p/spatial-lab/#void" },
+      "source": "AntiGravity Rebuild/apps/spatial",
+      "thumbnail": "thumbnails/void-room.jpg",
+      "variants": [
+        { "label": "Original (combined)", "path": "p/void-room/" },
+        { "label": "Original device guide", "path": "p/void-room/device-guide.html" }
+      ]
     },
     {
       "slug": "browser-platformer",
@@ -387,44 +391,51 @@
     },
     {
       "slug": "immersive-gallery",
-      "name": "Immersive Gallery",
+      "name": "Orbit Formations",
       "category": "3D & Interaction Demos",
-      "tagline": "3D gallery prototype",
-      "description": "An immersive 3D gallery prototype — spatial presentation of imagery in the browser.",
-      "tech": ["HTML", "CSS", "3D"],
-      "status": "concept",
-      "embed": { "type": "local", "path": "p/immersive-gallery/" },
-      "source": "AntiGravity/Demos/Immersive Gallery",
-      "thumbnail": "thumbnails/immersive-gallery.jpg"
+      "tagline": "The portfolio as a constellation — rebuilt 2026",
+      "description": "v2 rebuild of the Immersive Gallery on the Spatial Lab engine: every project floats in space and morphs live between ring, helix, wall, and sphere formations — orbit, zoom, and click any panel for project info. Original multi-mode prototype preserved as a variant.",
+      "tech": ["Three.js", "Vite", "WebGL"],
+      "status": "live",
+      "embed": { "type": "local", "path": "p/spatial-lab/#orbit" },
+      "source": "AntiGravity Rebuild/apps/spatial",
+      "thumbnail": "thumbnails/immersive-gallery.jpg",
+      "variants": [{ "label": "Original (8-mode prototype)", "path": "p/immersive-gallery/" }]
     },
     {
       "slug": "corridors",
-      "name": "Spatial Corridors",
+      "name": "Corridor Gallery",
       "category": "3D & Interaction Demos",
-      "tagline": "Spatial organization studies v4–v5",
-      "description": "A series of spatial-organization studies exploring corridor/matrix layouts for navigating content in 3D. Three surviving configurations.",
-      "tech": ["HTML", "3D", "CSS Transforms"],
-      "status": "concept",
-      "embed": { "type": "local", "path": "p/corridors/v5-3d_5.html" },
-      "source": "AntiGravity/Demos/Corridors",
+      "tagline": "The portfolio as architecture — rebuilt 2026",
+      "description": "v2 rebuild of the Spatial Corridors studies on the shared Spatial Lab engine: a living vaulted corridor where every alcove holds a real project from this portfolio — scroll-momentum travel, god rays, glow pools, fireflies, and click-through to each project. Originals preserved as variants.",
+      "tech": ["Three.js", "Vite", "WebGL"],
+      "status": "live",
+      "embed": { "type": "local", "path": "p/spatial-lab/#corridor" },
+      "source": "AntiGravity Rebuild/apps/spatial",
       "thumbnail": "thumbnails/corridors.jpg",
+      "highlights": [
+        "Every alcove displays a live portfolio project with deep links",
+        "Momentum scroll travel with parallax look — distilled from Living Gallery v5",
+        "Category wings with color-coded glow pools"
+      ],
       "variants": [
-        { "label": "v4.1", "path": "p/corridors/v4.1-3d.html" },
-        { "label": "v5 config 1", "path": "p/corridors/v5-3d_1.html" },
-        { "label": "v5 config 5", "path": "p/corridors/v5-3d_5.html" }
+        { "label": "Original v4.1", "path": "p/corridors/v4.1-3d.html" },
+        { "label": "Original v5 config 1", "path": "p/corridors/v5-3d_1.html" },
+        { "label": "Original v5 config 5 (Living Gallery)", "path": "p/corridors/v5-3d_5.html" }
       ]
     },
     {
       "slug": "mouse-mastery",
-      "name": "3D Mouse Mastery",
+      "name": "Motion Lab",
       "category": "3D & Interaction Demos",
-      "tagline": "Camera & cursor control study",
-      "description": "A focused study of 3D mouse and camera control patterns in the browser — v3.15 of the exploration.",
-      "tech": ["HTML", "JS", "3D"],
-      "status": "concept",
-      "embed": { "type": "local", "path": "p/mouse-mastery/3d-mastery-v3_15.html" },
-      "source": "AntiGravity/Demos/3D Mouse Mastery",
-      "thumbnail": "thumbnails/mouse-mastery.jpg"
+      "tagline": "Four camera souls — rebuilt 2026",
+      "description": "v2 rebuild of 3D Mouse Mastery on the Spatial Lab engine: one obstacle field, four control schemes to feel the difference — orbit, WASD pointer-lock fly, cinematic rail scrub, and damped chase-cam hunting a comet. Raycast hover feedback throughout. Original v3.15 study preserved as a variant.",
+      "tech": ["Three.js", "Pointer Lock", "Vite"],
+      "status": "live",
+      "embed": { "type": "local", "path": "p/spatial-lab/#motion" },
+      "source": "AntiGravity Rebuild/apps/spatial",
+      "thumbnail": "thumbnails/mouse-mastery.jpg",
+      "variants": [{ "label": "Original v3.15", "path": "p/mouse-mastery/3d-mastery-v3_15.html" }]
     },
     {
       "slug": "visual-terminal",
