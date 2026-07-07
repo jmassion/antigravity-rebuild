@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AntiGravity Engine — Holodeck Demo</title>
+  <meta name="description" content="First interactive demo of the AntiGravity imagination engine.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a14; color: #e0e0e0; font-family: 'Inter', system-ui, sans-serif; overflow: hidden; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+    #canvas { width: 100vw; height: 100vh; display: block; }
+
+    /* ── HUD Overlay ── */
+    #hud { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+    #hud > * { pointer-events: auto; }
+
+    /* Title */
+    #title-bar {
+      position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(10, 10, 30, 0.7); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+      padding: 10px 28px; display: flex; align-items: center; gap: 12px;
+    }
+    #title-bar h1 { font-size: 14px; font-weight: 500; letter-spacing: 1px; color: rgba(255,255,255,0.8); }
+    #title-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: #00ffa3; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* Tool Belt */
+    #toolbelt {
+      position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+      background: rgba(10, 10, 30, 0.75); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+      padding: 8px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .tool-btn {
+      width: 44px; height: 44px; border: none; border-radius: 12px;
+      background: transparent; color: rgba(255,255,255,0.5);
+      font-size: 20px; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .tool-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .tool-btn.active { background: rgba(80, 120, 255, 0.3); color: #5078ff; }
+    .tool-btn::after {
+      content: attr(data-tooltip); position: absolute; left: 52px;
+      background: rgba(10,10,30,0.9); border: 1px solid rgba(255,255,255,0.1);
+      padding: 4px 10px; border-radius: 6px; font-size: 11px; white-space: nowrap;
+      opacity: 0; transition: opacity 0.2s; pointer-events: none; color: #ccc;
+    }
+    .tool-btn:hover::after { opacity: 1; }
+
+    /* Properties Panel */
+    #panel {
+      position: absolute; right: 20px; top: 20px;
+      width: 280px; max-height: calc(100vh - 40px); overflow-y: auto;
+      background: rgba(10, 10, 30, 0.75); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+      padding: 16px; display: none;
+    }
+    #panel.open { display: block; }
+    #panel h2 { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+    .prop-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .prop-label { font-size: 12px; color: rgba(255,255,255,0.5); }
+    .prop-value { font-size: 12px; color: #5078ff; font-weight: 500; }
+
+    /* Shape Picker */
+    #shape-picker {
+      position: absolute; left: 80px; top: 50%; transform: translateY(-50%);
+      background: rgba(10, 10, 30, 0.8); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+      padding: 12px; display: none; gap: 8px; flex-wrap: wrap; width: 180px;
+    }
+    #shape-picker.open { display: flex; }
+    .shape-btn {
+      width: 48px; height: 48px; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.6);
+      font-size: 10px; cursor: pointer; transition: all 0.2s;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    }
+    .shape-btn:hover { border-color: #5078ff; color: #fff; background: rgba(80,120,255,0.1); }
+    .shape-icon { font-size: 18px; }
+
+    /* Wish Bar */
+    #wish-bar {
+      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+      width: min(600px, calc(100vw - 40px));
+      background: rgba(10, 10, 30, 0.75); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+      padding: 4px;
+      display: flex; gap: 8px;
+    }
+    #wish-input {
+      flex: 1; border: none; background: transparent; color: #fff;
+      padding: 12px 16px; font-size: 14px; font-family: inherit; outline: none;
+    }
+    #wish-input::placeholder { color: rgba(255,255,255,0.25); }
+    #wish-submit {
+      padding: 10px 20px; border: none; border-radius: 12px;
+      background: linear-gradient(135deg, #5078ff, #7c3aed);
+      color: #fff; font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: all 0.2s;
+    }
+    #wish-submit:hover { transform: scale(1.05); }
+
+    /* Info Bar */
+    #info {
+      position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
+      font-size: 11px; color: rgba(255,255,255,0.3); text-align: center;
+    }
+
+    /* Pointer indicator */
+    #pointer-info {
+      position: absolute; top: 20px; left: 20px;
+      font-size: 11px; color: rgba(255,255,255,0.3);
+      background: rgba(10,10,30,0.5); padding: 8px 12px; border-radius: 8px;
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+      background: rgba(80, 120, 255, 0.2); border: 1px solid rgba(80,120,255,0.3);
+      backdrop-filter: blur(12px); color: #aac4ff; padding: 10px 20px;
+      border-radius: 12px; font-size: 13px; z-index: 100;
+      animation: toastIn 0.3s ease, toastOut 0.3s ease 2s forwards;
+    }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
+    @keyframes toastOut { to { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
+  </style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div id="hud">
+  <!-- Title -->
+  <div id="title-bar">
+    <div class="dot"></div>
+    <h1>ANTIGRAVITY ENGINE</h1>
+  </div>
+
+  <!-- Pointer Info -->
+  <div id="pointer-info">
+    Mode: <span id="pointer-mode">free</span> &nbsp;|&nbsp;
+    Hovering: <span id="hover-info">—</span>
+  </div>
+
+  <!-- Tool Belt -->
+  <div id="toolbelt">
+    <button class="tool-btn active" data-tool="select" data-tooltip="Select" id="tool-select">↖</button>
+    <button class="tool-btn" data-tool="move" data-tooltip="Move">✥</button>
+    <button class="tool-btn" data-tool="rotate" data-tooltip="Rotate">↻</button>
+    <button class="tool-btn" data-tool="scale" data-tooltip="Scale">⤡</button>
+    <button class="tool-btn" data-tool="create" data-tooltip="Create" id="tool-create">＋</button>
+    <button class="tool-btn" data-tool="paint" data-tooltip="Paint">🎨</button>
+    <button class="tool-btn" data-tool="erase" data-tooltip="Erase">✕</button>
+    <button class="tool-btn" data-tool="wish" data-tooltip="Wish Wand">✨</button>
+  </div>
+
+  <!-- Shape Picker (appears near Create tool) -->
+  <div id="shape-picker">
+    <button class="shape-btn" data-shape="box"><span class="shape-icon">◻</span>Box</button>
+    <button class="shape-btn" data-shape="sphere"><span class="shape-icon">●</span>Sphere</button>
+    <button class="shape-btn" data-shape="cylinder"><span class="shape-icon">⬭</span>Cylinder</button>
+    <button class="shape-btn" data-shape="cone"><span class="shape-icon">▲</span>Cone</button>
+    <button class="shape-btn" data-shape="torus"><span class="shape-icon">◎</span>Torus</button>
+    <button class="shape-btn" data-shape="capsule"><span class="shape-icon">⬮</span>Capsule</button>
+  </div>
+
+  <!-- Properties Panel -->
+  <div id="panel">
+    <h2>Properties</h2>
+    <div id="panel-content"></div>
+  </div>
+
+  <!-- Wish Bar -->
+  <div id="wish-bar">
+    <input type="text" id="wish-input" placeholder="Wish for something... (e.g. 'create a red sphere')">
+    <button id="wish-submit">✨ Wish</button>
+  </div>
+
+  <div id="info">Click to select • Scroll to zoom • Right-drag to orbit • Middle-drag to pan</div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+
+// ═══════════════════════════════════════
+//  FOUNDATION
+// ═══════════════════════════════════════
+
+// Messenger — event bus
+const Messenger = {
+  _listeners: new Map(),
+  say(topic, data) {
+    const handlers = this._listeners.get(topic)
+    if (handlers) handlers.forEach(h => { try { h(data) } catch(e) { console.warn(e) } })
+  },
+  hear(topic, handler) {
+    if (!this._listeners.has(topic)) this._listeners.set(topic, new Set())
+    this._listeners.get(topic).add(handler)
+    return () => this._listeners.get(topic)?.delete(handler)
+  }
+}
+
+// Renderer
+const canvas = document.getElementById('canvas')
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
+renderer.setPixelRatio(window.devicePixelRatio)
+renderer.setSize(window.innerWidth, window.innerHeight)
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
+renderer.toneMapping = THREE.ACESFilmicToneMapping
+renderer.toneMappingExposure = 1.2
+
+// Scene
+const scene = new THREE.Scene()
+scene.background = new THREE.Color(0x0a0a14)
+
+// Camera
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000)
+camera.position.set(5, 4, 8)
+
+// Controls
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
+controls.dampingFactor = 0.08
+controls.mouseButtons = { LEFT: null, MIDDLE: THREE.MOUSE.PAN, RIGHT: THREE.MOUSE.ROTATE }
+controls.target.set(0, 0.5, 0)
+
+// ═══════════════════════════════════════
+//  WORLD
+// ═══════════════════════════════════════
+
+// Things registry
+const things = new Map()
+let selectedThing = null
+let activeTool = 'select'
+let thingCounter = 0
+
+// Grid
+const gridHelper = new THREE.GridHelper(20, 20, 0x1a1a2e, 0x111122)
+scene.add(gridHelper)
+
+// Ground plane (invisible, for raycasting)
+const groundGeo = new THREE.PlaneGeometry(40, 40)
+const groundMat = new THREE.MeshStandardMaterial({ color: 0x0d0d1a, roughness: 0.95 })
+const ground = new THREE.Mesh(groundGeo, groundMat)
+ground.rotation.x = -Math.PI / 2
+ground.receiveShadow = true
+scene.add(ground)
+
+// Lights
+const ambient = new THREE.AmbientLight(0x333355, 0.8)
+scene.add(ambient)
+
+const sun = new THREE.DirectionalLight(0xffeedd, 1.5)
+sun.position.set(8, 12, 5)
+sun.castShadow = true
+sun.shadow.mapSize.set(2048, 2048)
+sun.shadow.camera.near = 0.5
+sun.shadow.camera.far = 50
+sun.shadow.camera.left = -15
+sun.shadow.camera.right = 15
+sun.shadow.camera.top = 15
+sun.shadow.camera.bottom = -15
+scene.add(sun)
+
+const accent = new THREE.PointLight(0x5078ff, 2, 20)
+accent.position.set(-3, 3, -3)
+scene.add(accent)
+
+const warm = new THREE.PointLight(0xff7b54, 1.5, 15)
+warm.position.set(4, 2, 4)
+scene.add(warm)
+
+// Skybox feel — fog
+scene.fog = new THREE.FogExp2(0x0a0a14, 0.03)
+
+// ═══════════════════════════════════════
+//  THING FACTORY
+// ═══════════════════════════════════════
+
+const COLORS = [0x5078ff, 0xff5577, 0x00ffa3, 0xffc800, 0xff7b54, 0x7c3aed, 0x00d4ff, 0xff44aa]
+
+function createThing(shapeType, options = {}) {
+  const id = `thing_${++thingCounter}`
+  const name = options.name || `${shapeType} ${thingCounter}`
+  const color = options.color || COLORS[thingCounter % COLORS.length]
+
+  let geometry
+  switch (shapeType) {
+    case 'box': geometry = new THREE.BoxGeometry(1, 1, 1); break
+    case 'sphere': geometry = new THREE.SphereGeometry(0.5, 32, 32); break
+    case 'cylinder': geometry = new THREE.CylinderGeometry(0.4, 0.4, 1, 32); break
+    case 'cone': geometry = new THREE.ConeGeometry(0.5, 1, 32); break
+    case 'torus': geometry = new THREE.TorusGeometry(0.4, 0.15, 16, 48); break
+    case 'capsule': geometry = new THREE.CapsuleGeometry(0.3, 0.6, 10, 20); break
+    default: geometry = new THREE.BoxGeometry(1, 1, 1)
+  }
+
+  const material = new THREE.MeshStandardMaterial({
+    color,
+    roughness: 0.35,
+    metalness: 0.2,
+    envMapIntensity: 1.0,
+  })
+
+  const mesh = new THREE.Mesh(geometry, material)
+  mesh.castShadow = true
+  mesh.receiveShadow = true
+  mesh.position.set(
+    options.x ?? (Math.random() - 0.5) * 6,
+    options.y ?? 0.5,
+    options.z ?? (Math.random() - 0.5) * 6
+  )
+
+  mesh.userData = { id, name, kind: shapeType, traits: [] }
+  scene.add(mesh)
+  things.set(id, mesh)
+
+  Messenger.say('thing.created', { id, name, shape: shapeType })
+  toast(`Created: ${name}`)
+  return mesh
+}
+
+function deleteThing(mesh) {
+  if (!mesh) return
+  const id = mesh.userData.id
+  scene.remove(mesh)
+  mesh.geometry.dispose()
+  mesh.material.dispose()
+  things.delete(id)
+  if (selectedThing === mesh) deselectThing()
+  Messenger.say('thing.deleted', { id })
+  toast(`Deleted: ${mesh.userData.name}`)
+}
+
+// ═══════════════════════════════════════
+//  SELECTION & GIZMO
+// ═══════════════════════════════════════
+
+let outlineMesh = null
+
+function selectThing(mesh) {
+  deselectThing()
+  selectedThing = mesh
+
+  // Outline
+  const outlineGeo = mesh.geometry.clone()
+  const outlineMat = new THREE.MeshBasicMaterial({ color: 0x5078ff, wireframe: true, transparent: true, opacity: 0.4 })
+  outlineMesh = new THREE.Mesh(outlineGeo, outlineMat)
+  outlineMesh.position.copy(mesh.position)
+  outlineMesh.rotation.copy(mesh.rotation)
+  outlineMesh.scale.copy(mesh.scale).multiplyScalar(1.05)
+  scene.add(outlineMesh)
+
+  showPanel(mesh)
+  Messenger.say('thing.selected', { id: mesh.userData.id })
+}
+
+function deselectThing() {
+  if (outlineMesh) { scene.remove(outlineMesh); outlineMesh.geometry.dispose(); outlineMesh.material.dispose(); outlineMesh = null }
+  selectedThing = null
+  document.getElementById('panel').classList.remove('open')
+}
+
+function showPanel(mesh) {
+  const panel = document.getElementById('panel')
+  const content = document.getElementById('panel-content')
+  const p = mesh.position
+  const s = mesh.scale
+  content.innerHTML = `
+    <div class="prop-row"><span class="prop-label">Name</span><span class="prop-value">${mesh.userData.name}</span></div>
+    <div class="prop-row"><span class="prop-label">Kind</span><span class="prop-value">${mesh.userData.kind}</span></div>
+    <div class="prop-row"><span class="prop-label">Position</span><span class="prop-value">${p.x.toFixed(1)}, ${p.y.toFixed(1)}, ${p.z.toFixed(1)}</span></div>
+    <div class="prop-row"><span class="prop-label">Scale</span><span class="prop-value">${s.x.toFixed(1)}, ${s.y.toFixed(1)}, ${s.z.toFixed(1)}</span></div>
+    <div class="prop-row"><span class="prop-label">Color</span><span class="prop-value" style="color:#${mesh.material.color.getHexString()}">#${mesh.material.color.getHexString()}</span></div>
+    <div class="prop-row"><span class="prop-label">Shadows</span><span class="prop-value">On</span></div>
+  `
+  panel.classList.add('open')
+}
+
+// ═══════════════════════════════════════
+//  POINTER (RAYCASTER)
+// ═══════════════════════════════════════
+
+const raycaster = new THREE.Raycaster()
+const mouse = new THREE.Vector2()
+
+canvas.addEventListener('click', (e) => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
+  raycaster.setFromCamera(mouse, camera)
+
+  const meshes = [...things.values()]
+  const hits = raycaster.intersectObjects(meshes)
+
+  if (activeTool === 'select') {
+    if (hits.length > 0) selectThing(hits[0].object)
+    else deselectThing()
+  } else if (activeTool === 'create') {
+    // Place at grid intersection
+    const groundHits = raycaster.intersectObject(ground)
+    if (groundHits.length > 0) {
+      const p = groundHits[0].point
+      const picker = document.getElementById('shape-picker')
+      // Default to box if no shape picker interaction
+      createThing('box', { x: Math.round(p.x), y: 0.5, z: Math.round(p.z) })
+    }
+  } else if (activeTool === 'erase' && hits.length > 0) {
+    deleteThing(hits[0].object)
+  } else if (activeTool === 'paint' && hits.length > 0) {
+    hits[0].object.material.color.set(COLORS[Math.floor(Math.random() * COLORS.length)])
+    toast(`Painted: ${hits[0].object.userData.name}`)
+  }
+})
+
+// Hover detection
+canvas.addEventListener('mousemove', (e) => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
+  raycaster.setFromCamera(mouse, camera)
+  const meshes = [...things.values()]
+  const hits = raycaster.intersectObjects(meshes)
+  document.getElementById('hover-info').textContent = hits.length > 0 ? hits[0].object.userData.name : '—'
+})
+
+// ═══════════════════════════════════════
+//  TOOLS
+// ═══════════════════════════════════════
+
+document.querySelectorAll('.tool-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'))
+    btn.classList.add('active')
+    activeTool = btn.dataset.tool
+
+    const picker = document.getElementById('shape-picker')
+    picker.classList.toggle('open', activeTool === 'create')
+
+    if (activeTool === 'wish') document.getElementById('wish-input').focus()
+  })
+})
+
+// Shape picker
+document.querySelectorAll('.shape-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const shape = btn.dataset.shape
+    createThing(shape, { x: (Math.random() - 0.5) * 4, y: 0.5, z: (Math.random() - 0.5) * 4 })
+  })
+})
+
+// ═══════════════════════════════════════
+//  WISH SYSTEM
+// ═══════════════════════════════════════
+
+function fulfillWish(text) {
+  const lower = text.toLowerCase().trim()
+  if (!lower) return
+
+  // Parse colors
+  const colorMap = { red: 0xff4444, blue: 0x4488ff, green: 0x44ff44, yellow: 0xffcc00, purple: 0x7c3aed, orange: 0xff7b54, pink: 0xff44aa, white: 0xffffff, gold: 0xffd700, cyan: 0x00d4ff }
+  let color = undefined
+  for (const [name, hex] of Object.entries(colorMap)) {
+    if (lower.includes(name)) { color = hex; break }
+  }
+
+  // Parse shapes
+  const shapeMap = { box: 'box', cube: 'box', sphere: 'sphere', ball: 'sphere', cylinder: 'cylinder', cone: 'cone', torus: 'torus', donut: 'torus', capsule: 'capsule' }
+  let shape = 'box'
+  for (const [word, type] of Object.entries(shapeMap)) {
+    if (lower.includes(word)) { shape = type; break }
+  }
+
+  // Actions
+  if (lower.includes('create') || lower.includes('make') || lower.includes('add') || lower.includes('spawn')) {
+    createThing(shape, { color, name: text.replace(/^(create|make|add|spawn)\s+(a\s+)?/i, '') })
+    return
+  }
+
+  if (lower.includes('delete') || lower.includes('remove') || lower.includes('destroy')) {
+    if (selectedThing) deleteThing(selectedThing)
+    else toast('Select something first')
+    return
+  }
+
+  if (lower.includes('clear') || lower.includes('reset')) {
+    for (const mesh of things.values()) { scene.remove(mesh); mesh.geometry.dispose(); mesh.material.dispose() }
+    things.clear()
+    deselectThing()
+    thingCounter = 0
+    toast('Space cleared')
+    return
+  }
+
+  if (lower.includes('bigger') || lower.includes('larger')) {
+    if (selectedThing) { selectedThing.scale.multiplyScalar(1.5); toast('Scaled up!') }
+    return
+  }
+
+  if (lower.includes('smaller') || lower.includes('tiny')) {
+    if (selectedThing) { selectedThing.scale.multiplyScalar(0.66); toast('Scaled down!') }
+    return
+  }
+
+  // Default: create something
+  createThing(shape, { color, name: text })
+}
+
+document.getElementById('wish-submit').addEventListener('click', () => {
+  fulfillWish(document.getElementById('wish-input').value)
+  document.getElementById('wish-input').value = ''
+})
+
+document.getElementById('wish-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    fulfillWish(e.target.value)
+    e.target.value = ''
+  }
+})
+
+// ═══════════════════════════════════════
+//  TRAITS — Auto-breathing for Things
+// ═══════════════════════════════════════
+
+const breathingThings = []
+Messenger.hear('thing.created', ({ id }) => {
+  const mesh = things.get(id)
+  if (mesh) {
+    mesh.userData.breatheOffset = Math.random() * Math.PI * 2
+    mesh.userData.breatheSpeed = 0.5 + Math.random() * 0.5
+    breathingThings.push(mesh)
+  }
+})
+
+// ═══════════════════════════════════════
+//  TOASTS
+// ═══════════════════════════════════════
+
+function toast(msg) {
+  const el = document.createElement('div')
+  el.className = 'toast'
+  el.textContent = msg
+  document.body.appendChild(el)
+  setTimeout(() => el.remove(), 2500)
+}
+
+// ═══════════════════════════════════════
+//  DEMO SCENE
+// ═══════════════════════════════════════
+
+createThing('box', { name: 'Foundation', color: 0xff4444, x: -3, y: 0.5, z: 0 })
+createThing('sphere', { name: 'World', color: 0x44ff44, x: -1.5, y: 0.5, z: 0 })
+createThing('cylinder', { name: 'Senses', color: 0x00d4ff, x: 0, y: 0.5, z: 0 })
+createThing('torus', { name: 'Life', color: 0xffc800, x: 1.5, y: 0.5, z: 0 })
+createThing('capsule', { name: 'Memory', color: 0x7c3aed, x: 3, y: 0.5, z: 0 })
+createThing('cone', { name: 'Tools', color: 0xff7b54, x: -1, y: 0.5, z: -2 })
+createThing('sphere', { name: 'Stories', color: 0xff44aa, x: 1, y: 0.5, z: -2 })
+
+// ═══════════════════════════════════════
+//  HEARTBEAT — Main Loop
+// ═══════════════════════════════════════
+
+const clock = new THREE.Clock()
+
+function heartbeat() {
+  requestAnimationFrame(heartbeat)
+  const delta = clock.getDelta()
+  const elapsed = clock.getElapsedTime()
+
+  // Update controls
+  controls.update()
+
+  // Breathing trait
+  for (const mesh of breathingThings) {
+    if (!mesh.parent) continue // deleted
+    const s = 1 + Math.sin(elapsed * mesh.userData.breatheSpeed + mesh.userData.breatheOffset) * 0.03
+    mesh.scale.set(s, s, s)
+    mesh.position.y = mesh.userData.originalY || mesh.position.y
+    mesh.userData.originalY = mesh.userData.originalY || mesh.position.y
+    mesh.position.y = mesh.userData.originalY + Math.sin(elapsed * 0.8 + mesh.userData.breatheOffset) * 0.05
+  }
+
+  // Update outline
+  if (outlineMesh && selectedThing) {
+    outlineMesh.position.copy(selectedThing.position)
+    outlineMesh.rotation.copy(selectedThing.rotation)
+    outlineMesh.scale.copy(selectedThing.scale).multiplyScalar(1.05)
+  }
+
+  // Accent light orbit
+  accent.position.x = Math.sin(elapsed * 0.3) * 5
+  accent.position.z = Math.cos(elapsed * 0.3) * 5
+
+  renderer.render(scene, camera)
+}
+
+heartbeat()
+
+// Resize
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight
+  camera.updateProjectionMatrix()
+  renderer.setSize(window.innerWidth, window.innerHeight)
+})
+
+console.log('🌌 AntiGravity Engine — Holodeck is online')
+</script>
+</body>
+</html>

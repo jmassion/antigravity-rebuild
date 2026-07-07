@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TabSpace — Notes for Justin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #06080d;
+            --bg-card: rgba(16, 22, 36, 0.65);
+            --bg-input: rgba(14, 19, 32, 0.9);
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.12);
+            --text: #e2ecff;
+            --text-sec: rgba(207, 220, 240, 0.65);
+            --text-muted: rgba(207, 220, 240, 0.4);
+            --accent: #6C5CE7;
+            --accent-light: #a29bfe;
+            --accent-glow: rgba(108, 92, 231, 0.25);
+            --cyan: #00CEC9;
+            --green: #00B894;
+            --red: #FF6B6B;
+            --yellow: #FECA57;
+            --radius: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 600px 400px at 30% 30%, rgba(108, 92, 231, 0.06), transparent),
+                radial-gradient(ellipse 500px 350px at 70% 70%, rgba(0, 206, 201, 0.04), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-left h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-left .badge {
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            color: #fff;
+        }
+
+        .back-link {
+            color: var(--accent-light);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            background: var(--accent-glow);
+            border-color: var(--accent);
+        }
+
+        /* Section */
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(12px);
+        }
+
+        .section h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section h2 .icon {
+            font-size: 1.2rem;
+        }
+
+        /* Info items */
+        .info-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item .label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-light);
+            margin-bottom: 4px;
+        }
+
+        .info-item .value {
+            font-size: 0.88rem;
+            color: var(--text-sec);
+            line-height: 1.6;
+        }
+
+        .info-item .value code {
+            background: rgba(108, 92, 231, 0.12);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--cyan);
+        }
+
+        /* Question items */
+        .question {
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .question:last-child {
+            border-bottom: none;
+        }
+
+        .question .q-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--accent-glow);
+            color: var(--accent-light);
+            font-size: 0.7rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-right: 8px;
+        }
+
+        .question .q-text {
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .question .q-context {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-left: 30px;
+            line-height: 1.5;
+        }
+
+        /* Feedback form */
+        .feedback-area {
+            width: 100%;
+            min-height: 140px;
+            max-height: 400px;
+            background: var(--bg-input);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            font-family: inherit;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .feedback-area:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .feedback-area::placeholder {
+            color: var(--text-muted);
+        }
+
+        .topic-select {
+            background: var(--bg-input);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-family: inherit;
+            font-size: 0.82rem;
+            outline: none;
+            width: 100%;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .topic-select:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, var(--accent), #5a4bd1);
+            color: #fff;
+        }
+
+        .btn-send:hover {
+            box-shadow: 0 0 30px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-clear {
+            background: var(--bg-card);
+            color: var(--text-sec);
+            border: 1px solid var(--border);
+        }
+
+        .btn-clear:hover {
+            border-color: var(--border-hover);
+        }
+
+        /* Status */
+        .send-status {
+            margin-top: 10px;
+            font-size: 0.78rem;
+            min-height: 20px;
+        }
+
+        .send-status.success {
+            color: var(--green);
+        }
+
+        .send-status.error {
+            color: var(--red);
+        }
+
+        /* Previous feedback */
+        .feedback-history {
+            margin-top: 16px;
+        }
+
+        .feedback-entry {
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            background: rgba(10, 14, 24, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .feedback-entry .fe-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .feedback-entry .fe-topic {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--cyan);
+            letter-spacing: 0.04em;
+        }
+
+        .feedback-entry .fe-time {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+
+        .feedback-entry .fe-body {
+            font-size: 0.82rem;
+            color: var(--text-sec);
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        /* Tip box */
+        .tip-box {
+            background: rgba(0, 206, 201, 0.06);
+            border: 1px solid rgba(0, 206, 201, 0.15);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            font-size: 0.82rem;
+            color: var(--text-sec);
+            line-height: 1.6;
+        }
+
+        .tip-box .tip-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--cyan);
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>Notes for Justin</h1>
+                <span class="badge">TABSPACE</span>
+            </div>
+            <a href="/" class="back-link">← Back to Demo</a>
+        </div>
+
+        <div class="tip-box">
+            <div class="tip-label">💡 How this works</div>
+            Write your feedback, answers, or comments below and click <strong>Send Feedback</strong>.
+            It gets saved to <code>justin_feedback.json</code> in the project folder —
+            the AI reads this file at the start of the next conversation so it knows exactly what you said.
+        </div>
+
+        <!-- ─── THINGS TO KNOW ─── -->
+        <div class="section">
+            <h2><span class="icon">📋</span> Things to Know</h2>
+
+            <div class="info-item">
+                <div class="label">What's Working</div>
+                <div class="value">
+                    The demo shows 6 browser surfaces loaded inside iframes that you can mouse over, click, and scroll.
+                    Each has an editable URL bar — type any URL and press Enter to navigate.
+                    The WebSocket protocol (rooms, presence, capability tokens, locks) is fully operational underneath.
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="label">Iframe Limitations</div>
+                <div class="value">
+                    Many major websites (Gmail, GitHub, Notion, Figma) <strong>block iframe embedding</strong> via
+                    <code>X-Frame-Options</code> or CSP headers. There's no browser-side workaround for this — it's a
+                    security policy set by those websites. The current demo uses sites that DO allow embedding:
+                    Wikipedia, YouTube (embed URL), OpenStreetMap, Internet Archive, CodePen, and Google Maps.
+                    <br /><br />
+                    To show blocked sites like Gmail or GitHub, you'd need a <strong>server-side proxy</strong> that
+                    strips the X-Frame-Options headers — or a Chrome extension that overrides them. The real TabSpace
+                    architecture solves this by using <strong>CDP (Chrome DevTools Protocol) pixel streaming</strong>
+                    instead of iframes, which is the "next step" in the README.
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="label">Architecture Under the Hood</div>
+                <div class="value">
+                    Even though the demo looks simple, the full multiplayer protocol is running:
+                    <strong>Server</strong> (WebSocket room authority + HMAC capability signing),
+                    <strong>Host</strong> (publishes surfaces into rooms),
+                    <strong>Client</strong> (renders surfaces, receives caps).
+                    All 3 run together. Multiple browser tabs can join the same room with different user IDs and see
+                    each other's presence.
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="label">How to Test Multi-User</div>
+                <div class="value">
+                    Open <code>http://localhost:8787</code> in a second browser tab.
+                    The default user is <code>user-justin</code>. To change it, edit the hidden input in
+                    <code>index.html</code>
+                    or add <code>?user=user-susannah</code> to the URL (I can add URL param support if you like).
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── QUESTIONS ─── -->
+        <div class="section">
+            <h2><span class="icon">❓</span> Questions for Justin</h2>
+
+            <div class="question">
+                <div class="q-text"><span class="q-num">1</span>Which websites do you want shown in the demo?</div>
+                <div class="q-context">The current 6 are chosen because they allow iframe embedding. If you want
+                    specific sites, I can set them up — some may need a proxy or different approach. List the URLs you'd
+                    like.</div>
+            </div>
+
+            <div class="question">
+                <div class="q-text"><span class="q-num">2</span>Should I add a server-side proxy for blocked sites?
+                </div>
+                <div class="q-context">I could build a simple proxy endpoint on the server that fetches pages and serves
+                    them without X-Frame-Options headers. This would let Gmail, GitHub, etc. load in iframes. Downside:
+                    login/auth won't work through a proxy, and it adds complexity. The real solution is CDP streaming
+                    (which is the next phase in the roadmap).</div>
+            </div>
+
+            <div class="question">
+                <div class="q-text"><span class="q-num">3</span>Who is the demo audience?</div>
+                <div class="q-context">Knowing who you're presenting to helps me tune the level of polish vs. technical
+                    depth. Is this for investors, a team, or a technical crowd?</div>
+            </div>
+
+            <div class="question">
+                <div class="q-text"><span class="q-num">4</span>Do you want the surfaces arranged differently?</div>
+                <div class="q-context">Right now they're in a responsive grid. I could do a freeform canvas layout, a
+                    tabbed interface, a 3D perspective view, or a single maximized view with tabs. What feels right for
+                    the demo?</div>
+            </div>
+
+            <div class="question">
+                <div class="q-text"><span class="q-num">5</span>Multi-user demo: should I add URL param switching?</div>
+                <div class="q-context">Right now the user ID is hardcoded. I can make it so <code>?user=susannah</code>
+                    auto-sets the user, making it easy to demo multi-user presence by opening two tabs with different
+                    URLs.</div>
+            </div>
+        </div>
+
+        <!-- ─── FEEDBACK FORM ─── -->
+        <div class="section">
+            <h2><span class="icon">✏️</span> Your Feedback</h2>
+
+            <select id="feedback-topic" class="topic-select">
+                <option value="general">General feedback</option>
+                <option value="question-answers">Answering the questions above</option>
+                <option value="websites">Websites I want in the demo</option>
+                <option value="ui-design">UI / design feedback</option>
+                <option value="features">Feature requests</option>
+                <option value="bugs">Bug reports</option>
+                <option value="other">Other</option>
+            </select>
+
+            <textarea id="feedback-text" class="feedback-area"
+                placeholder="Write anything here — answers to the questions above, design feedback, feature ideas, bugs you found, or anything else. The AI will read this at the start of the next conversation."></textarea>
+
+            <div class="btn-row">
+                <button id="send-btn" class="btn btn-send" onclick="sendFeedback()">📤 Send Feedback</button>
+                <button class="btn btn-clear" onclick="document.getElementById('feedback-text').value=''">Clear</button>
+            </div>
+            <div id="send-status" class="send-status"></div>
+        </div>
+
+        <!-- ─── PREVIOUS FEEDBACK ─── -->
+        <div class="section">
+            <h2><span class="icon">📬</span> Previous Feedback</h2>
+            <div id="feedback-history" class="feedback-history">
+                <div style="color:var(--text-muted); font-size:0.82rem;">Loading…</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function sendFeedback() {
+            const topic = document.getElementById("feedback-topic").value;
+            const text = document.getElementById("feedback-text").value.trim();
+            const status = document.getElementById("send-status");
+            const btn = document.getElementById("send-btn");
+
+            if (!text) {
+                status.className = "send-status error";
+                status.textContent = "Please write something first.";
+                return;
+            }
+
+            btn.disabled = true;
+            status.className = "send-status";
+            status.textContent = "Sending…";
+
+            try {
+                const res = await fetch("/api/notes", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ topic, text, from: "justin" })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    status.className = "send-status success";
+                    status.textContent = `✓ Saved! (${data.count} note${data.count > 1 ? "s" : ""} total). The AI will see this next conversation.`;
+                    document.getElementById("feedback-text").value = "";
+                    loadHistory();
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (e) {
+                status.className = "send-status error";
+                status.textContent = `✗ Error: ${e.message}`;
+            }
+            btn.disabled = false;
+        }
+
+        async function loadHistory() {
+            const container = document.getElementById("feedback-history");
+            try {
+                const res = await fetch("/api/notes");
+                const notes = await res.json();
+                if (notes.length === 0) {
+                    container.innerHTML = '<div style="color:var(--text-muted); font-size:0.82rem; text-align:center; padding:12px;">No feedback yet — write some above!</div>';
+                    return;
+                }
+                container.innerHTML = notes.reverse().map(n => `
+          <div class="feedback-entry">
+            <div class="fe-head">
+              <span class="fe-topic">${esc(n.topic || "general")}</span>
+              <span class="fe-time">${new Date(n.timestamp).toLocaleString()}</span>
+            </div>
+            <div class="fe-body">${esc(n.text)}</div>
+          </div>
+        `).join("");
+            } catch {
+                container.innerHTML = '<div style="color:var(--text-muted); font-size:0.82rem;">Could not load history.</div>';
+            }
+        }
+
+        function esc(s) {
+            return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        }
+
+        // Ctrl/Cmd+Enter to send
+        document.getElementById("feedback-text").addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                sendFeedback();
+            }
+        });
+
+        loadHistory();
+    </script>
+</body>
+
+</html>

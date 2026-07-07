@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Higgsfield Sync Tool</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0a0f;color:#e8e8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.container{max-width:700px;width:100%;background:#12121a;border:1px solid #2a2a40;border-radius:16px;padding:32px;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+h1{font-size:1.5rem;margin-bottom:8px;background:linear-gradient(135deg,#7b6cf6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{color:#9898b0;font-size:.85rem;margin-bottom:24px}
+.step{padding:16px;background:#1a1a28;border-radius:12px;margin-bottom:12px;border:1px solid #2a2a40}
+.step-title{font-size:.9rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.step-num{width:24px;height:24px;border-radius:50%;background:#7b6cf6;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+.step-desc{font-size:.8rem;color:#9898b0;line-height:1.5}
+textarea{width:100%;padding:12px;background:#0a0a0f;border:1px solid #2a2a40;border-radius:8px;color:#e8e8f0;font-family:'JetBrains Mono',monospace;font-size:.8rem;resize:vertical;min-height:60px;margin-top:8px}
+textarea:focus{border-color:#7b6cf6;outline:none}
+.btn{padding:12px 24px;border-radius:10px;border:none;cursor:pointer;font-size:.9rem;font-weight:600;transition:all .25s ease;width:100%}
+.btn-primary{background:linear-gradient(135deg,#7b6cf6,#a78bfa);color:#fff;margin-top:16px}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(123,108,246,0.4)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-download{background:#1a1a28;color:#22d3ee;border:1px solid #22d3ee;margin-top:12px;display:none}
+.btn-download:hover{background:rgba(34,211,238,0.1)}
+#log{margin-top:16px;padding:16px;background:#0a0a0f;border-radius:8px;border:1px solid #2a2a40;font-family:'JetBrains Mono',monospace;font-size:.75rem;max-height:300px;overflow-y:auto;display:none;line-height:1.6;white-space:pre-wrap}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;display:none}
+.stat-card{background:#1a1a28;border-radius:8px;padding:12px;text-align:center;border:1px solid #2a2a40}
+.stat-value{font-size:1.5rem;font-weight:700;color:#a78bfa}
+.stat-label{font-size:.7rem;color:#9898b0;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.success{color:#34d399}.error{color:#f87171}.info{color:#60a5fa}.warn{color:#fbbf24}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+  <h1>⚡ Higgsfield Sync Tool</h1>
+  <p class="subtitle">Fetch all your Higgsfield assets via API pagination</p>
+  
+  <div class="step">
+    <div class="step-title"><span class="step-num">1</span> Get your Bearer token</div>
+    <div class="step-desc">
+      Open <a href="https://higgsfield.ai/assets" target="_blank" style="color:#a78bfa">higgsfield.ai/assets</a> → DevTools (F12) → Network tab → find a request to <code style="color:#22d3ee">fnf.higgsfield.ai</code> → copy the Authorization header value
+    </div>
+    <textarea id="tokenInput" placeholder="Paste your Bearer token here (with or without 'Bearer ' prefix)..."></textarea>
+  </div>
+  
+  <button class="btn btn-primary" id="syncBtn" onclick="startSync()">🚀 Start Full Sync</button>
+  <button class="btn btn-download" id="downloadBtn" onclick="downloadData()">💾 Download parsed_data.json</button>
+  
+  <div class="stat-grid" id="stats">
+    <div class="stat-card"><div class="stat-value" id="statTotal">—</div><div class="stat-label">Total</div></div>
+    <div class="stat-card"><div class="stat-value" id="statImages">—</div><div class="stat-label">Images</div></div>
+    <div class="stat-card"><div class="stat-value" id="statVideos">—</div><div class="stat-label">Videos</div></div>
+    <div class="stat-card"><div class="stat-value" id="statAudio">—</div><div class="stat-label">Audio</div></div>
+  </div>
+  
+  <div id="log"></div>
+</div>
+
+<script>
+const API_BASE = 'https://fnf.higgsfield.ai';
+const PAGE_SIZE = 1001;
+let syncData = null;
+
+function log(msg, cls = '') {
+  const el = document.getElementById('log');
+  el.style.display = 'block';
+  const line = document.createElement('div');
+  line.className = cls;
+  line.textContent = msg;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+function categorizeType(item) {
+  const jst = (item.job_set_type || '').toLowerCase();
+  const rawUrl = (item.raw_url || '').toLowerCase();
+  if (jst.includes('video') || jst.includes('cinema') || rawUrl.endsWith('.mp4')) return 'video';
+  if (jst.includes('image') || jst.includes('text2image') || jst.includes('soul') || jst.includes('upscale') || rawUrl.endsWith('.png') || rawUrl.endsWith('.jpg') || rawUrl.endsWith('.webp')) return 'image';
+  if (jst.includes('audio') || jst.includes('lipsync') || rawUrl.endsWith('.mp3') || rawUrl.endsWith('.wav')) return 'audio';
+  return 'other';
+}
+
+async function startSync() {
+  const tokenInput = document.getElementById('tokenInput').value.trim();
+  if (!tokenInput) {
+    log('❌ Please paste a Bearer token first!', 'error');
+    return;
+  }
+  
+  const token = tokenInput.startsWith('Bearer ') ? tokenInput : `Bearer ${tokenInput}`;
+  const btn = document.getElementById('syncBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Syncing...';
+  
+  document.getElementById('log').innerHTML = '';
+  log('🚀 Starting full sync...', 'info');
+  
+  const allItems = new Map();
+  let cursor = null;
+  let hasMore = true;
+  let pageNum = 0;
+  
+  while (hasMore) {
+    pageNum++;
+    try {
+      let url = `${API_BASE}/assets?size=${PAGE_SIZE}&category=all`;
+      if (cursor) url += `&cursor=${cursor}`;
+      
+      const start = Date.now();
+      const resp = await fetch(url, {
+        headers: { 'Authorization': token, 'Accept': 'application/json' }
+      });
+      const elapsed = Date.now() - start;
+      
+      if (!resp.ok) {
+        const text = await resp.text();
+        if (resp.status === 401 || resp.status === 403) {
+          log(`🔑 Token expired on page ${pageNum}! Collected ${allItems.size} items so far.`, 'warn');
+          log('   Get a fresh token and run again — existing items will be preserved.', 'warn');
+        } else {
+          log(`❌ API error ${resp.status}: ${text.slice(0, 200)}`, 'error');
+        }
+        break;
+      }
+      
+      const data = await resp.json();
+      const items = data.items || [];
+      
+      if (items.length === 0) {
+        hasMore = false;
+        break;
+      }
+      
+      for (const raw of items) {
+        if (!allItems.has(raw.id)) {
+          allItems.set(raw.id, {
+            id: raw.id,
+            type: categorizeType(raw),
+            job_set_type: raw.job_set_type || '',
+            created_at: raw.created_at,
+            raw_url: raw.raw_url || '',
+            min_url: raw.min_url || '',
+            thumbnail_url: raw.thumbnail_url || raw.min_url || '',
+            status: raw.status || 'completed',
+            folder_ids: raw.folder_ids || [],
+            is_favourite: raw.is_favourite || false,
+            published_at: raw.published_at || null,
+            comments_count: raw.comments_count || 0,
+          });
+        }
+      }
+      
+      cursor = items[items.length - 1]?.created_at;
+      hasMore = data.has_more !== undefined ? data.has_more : items.length >= PAGE_SIZE;
+      
+      log(`   Page ${pageNum}: +${items.length} → ${allItems.size} total (${elapsed}ms)`, 'info');
+      
+      if (hasMore) await new Promise(r => setTimeout(r, 100));
+      
+    } catch (err) {
+      log(`❌ Error: ${err.message}`, 'error');
+      break;
+    }
+  }
+  
+  if (allItems.size === 0) {
+    log('❌ No items fetched — token may have expired. Try again with a fresh token.', 'error');
+    btn.disabled = false;
+    btn.textContent = '🚀 Start Full Sync';
+    return;
+  }
+  
+  // Sort newest first
+  const sortedItems = [...allItems.values()].sort((a, b) => b.created_at - a.created_at);
+  
+  // Compute stats
+  const stats = {
+    total: sortedItems.length,
+    images: sortedItems.filter(i => i.type === 'image').length,
+    videos: sortedItems.filter(i => i.type === 'video').length,
+    audio: sortedItems.filter(i => i.type === 'audio').length,
+    other: sortedItems.filter(i => i.type === 'other').length,
+  };
+  
+  syncData = {
+    workspace_id: 'ee0b8cf8-1163-450e-8687-0e1cbfc3611e',
+    synced_at: new Date().toISOString(),
+    total_items: sortedItems.length,
+    stats,
+    items: sortedItems,
+  };
+  
+  // Update UI
+  document.getElementById('stats').style.display = 'grid';
+  document.getElementById('statTotal').textContent = stats.total;
+  document.getElementById('statImages').textContent = stats.images;
+  document.getElementById('statVideos').textContent = stats.videos;
+  document.getElementById('statAudio').textContent = stats.audio;
+  
+  document.getElementById('downloadBtn').style.display = 'block';
+  
+  log(`\n✅ Sync complete! ${stats.total} total items`, 'success');
+  log(`   ${stats.images} images, ${stats.videos} videos, ${stats.audio} audio`, 'success');
+  
+  btn.disabled = false;
+  btn.textContent = '🔄 Re-sync';
+}
+
+function downloadData() {
+  if (!syncData) return;
+  const blob = new Blob([JSON.stringify(syncData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'parsed_data.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

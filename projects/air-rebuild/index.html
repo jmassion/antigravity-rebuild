@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Air | Creative Operations platform</title>
+  <meta name="description" content="Organize. Approve. Multiply. Air is the place where creative teams organize their work." />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Three.js for 3D logo -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- GSAP for scroll animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div class="loader" id="loader">
+    <span class="loader-text" id="loader-text">Air</span>
+  </div>
+
+  <!-- Sky Background -->
+  <div id="sky-bg"></div>
+
+  <!-- 3D Canvas -->
+  <canvas id="three-canvas"></canvas>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <a href="#" class="nav-logo" id="nav-logo">Air</a>
+    <div class="nav-right">
+      <a href="#signup" class="nav-cta" id="nav-cta"><span>Start for free</span></a>
+      <button class="nav-menu-btn" id="menu-open" aria-label="Open menu">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Full-Screen Nav Menu -->
+  <div class="menu-overlay" id="menu-overlay">
+    <div class="menu-header">
+      <a href="#" class="nav-logo">Air</a>
+      <div style="display:flex;gap:12px;align-items:center">
+        <a href="#demo" class="nav-cta" style="background:#1a1145;color:white">Book a demo</a>
+        <button class="menu-close" id="menu-close">✕</button>
+      </div>
+    </div>
+    <div class="menu-items" id="menu-items">
+      <!-- Populated by JS -->
+    </div>
+    <div class="theme-switcher" id="theme-switcher">
+      <!-- Populated by JS -->
+    </div>
+    <div class="menu-bottom">
+      <a href="#login" class="menu-btn menu-btn-outline">Login</a>
+      <a href="#signup" class="menu-btn menu-btn-filled">Start for free</a>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN CONTENT ═══════════════════════════════════════ -->
+  <main>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <h1 class="hero-heading" id="hero-heading">
+        Human creativity.
+        <span class="hero-heading-italic" id="hero-italic">AI scale.</span>
+      </h1>
+      <a href="#demo" class="hero-cta" id="hero-cta">Get some Air</a>
+    </section>
+
+    <!-- Browser Showcase -->
+    <section class="showcase" data-reveal>
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+          <div class="browser-dot"></div>
+          <div class="browser-url">app.air.inc</div>
+        </div>
+        <div class="browser-content">
+          <div class="browser-content-inner">
+            <h3>Your creative workspace</h3>
+            <p>Organize, approve, and multiply creative assets at scale</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="social-proof" data-reveal>
+      <p class="social-proof-headline" id="social-headline">Supporting creative ops for <em>real</em> creatives</p>
+      <div class="logo-wall" id="logo-wall">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- Big Typography Section -->
+    <section class="big-section" id="big-sections">
+      <!-- Populated by JS -->
+    </section>
+
+    <!-- Pillar Sections -->
+    <div id="pillars-container">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Features Grid -->
+    <section class="features" id="features-section">
+      <h2 class="features-heading" data-reveal>Everything you need</h2>
+      <div class="features-grid" id="features-grid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- AI Section -->
+    <section class="ai-section" data-reveal>
+      <h2 class="ai-heading" id="ai-heading">One plan. Every model.</h2>
+      <p class="ai-subheading" id="ai-subheading">Whatever the work calls for, it's in.</p>
+      <p class="ai-description" id="ai-description">Access 50+ models without extra subscriptions. Use them in Air Canvas to multiply your creative across every channel.</p>
+      <a href="#signup" class="ai-cta" id="ai-cta">Try Canvas</a>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" data-reveal>
+      <h2 class="cta-heading" id="cta-heading">Air unblocks creativity at scale.</h2>
+      <p class="cta-description" id="cta-description">Organize your work, approve what matters, and multiply it across every channel. All in one place.</p>
+      <a href="#demo" class="cta-btn" id="cta-btn">Book a demo</a>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" id="footer">
+    <div class="footer-links" id="footer-links">
+      <!-- Populated by JS -->
+    </div>
+    <p class="footer-copyright" id="footer-copyright">Air Inc. ©2026 All rights reserved</p>
+  </footer>
+
+  <!-- Announcement Bar -->
+  <div class="announcement" id="announcement">
+    <div class="announcement-text">
+      <span><em>New!</em> <strong>Air Canvas is here.</strong> One approved design → unlimited on-brand deliverables.</span>
+      <a href="#canvas" class="announcement-link">Try Canvas free</a>
+    </div>
+    <button class="announcement-close" id="announcement-close">✕</button>
+  </div>
+
+  <!-- Scripts -->
+  <script src="content.config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

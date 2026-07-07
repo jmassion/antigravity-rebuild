@@ -1,0 +1,362 @@
+/* ═══════ Wispr Flow Alternative Page Styles ═══════ */
+
+.wispr-hero {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    padding: 140px 24px 80px;
+    position: relative;
+}
+
+.active-link {
+    color: var(--accent-indigo) !important;
+}
+
+/* ─── Demo Window ───────────────────────────────── */
+
+.voice-demo {
+    padding: 0 0 100px;
+}
+
+.demo-window {
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-visible);
+    background: var(--bg-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-glow), 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.demo-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.demo-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.demo-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.demo-dots span:nth-child(1) {
+    background: #EF4444;
+}
+
+.demo-dots span:nth-child(2) {
+    background: #F59E0B;
+}
+
+.demo-dots span:nth-child(3) {
+    background: #10B981;
+}
+
+.demo-body {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    min-height: 300px;
+}
+
+.demo-transcript {
+    padding: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 2;
+}
+
+.transcript-line {
+    margin-bottom: 16px;
+}
+
+.speaker-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 8px;
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--accent-indigo);
+}
+
+.transcript-text {
+    color: var(--text-primary);
+}
+
+.transcript-cursor {
+    animation: blink 1s step-end infinite;
+    color: var(--accent-indigo);
+    font-weight: 700;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+.demo-sidebar {
+    padding: 24px;
+    border-left: 1px solid var(--border-subtle);
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-section {
+    margin-bottom: 24px;
+}
+
+.sidebar-section h4 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-secondary);
+}
+
+.image-placeholder {
+    background: var(--bg-primary);
+    border: 1px dashed var(--border-visible);
+    border-radius: var(--radius-md);
+    padding: 24px 16px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.image-placeholder.active {
+    border-color: var(--accent-indigo);
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.speaker-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.speaker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.speaker-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-emerald);
+    animation: pulse 2s infinite;
+}
+
+.speaker-dot.inactive {
+    background: var(--text-muted);
+    animation: none;
+}
+
+.active-speaker {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* ─── Comparison Table ──────────────────────────── */
+
+.comparison {
+    padding: 100px 0;
+}
+
+.comparison-table {
+    max-width: 800px;
+    margin: 0 auto;
+    border: 1px solid var(--border-visible);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.comp-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.comp-row:last-child {
+    border-bottom: none;
+}
+
+.comp-header {
+    background: rgba(99, 102, 241, 0.08);
+}
+
+.comp-header>div {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.comp-row>div {
+    padding: 14px 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+}
+
+.comp-feature {
+    font-weight: 600;
+    color: var(--text-primary) !important;
+}
+
+.comp-them {
+    text-align: center;
+    justify-content: center;
+}
+
+.comp-us {
+    background: rgba(99, 102, 241, 0.04);
+    justify-content: center;
+    text-align: center;
+}
+
+.comp-price .comp-us {
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.highlight {
+    color: var(--accent-emerald) !important;
+    font-weight: 700 !important;
+}
+
+/* ─── Advantages ────────────────────────────────── */
+
+.advantages {
+    padding: 100px 0;
+    background: var(--bg-secondary);
+}
+
+.advantage-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.advantage-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    transition: var(--transition);
+}
+
+.advantage-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-visible);
+    box-shadow: var(--shadow-card);
+}
+
+.advantage-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+}
+
+.advantage-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.advantage-card p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* ─── Waitlist ──────────────────────────────────── */
+
+.waitlist {
+    padding: 120px 0;
+    text-align: center;
+    position: relative;
+}
+
+.waitlist-form {
+    display: flex;
+    gap: 12px;
+    max-width: 500px;
+    margin: 0 auto 16px;
+}
+
+.waitlist-input {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-visible);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.waitlist-input:focus {
+    border-color: var(--accent-indigo);
+}
+
+.waitlist-note {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ─── Responsive ────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .demo-body {
+        grid-template-columns: 1fr;
+    }
+
+    .demo-sidebar {
+        border-left: none;
+        border-top: 1px solid var(--border-subtle);
+    }
+
+    .comp-row {
+        grid-template-columns: 1.5fr 1fr 1fr;
+    }
+
+    .comp-row>div {
+        padding: 10px 12px;
+        font-size: 11px;
+    }
+
+    .advantage-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .waitlist-form {
+        flex-direction: column;
+    }
+}

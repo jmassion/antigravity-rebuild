@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TabSpace — Browser World</title>
+  <meta name="description"
+    content="TabSpace: interactive multiplayer browser surfaces you can browse, click, and scroll." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <!-- ─── TOP BAR ─── -->
+  <header id="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect x="2" y="2" width="24" height="24" rx="6" stroke="url(#lg1)" stroke-width="2.5" />
+          <rect x="7" y="7" width="6" height="6" rx="1.5" fill="#6C5CE7" />
+          <rect x="15" y="7" width="6" height="6" rx="1.5" fill="#00CEC9" />
+          <rect x="7" y="15" width="6" height="6" rx="1.5" fill="#00CEC9" />
+          <rect x="15" y="15" width="6" height="6" rx="1.5" fill="#6C5CE7" opacity="0.5" />
+          <defs>
+            <linearGradient id="lg1" x1="2" y1="2" x2="26" y2="26">
+              <stop stop-color="#6C5CE7" />
+              <stop offset="1" stop-color="#00CEC9" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="logo-text">TabSpace</span>
+        <span class="logo-badge">LIVE</span>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <div id="conn-badge" class="conn-badge offline">
+        <span class="conn-dot"></span>
+        <span id="conn-label">Connecting…</span>
+      </div>
+      <div class="topbar-room-info">
+        <span class="room-label">Room:</span>
+        <span id="room-name" class="room-name">roomA</span>
+        <span id="epoch-badge" class="epoch-badge" style="display:none;"></span>
+        <span class="sep">·</span>
+        <span id="user-label" class="user-label">user-justin</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button id="add-browser" class="btn btn-add" title="Add a new browser surface">＋ Add Browser</button>
+      <button id="revoke-all" class="btn btn-revoke" title="Revoke all caps & locks (epoch bump)">🔒 Revoke All</button>
+      <a href="/notes.html" class="btn btn-notes" title="Open Justin's Notes">
+        📋 Notes
+      </a>
+    </div>
+  </header>
+
+  <!-- ─── MAIN SURFACE GRID ─── -->
+  <main id="main">
+    <!-- Host Metrics Panel -->
+    <div id="host-metrics" class="host-metrics-panel" style="display:none;">
+      <div class="metrics-header">📊 Host Metrics <span id="metrics-count" class="metrics-count"></span></div>
+      <div id="metrics-grid" class="metrics-grid"></div>
+    </div>
+
+    <!-- View Mode Switcher -->
+    <div class="view-switcher">
+      <span class="view-label">View:</span>
+      <button class="view-btn view-btn-active" data-view="grid" onclick="setViewMode('grid')">📰 Grid</button>
+      <button class="view-btn" data-view="fullheight" onclick="setViewMode('fullheight')">📄 Full Height</button>
+      <button class="view-btn" data-view="carousel" onclick="setViewMode('carousel')">🎠 Carousel</button>
+      <button class="view-btn" data-view="mosaic" onclick="setViewMode('mosaic')">🧩 Mosaic</button>
+      <button class="view-btn" data-view="focus" onclick="setViewMode('focus')">🎯 Focus</button>
+      <button class="view-btn" data-view="stack" onclick="setViewMode('stack')">📚 Stack</button>
+      <button class="view-btn" data-view="cinema" onclick="setViewMode('cinema')">🎬 Cinema</button>
+      <button class="view-btn" data-view="sitemap" onclick="setViewMode('sitemap')">🗺️ Sitemap</button>
+      <button class="view-btn" data-view="spatial3d" onclick="setViewMode('spatial3d')">🧊 3D Spatial</button>
+    </div>
+
+    <div id="surfaces-empty" class="surfaces-empty">
+      <div class="spinner"></div>
+      <p>Connecting to server and loading surfaces…</p>
+    </div>
+    <div id="surfaces" class="surfaces-grid"></div>
+    <div id="spatial3d-container" style="display:none; width:100%; height:80vh;"></div>
+  </main>
+
+  <!-- ─── TOAST CONTAINER ─── -->
+  <div id="toasts" class="toast-container"></div>
+
+  <!-- Hidden config (auto-connect) -->
+  <input type="hidden" id="server" value="ws://localhost:8787" />
+  <input type="hidden" id="room" value="roomA" />
+  <input type="hidden" id="user" value="user-justin" />
+
+  <!-- ─── ADD BROWSER MODAL ─── -->
+  <div id="add-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>＋ Add Browser</span>
+        <button id="modal-close" class="modal-close-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="modal-label">URL</label>
+        <input id="add-url" class="modal-input" type="text" placeholder="https://example.com" spellcheck="false" />
+        <label class="modal-label">Title <span class="muted">(optional — auto-detects from page)</span></label>
+        <input id="add-title" class="modal-input" type="text" placeholder="My Browser" spellcheck="false" />
+        <label class="modal-label">Session Mode</label>
+        <select id="add-session-mode" class="modal-input modal-select">
+          <option value="SHARED" selected>👁 Shared Persistent — everyone sees the same view</option>
+          <option value="PER_USER">👤 Per-User Instance — each user browses independently</option>
+          <option value="SEPARATE_ACCOUNT">🔐 Separate Account — isolated login per user</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-cancel" class="btn btn-cancel">Cancel</button>
+        <button id="modal-confirm" class="btn btn-confirm">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="./client.js"></script>
+</body>
+
+</html>

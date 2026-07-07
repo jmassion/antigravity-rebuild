@@ -1,0 +1,12 @@
+{
+  "icon": "MousePointer",
+  "tags": [
+    "input",
+    "mouse",
+    "keyboard",
+    "trackpad",
+    "gamepad",
+    "gestures"
+  ],
+  "description": "Input device configuration"
+}

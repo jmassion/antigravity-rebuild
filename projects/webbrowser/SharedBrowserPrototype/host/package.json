@@ -1,0 +1,14 @@
+{
+  "name": "sharedbrowser-host",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node host.js",
+    "cdp": "node cdp-host.js"
+  },
+  "dependencies": {
+    "playwright-core": "^1.58.2",
+    "systeminformation": "^5.22.11",
+    "ws": "^8.16.0"
+  }
+}

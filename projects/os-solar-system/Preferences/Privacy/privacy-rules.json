@@ -1,0 +1,7 @@
+{
+  "locationServices": true,
+  "analytics": false,
+  "adTracking": false,
+  "cameraAccess": "ask",
+  "micAccess": "ask"
+}

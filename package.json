@@ -1,0 +1,13 @@
+{
+  "name": "antigravity-rebuild",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AntiGravity portfolio monorepo — a navigable, hosted collection of every prototype",
+  "type": "module",
+  "scripts": {
+    "migrate": "bash scripts/migrate.sh",
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build && npx serve dist -l 4321",
+    "capture": "node scripts/capture.mjs"
+  }
+}

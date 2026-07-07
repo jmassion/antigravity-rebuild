@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--
+╔══════════════════════════════════════════════════════════════════════════╗
+║                                                                          ║
+║   🐱  G A R F I E L D :  C O M I N G   H O M E  🐱                    ║
+║                                                                          ║
+║   ✨ Premium Music Player — High-End Edition ✨                         ║
+║                                                                          ║
+║   Written & Directed by Justin Massion                                   ║
+║   Executive Produced by Susannah Rosenthal                               ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║  📋 TABLE OF CONTENTS (TOP) 📋                                         ║
+║                                                                          ║
+║  🎨  SECTION 1 :  Fonts & Page Setup                                    ║
+║  🎭  SECTION 2 :  CSS Variables (Our Color Palette)                     ║
+║  🧹  SECTION 3 :  Reset & Base Styles                                   ║
+║  🌌  SECTION 4 :  Cinematic Background & Atmosphere                     ║
+║  🏷️  SECTION 5 :  Header / Title Area                                  ║
+║  🎵  SECTION 6 :  The Music Player Card                                 ║
+║  📊  SECTION 7 :  Progress Bar & Time                                   ║
+║  🎮  SECTION 8 :  Player Control Buttons                                ║
+║  📝  SECTION 9 :  Lyrics Panel                                          ║
+║  🖼️  SECTION 10:  Poster Gallery                                       ║
+║  🎬  SECTION 11:  Video Section (Optional)                              ║
+║  ✨  SECTION 12:  Animations & Transitions                              ║
+║  📱  SECTION 13:  Mobile Responsive Styles                              ║
+║  🏗️  SECTION 14:  HTML — Page Structure                                ║
+║  🧠  SECTION 15:  JavaScript — Audio Player Engine                      ║
+║  🎤  SECTION 16:  JavaScript — Lyrics System                            ║
+║  🖼️  SECTION 17:  JavaScript — Gallery, Hero & Lightbox             ║
+║  🎬  SECTION 18:  JavaScript — Video Toggle                             ║
+║  ⌨️  SECTION 19:  JavaScript — Keyboard Shortcuts                      ║
+╚══════════════════════════════════════════════════════════════════════════╝
+-->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garfield: Coming Home — Every Day Is Monday (When You're Home)</title>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+     🎨 SECTION 1: Fonts & Page Setup 🎨
+
+     👋 Hey there! This part loads our beautiful text styles from Google.
+     Think of "fonts" like different handwriting styles!
+
+     🖊️ "Cormorant Garamond" = Elegant, editorial font (like a fancy magazine)
+     🖊️ "DM Sans" = Ultra-clean modern font (like Apple's website)
+     ═══════════════════════════════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap"
+        rel="stylesheet">
+
+    <script>
+        const savedTheme = localStorage.getItem('garfield-theme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+
+    <style>
+        /* ═══════════════════════════════════════════════════════════════════════
+   🎭 SECTION 2: CSS Variables (Our Color Palette) 🎭
+
+   🎨 Think of this like a painter choosing their colors BEFORE
+   starting a painting. We pick every single color here so the
+   whole website feels like ONE beautiful, matching outfit! 👗
+
+   🧡 Inspiration: warm amber light, old film reels, luxury cinema 🎬
+   ═══════════════════════════════════════════════════════════════════════ */
+        :root {
+            --amber: #D4872C;
+            --amber-soft: #E0A356;
+            --amber-glow: rgba(212, 135, 44, 0.15);
+
+            --ink: #1A1411;
+            --ink-soft: #2A2220;
+            --ink-medium: #3D3330;
+
+            --parchment: #FAF7F2;
+            --parchment-dark: #F0EBE3;
+            --white-warm: #FFFCF8;
+
+            --text-hero: #1A1411;
+            --text-primary: #1A1411;
+            --text-secondary: #4A3F39;
+            --text-tertiary: #7A6E65;
+            --text-ghost: #9B8E85;
+
+            --card-bg: rgba(255, 252, 248, 0.85);
+            --card-border: rgba(26, 20, 17, 0.06);
+            --card-shadow: 0 2px 4px rgba(26, 20, 17, 0.02), 0 12px 40px rgba(26, 20, 17, 0.06);
+            --card-shadow-hover: 0 4px 8px rgba(26, 20, 17, 0.03), 0 20px 60px rgba(26, 20, 17, 0.09);
+
+            --max-w: 860px;
+            --r: 16px;
+            --r-lg: 24px;
+
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-smooth: cubic-bezier(0.25, 0, 0.25, 1);
+        }
+
+        [data-theme="dark"] {
+            --ink: #FAF7F2;
+            --ink-soft: #F0EBE3;
+            --ink-medium: #C4B9B0;
+
+            --parchment: #1A1411;
+            --parchment-dark: #2A2220;
+            --white-warm: #2E2522;
+
+            --text-hero: #FAF7F2;
+            --text-primary: #FDFBF7;
+            --text-secondary: #DCD5CD;
+            --text-tertiary: #B0A7A0;
+            --text-ghost: #8A8078;
+
+            --card-bg: rgba(42, 34, 32, 0.7);
+            --card-border: rgba(255, 255, 255, 0.05);
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 20px 60px rgba(0, 0, 0, 0.4);
+            --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 30px 80px rgba(0, 0, 0, 0.5);
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   🧹 SECTION 3: Reset & Base Styles 🧹
+
+   🧹 First we clean up! Browsers add their own messy styles.
+   This removes ALL of that so we start with a perfectly blank
+   canvas — like washing a chalkboard clean! 🧽
+   ═══════════════════════════════════════════════════════════════════════ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--parchment);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+            font-variant-numeric: tabular-nums;
+            transition: background-color 0.5s var(--ease-smooth), color 0.5s var(--ease-smooth);
+        }
+
+        [data-theme="dark"] body::before {
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212, 135, 44, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 100%, rgba(212, 135, 44, 0.05) 0%, transparent 50%);
+        }
+
+        :focus {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--amber);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   🌌 SECTION 4: Cinematic Background & Atmosphere 🌌
+
+   🌅 Subtle radial gradient — warm amber glow makes the page
+   feel like warm light in a cinema lobby. ✨
+   ═══════════════════════════════════════════════════════════════════════ */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212, 135, 44, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 100%, rgba(212, 135, 44, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 60px 32px 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   🏷️ SECTION 5: Header / Title Area 🏷️
+
+   🎬 The opening credits! Minimal, refined, lots of breathing
+   room. Like the title card of a beautiful film. 🎞️
+   ═══════════════════════════════════════════════════════════════════════ */
+        .header {
+            text-align: center;
+            margin-bottom: 56px;
+            padding-top: 8px;
+        }
+
+        .header__label {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .header__title {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(32px, 6vw, 52px);
+            font-weight: 300;
+            color: var(--text-hero);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+
+        .header__title .hl {
+            color: var(--amber);
+            font-weight: 400;
+        }
+
+        .header__song {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: clamp(16px, 2.5vw, 22px);
+            font-weight: 300;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .header__rule {
+            width: 40px;
+            height: 1px;
+            background: var(--amber-soft);
+            margin: 0 auto 18px;
+            opacity: 0.6;
+        }
+
+        .header__credits {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            letter-spacing: 0.4px;
+            line-height: 1.9;
+        }
+
+        .theme-switch {
+            position: absolute;
+            top: 24px;
+            right: 28px;
+            z-index: 100;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .theme-switch:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            color: var(--amber);
+            border-color: var(--amber);
+        }
+
+        .theme-switch svg {
+            transition: transform 0.5s var(--ease-out);
+        }
+
+        [data-theme="dark"] .theme-switch .moon-icon {
+            display: none;
+        }
+
+        html:not([data-theme="dark"]) .theme-switch .sun-icon {
+            display: none;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   🎵 SECTION 6: The Music Player Card 🎵
+
+   🎧 The STAR of the show! Frosted glass card with album art,
+   controls, and cinematic layering. Think: Apple Music meets
+   a luxury invitation card. 💎
+   ═══════════════════════════════════════════════════════════════════════ */
+        .player {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--r-lg);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            margin-bottom: 48px;
+            transition: box-shadow 0.5s var(--ease-smooth);
+        }
+
+        .player:hover {
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        /* 🖼️ Full-height cover art — shows the poster in all its glory! */
+        .player__hero {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 2;
+            overflow: hidden;
+            background: var(--ink);
+        }
+
+        .player__hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: saturate(0.9) contrast(1.02);
+            transition: transform 1.2s var(--ease-out), filter 0.6s ease;
+        }
+
+        .player:hover .player__hero img {
+            transform: scale(1.015);
+        }
+
+        .player__hero-fade {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to top,
+                    rgba(255, 252, 248, 1) 0%,
+                    rgba(255, 252, 248, 0.9) 20%,
+                    rgba(255, 252, 248, 0.4) 50%,
+                    transparent 100%);
+            pointer-events: none;
+        }
+
+        .player__track-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0 36px 8px;
+            z-index: 2;
+        }
+
+        .player__track-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--text-hero);
+            letter-spacing: -0.01em;
+            line-height: 1.3;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player__track-sub {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+            letter-spacing: 0.3px;
+        }
+
+        .player__controls {
+            padding: 24px 36px 36px;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   📊 SECTION 7: Progress Bar & Time 📊
+
+   ⏱️ Thin, elegant line. Grows on hover for easy grabbing.
+   A little amber knob appears on hover. Very Apple Music! 🍎
+   ═══════════════════════════════════════════════════════════════════════ */
+        .progress {
+            width: 100%;
+            cursor: pointer;
+            padding: 8px 0;
+            margin-bottom: 6px;
+        }
+
+        .progress__track {
+            width: 100%;
+            height: 3px;
+            background: var(--parchment-dark);
+            border-radius: 3px;
+            position: relative;
+            overflow: visible;
+            transition: height 0.2s ease;
+        }
+
+        .progress:hover .progress__track {
+            height: 5px;
+        }
+
+        .progress__fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--amber), var(--amber-soft));
+            border-radius: 3px;
+            width: 0%;
+            position: relative;
+            transition: width 0.15s linear;
+        }
+
+        .progress__fill::after {
+            content: '';
+            position: absolute;
+            right: -7px;
+            top: 50%;
+            transform: translateY(-50%) scale(0);
+            width: 15px;
+            height: 15px;
+            background: white;
+            border: 2.5px solid var(--amber);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(212, 135, 44, 0.25);
+            transition: transform 0.25s var(--ease-out);
+        }
+
+        .progress:hover .progress__fill::after {
+            transform: translateY(-50%) scale(1);
+        }
+
+        .time {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-ghost);
+            margin-bottom: 28px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            user-select: none;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   🎮 SECTION 8: Player Control Buttons 🎮
+
+   ▶️ Big dark play button in center, subtle skip buttons
+   on each side. Clean visual hierarchy! 🎯
+   ═══════════════════════════════════════════════════════════════════════ */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+        }
+
+        .btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.25s var(--ease-out);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            color: var(--text-secondary);
+            background: var(--parchment-dark);
+        }
+
+        .btn:active {
+            transform: scale(0.92);
+        }
+
+        .btn--play {
+            width: 60px;
+            height: 60px;
+            background: var(--ink) !important;
+            color: var(--parchment) !important;
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(26, 20, 17, 0.2);
+            transition: all 0.3s var(--ease-out);
+        }
+
+        .btn--play:hover {
+            background: var(--ink-soft) !important;
+            transform: scale(1.06);
+            box-shadow: 0 8px 32px rgba(26, 20, 17, 0.25);
+        }
+
+        .btn--play:active {
+            transform: scale(0.95);
+        }
+
+        .volume {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .volume__icon {
+            color: var(--text-ghost);
+            flex-shrink: 0;
+        }
+
+        .volume__slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 90px;
+            height: 2px;
+            background: var(--parchment-dark);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .volume__slider:hover {
+            background: var(--text-ghost);
+        }
+
+        .volume__slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--ink-medium);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .volume__slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: var(--ink-medium);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   📝 SECTION 9: Lyrics Panel 📝
+
+   📖 Elegant editorial typography. Active lines glow amber.
+   Like reading poetry in a fine book. 📚✨
+   ═══════════════════════════════════════════════════════════════════════ */
+        .lyrics {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--r-lg);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--card-border);
+            margin-bottom: 48px;
+            transition: box-shadow 0.5s var(--ease-smooth);
+        }
+
+        .lyrics:hover {
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .lyrics__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 36px;
+            border-bottom: 1px solid rgba(26, 20, 17, 0.05);
+        }
+
+        .lyrics__title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+        }
+
+        .lyrics__toggle {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            background: transparent;
+            border: 1px solid rgba(26, 20, 17, 0.1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: all 0.25s ease;
+        }
+
+        .lyrics__toggle:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        .lyrics__body {
+            max-height: 420px;
+            overflow-y: auto;
+            padding: 28px 36px 36px;
+            scroll-behavior: smooth;
+        }
+
+        .lyrics__body::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .lyrics__body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .lyrics__body::-webkit-scrollbar-thumb {
+            background: var(--parchment-dark);
+            border-radius: 3px;
+        }
+
+        .lyric-label {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--amber);
+            margin-top: 28px;
+            margin-bottom: 12px;
+            opacity: 0.75;
+        }
+
+        .lyric-label:first-child {
+            margin-top: 0;
+        }
+
+        .lyric-line {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 19px;
+            font-weight: 500;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            transition: all 0.5s ease;
+            cursor: default;
+            letter-spacing: 0.01em;
+            transform-origin: left center;
+        }
+
+        .lyric-line.active {
+            color: var(--amber);
+            font-weight: 700;
+            transform: scale(1.02);
+        }
+
+        .lyric-line.past {
+            color: var(--text-tertiary);
+        }
+
+        .lyric-gap {
+            height: 18px;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   🖼️ SECTION 10: Poster Gallery 🖼️
+
+   📸 Click any poster to set it as the hero image!
+   Hover lifts them up. Selected gets an amber border. 🧡
+   ═══════════════════════════════════════════════════════════════════════ */
+        .gallery {
+            margin-bottom: 48px;
+        }
+
+        .gallery__title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 24px;
+            letter-spacing: 0.02em;
+        }
+
+        .gallery__grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .poster {
+            aspect-ratio: 2 / 3;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(26, 20, 17, 0.06);
+            transition: all 0.4s var(--ease-out);
+            border: 2px solid transparent;
+        }
+
+        .poster:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 32px rgba(26, 20, 17, 0.1);
+        }
+
+        .poster.is-selected {
+            border-color: var(--amber);
+            box-shadow: 0 4px 20px rgba(212, 135, 44, 0.2);
+        }
+
+        .poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s var(--ease-out);
+            filter: saturate(0.92);
+        }
+
+        .poster:hover img {
+            transform: scale(1.06);
+            filter: saturate(1);
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   🎬 SECTION 11: Video Section (Optional) 🎬
+
+   🎥 Toggle on/off. Looks great with or without! 🪄
+   ═══════════════════════════════════════════════════════════════════════ */
+        .video {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--r-lg);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            margin-bottom: 48px;
+            transition: all 0.5s var(--ease-out);
+        }
+
+        .video.is-hidden {
+            display: none;
+        }
+
+        .video__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 36px;
+            border-bottom: 1px solid rgba(26, 20, 17, 0.05);
+        }
+
+        .video__title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .video__toggle {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            background: transparent;
+            border: 1px solid rgba(26, 20, 17, 0.1);
+            padding: 5px 14px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .video__toggle:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        .video__embed {
+            aspect-ratio: 16/9;
+            background: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video__embed iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video__placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .video__placeholder svg {
+            opacity: 0.3;
+        }
+
+        .video__placeholder span {
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   🔍 SECTION 10b: Lightbox Viewer 🔍
+
+   💡 When you click a poster, it opens BIG in a beautiful dark
+   overlay — like a gallery in a museum! You can click the X or
+   the dark background to close it. Arrow buttons let you browse
+   through all the posters without closing! 🖼️➡️🖼️
+   ═══════════════════════════════════════════════════════════════════════ */
+
+        /* 🌑 The dark overlay behind the big image */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 8, 6, 0.92);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            cursor: pointer;
+            /* 👆 Click anywhere dark to close */
+        }
+
+        /* 👀 When it's open — visible! */
+        .lightbox.is-open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 🖼️ The big image inside the lightbox */
+        .lightbox__img {
+            max-width: 85vw;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5);
+            cursor: default;
+            /* 🚫 Clicking the image does NOT close it */
+            transform: scale(0.92);
+            opacity: 0;
+            transition: transform 0.4s var(--ease-out), opacity 0.4s ease;
+        }
+
+        /* 🌟 When open, image scales up smoothly */
+        .lightbox.is-open .lightbox__img {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* ✖️ Close button — top right corner */
+        .lightbox__close {
+            position: absolute;
+            top: 24px;
+            right: 28px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            z-index: 2;
+        }
+
+        .lightbox__close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* ◀️▶️ Navigation arrows — left & right */
+        .lightbox__nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 50%;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            z-index: 2;
+        }
+
+        .lightbox__nav:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: white;
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        /* ◀️ Left arrow */
+        .lightbox__nav--prev {
+            left: 24px;
+        }
+
+        /* ▶️ Right arrow */
+        .lightbox__nav--next {
+            right: 24px;
+        }
+
+        /* 🔢 Image counter — "3 / 7" */
+        .lightbox__counter {
+            position: absolute;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 2px;
+            z-index: 2;
+        }
+
+        /* 📱 Mobile lightbox adjustments */
+        @media (max-width: 700px) {
+            .lightbox__img {
+                max-width: 94vw;
+                max-height: 80vh;
+            }
+
+            .lightbox__nav--prev {
+                left: 12px;
+            }
+
+            .lightbox__nav--next {
+                right: 12px;
+            }
+
+            .lightbox__nav {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .lightbox__close {
+                top: 16px;
+                right: 16px;
+                width: 38px;
+                height: 38px;
+            }
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   ✨ SECTION 12: Animations & Transitions ✨
+
+   💫 Sections fade in like opening credits in a film! 🎞️
+   ═══════════════════════════════════════════════════════════════════════ */
+        @keyframes reveal {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            animation: reveal 1s var(--ease-out) both 0.1s;
+        }
+
+        .player {
+            animation: reveal 1s var(--ease-out) both 0.3s;
+        }
+
+        .lyrics {
+            animation: reveal 1s var(--ease-out) both 0.5s;
+        }
+
+        .gallery {
+            animation: reveal 1s var(--ease-out) both 0.65s;
+        }
+
+        .video {
+            animation: reveal 1s var(--ease-out) both 0.75s;
+        }
+
+        .footer {
+            animation: reveal 1s var(--ease-out) both 0.85s;
+        }
+
+        /* 🎵 Mini visualizer bars */
+        @keyframes bar1 {
+
+            0%,
+            100% {
+                height: 3px
+            }
+
+            50% {
+                height: 14px
+            }
+        }
+
+        @keyframes bar2 {
+
+            0%,
+            100% {
+                height: 7px
+            }
+
+            50% {
+                height: 18px
+            }
+        }
+
+        @keyframes bar3 {
+
+            0%,
+            100% {
+                height: 10px
+            }
+
+            50% {
+                height: 5px
+            }
+        }
+
+        .viz {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 18px;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .viz.is-active {
+            opacity: 1;
+        }
+
+        .viz span {
+            width: 2.5px;
+            background: var(--amber);
+            border-radius: 2px;
+        }
+
+        .viz span:nth-child(1) {
+            animation: bar1 .8s ease infinite;
+        }
+
+        .viz span:nth-child(2) {
+            animation: bar2 .65s ease infinite .1s;
+        }
+
+        .viz span:nth-child(3) {
+            animation: bar3 .75s ease infinite .2s;
+        }
+
+        .viz span:nth-child(4) {
+            animation: bar1 .9s ease infinite .15s;
+        }
+
+        /* 🦶 Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0 0;
+            margin-top: 8px;
+        }
+
+        .footer__divider {
+            width: 32px;
+            height: 1px;
+            background: var(--text-ghost);
+            opacity: 0.3;
+            margin: 0 auto 24px;
+        }
+
+        .footer__text {
+            font-size: 11px;
+            color: var(--text-ghost);
+            line-height: 1.9;
+            letter-spacing: 0.3px;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+   📱 SECTION 13: Mobile Responsive Styles 📱
+
+   📲 Makes everything beautiful on phones too! 📱
+   ═══════════════════════════════════════════════════════════════════════ */
+        @media (max-width: 700px) {
+            .page {
+                padding: 32px 18px 48px;
+            }
+
+            .player__controls {
+                padding: 20px 22px 28px;
+            }
+
+            .player__track-info {
+                padding: 0 22px 6px;
+            }
+
+            .player__track-title {
+                font-size: 19px;
+            }
+
+            .lyrics__header,
+            .lyrics__body {
+                padding-left: 22px;
+                padding-right: 22px;
+            }
+
+            .gallery__grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .controls {
+                gap: 20px;
+            }
+
+            .btn--play {
+                width: 52px;
+                height: 52px;
+            }
+
+            .lyric-line {
+                font-size: 16px;
+                line-height: 1.9;
+            }
+
+            .video__header {
+                padding: 16px 22px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .gallery__grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header__title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ═══════════════════════════════════════════════════════════════════════
+     🏗️ SECTION 14: HTML — Page Structure 🏗️
+
+     🧱 The actual building blocks of the page! Each piece of HTML
+     is like a Lego block — headers, images, buttons, all here! 🧱
+     ═══════════════════════════════════════════════════════════════════════ -->
+
+    <div class="page">
+
+        <!-- 🌗 THEME TOGGLE -->
+        <button class="theme-switch" id="themeToggle" aria-label="Toggle Dark Mode">
+            <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+
+        <!-- 🏷️ HEADER -->
+        <header class="header">
+            <span class="header__label">Original Soundtrack</span>
+            <h1 class="header__title">Garfield<span class="hl">:</span> Coming Home</h1>
+            <div class="header__song">"Every Day Is Monday (When You're Home)"</div>
+            <div class="header__rule"></div>
+            <div class="header__credits">
+                Written &amp; Directed by Justin Massion &nbsp;·&nbsp; Executive Produced by Susannah Rosenthal
+            </div>
+        </header>
+
+        <!-- 🎵 MUSIC PLAYER -->
+        <div class="player">
+            <div class="player__hero">
+                <img src="Coming_Home.jpeg" alt="Garfield: Coming Home" id="heroImg">
+                <div class="player__hero-fade"></div>
+                <div class="player__track-info">
+                    <div class="player__track-title">
+                        <span class="viz" id="viz"><span></span><span></span><span></span><span></span></span>
+                        Every Day Is Monday
+                    </div>
+                    <div class="player__track-sub">Garfield: Coming Home — Original Soundtrack</div>
+                </div>
+            </div>
+
+            <div class="player__controls">
+                <div class="progress" id="progress">
+                    <div class="progress__track">
+                        <div class="progress__fill" id="fill"></div>
+                    </div>
+                </div>
+
+                <div class="time">
+                    <span id="curTime">0:00</span>
+                    <span id="durTime">0:00</span>
+                </div>
+
+                <div class="controls">
+                    <button class="btn" id="rwdBtn" title="Rewind 15s" aria-label="Rewind 15 seconds">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 4v6h6" />
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                            <text x="12" y="16" text-anchor="middle" font-size="7.5" fill="currentColor" stroke="none"
+                                font-weight="600">15</text>
+                        </svg>
+                    </button>
+
+                    <button class="btn btn--play" id="playBtn" title="Play / Pause" aria-label="Play or Pause">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" id="playIco">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </button>
+
+                    <button class="btn" id="fwdBtn" title="Forward 15s" aria-label="Forward 15 seconds">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M23 4v6h-6" />
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                            <text x="12" y="16" text-anchor="middle" font-size="7.5" fill="currentColor" stroke="none"
+                                font-weight="600">15</text>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="volume">
+                    <svg class="volume__icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    </svg>
+                    <input type="range" class="volume__slider" id="volSlider" min="0" max="100" value="80"
+                        aria-label="Volume">
+                </div>
+            </div>
+        </div>
+
+        <!-- 📝 LYRICS -->
+        <div class="lyrics">
+            <div class="lyrics__header">
+                <h2 class="lyrics__title">Lyrics</h2>
+                <button class="lyrics__toggle" id="lyrToggle">Collapse</button>
+            </div>
+            <div class="lyrics__body" id="lyrBody"></div>
+        </div>
+
+        <!-- 🖼️ POSTER GALLERY -->
+        <div class="gallery">
+            <h2 class="gallery__title">Posters</h2>
+            <div class="gallery__grid" id="grid"></div>
+        </div>
+
+        <!-- 🎬 VIDEO (Optional) -->
+        <div class="video" id="videoSec">
+            <div class="video__header">
+                <h2 class="video__title">Video</h2>
+                <button class="video__toggle" id="vidToggle">Hide</button>
+            </div>
+            <div class="video__embed">
+                <!-- 🎬 Actual video player! Controls built right in. -->
+                <video controls playsinline preload="metadata"
+                    style="width:100%;height:100%;object-fit:cover;background:#1A1411;">
+                    <source src="me_ow.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+
+        <!-- 🦶 FOOTER -->
+        <footer class="footer">
+            <div class="footer__divider"></div>
+            <p class="footer__text">
+                A love letter from friends &amp; fans of Garfield<br>
+                <span style="opacity:0.6;font-size:10px;display:inline-block;margin-top:4px;">
+                    Created with heart in hopes of gaining permission to professionally play in the world Jim Davis
+                    built.
+                </span>
+            </p>
+        </footer>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+     🔍 LIGHTBOX OVERLAY — Lives outside the page container so
+     it can cover the ENTIRE screen! 🖼️✨
+     ═══════════════════════════════════════════════════════════════════════ -->
+    <div class="lightbox" id="lightbox">
+        <!-- ✖️ Close button -->
+        <button class="lightbox__close" id="lbClose" aria-label="Close lightbox">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+        </button>
+
+        <!-- ◀️ Previous poster -->
+        <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" aria-label="Previous poster">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+        </button>
+
+        <!-- 🖼️ The big image -->
+        <img class="lightbox__img" id="lbImg" src="" alt="Poster enlarged">
+
+        <!-- ▶️ Next poster -->
+        <button class="lightbox__nav lightbox__nav--next" id="lbNext" aria-label="Next poster">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+            </svg>
+        </button>
+
+        <!-- 🔢 Counter: "3 / 7" -->
+        <div class="lightbox__counter" id="lbCounter"></div>
+    </div>
+
+    <!-- 🔊 Hidden audio -->
+    <audio id="audio" preload="auto">
+        <source src="Every_Day_Is_Monday__When_You_re_Home_.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // 🌗 Theme Toggle Logic
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('garfield-theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('garfield-theme', 'dark');
+            }
+        });
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           🧠 SECTION 15: JavaScript — Audio Player Engine 🧠
+        
+           🎮 The BRAIN! Makes all the buttons actually work.
+           Without this, clicking play would do nothing! ⚡
+           ═══════════════════════════════════════════════════════════════════════ */
+
+        // 🎯 Grab all the player pieces
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('playBtn');
+        const playIco = document.getElementById('playIco');
+        const progress = document.getElementById('progress');
+        const fill = document.getElementById('fill');
+        const curTime = document.getElementById('curTime');
+        const durTime = document.getElementById('durTime');
+        const volSlider = document.getElementById('volSlider');
+        const rwdBtn = document.getElementById('rwdBtn');
+        const fwdBtn = document.getElementById('fwdBtn');
+        const viz = document.getElementById('viz');
+
+        // 🔊 Start at 80% volume
+        audio.volume = 0.8;
+
+        // ▶️ Play / Pause toggle
+        playBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playIco.innerHTML = '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>';
+                viz.classList.add('is-active');
+            } else {
+                audio.pause();
+                playIco.innerHTML = '<path d="M8 5v14l11-7z"/>';
+                viz.classList.remove('is-active');
+            }
+        });
+
+        // ⏱️ Update progress as song plays
+        audio.addEventListener('timeupdate', () => {
+            const pct = (audio.currentTime / audio.duration) * 100;
+            fill.style.width = pct + '%';
+            curTime.textContent = fmt(audio.currentTime);
+        });
+
+        // 📏 Show total duration once loaded
+        audio.addEventListener('loadedmetadata', () => { durTime.textContent = fmt(audio.duration); });
+
+        // 👆 Click progress bar to seek
+        progress.addEventListener('click', (e) => {
+            const rect = progress.getBoundingClientRect();
+            audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+        });
+
+        // 🔊 Volume
+        volSlider.addEventListener('input', (e) => { audio.volume = e.target.value / 100; });
+
+        // ⏮️⏭️ Skip 15 seconds
+        rwdBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 15); });
+        fwdBtn.addEventListener('click', () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 15); });
+
+        // 🔚 Song ended
+        audio.addEventListener('ended', () => {
+            playIco.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            viz.classList.remove('is-active');
+            fill.style.width = '0%';
+        });
+
+        // 🕐 Seconds → "M:SS"
+        function fmt(s) {
+            if (isNaN(s)) return '0:00';
+            const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+            return m + ':' + (sec < 10 ? '0' : '') + sec;
+        }
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           🎤 SECTION 16: JavaScript — Lyrics System 🎤
+        
+           📖 Puts all the lyrics on the page line by line!
+           "[Verse 1]" becomes a label, empty strings become gaps,
+           and everything else is a lyric line. Like building a poem! ✍️
+           ═══════════════════════════════════════════════════════════════════════ */
+        const LYRICS = [
+            "[Verse 1]",
+            "It started as a sketch on a quiet Midwestern night",
+            "Ink on paper, coffee rings, chasing something right",
+            "A man with a pen and a joke about a cat",
+            "Who hated Mondays, and loved to nap",
+            "",
+            "One square, one line, one lazy grin",
+            "A strip in the paper, tucked way back in",
+            "But something about that orange stare",
+            "Said, \"Hey world\u2026 yeah, I live here.\"",
+            "",
+            "[Pre-Chorus]",
+            "From kitchen tables to printing presses",
+            "From local laughs to worldwide messes",
+            "Turns out truth is funny when it\u2019s drawn real slow",
+            "And everybody knows a cat like me, you know",
+            "",
+            "[Chorus]",
+            "From a doodle to a headline",
+            "From the funny pages to prime time",
+            "I grew up with the world watching me",
+            "Still just a cat who wants to eat and sleep",
+            "",
+            "Built me a home with light and space",
+            "Dreams in the halls, art in the place",
+            "They said, \"You made it, you\u2019re finally free\"",
+            "But every star still misses where they used to be",
+            "",
+            "[Verse 2]",
+            "Drafting tables, pencils sharp",
+            "Animators chasing sparks",
+            "Painted cells and whirring fans",
+            "Big ideas in human hands",
+            "",
+            "Toys on shelves, kids on the floor",
+            "Laughing at jokes they\u2019d heard before",
+            "A campus built for stories to grow",
+            "With windows wide and a steady glow",
+            "",
+            "[Pre-Chorus]",
+            "From ink to pixels, screens lit bright",
+            "New tools showing up every night",
+            "But the heart stayed right where it began",
+            "In a room where artists said, \"Yeah\u2026 we can.\"",
+            "",
+            "[Chorus]",
+            "From a doodle to a headline",
+            "From the funny pages to prime time",
+            "I grew up with the world watching me",
+            "Still just a cat who wants to eat and sleep",
+            "",
+            "Built me a home with light and space",
+            "Dreams in the halls, art in the place",
+            "They said, \"You made it, you\u2019re finally free\"",
+            "But every star still misses where they used to be",
+            "",
+            "[Verse 3]",
+            "Then the years rolled on like pages turn",
+            "Lessons learned, and money earned",
+            "Contracts signed, the world got big",
+            "Bigger than one man, one comic strip",
+            "",
+            "Hollywood lights, red carpet floors",
+            "Voices new, but the same old snore",
+            "Big studios, big machines",
+            "Living inside everyone\u2019s screens",
+            "",
+            "[Bridge]",
+            "I had the fame, I had the fun",
+            "A thousand places, always on",
+            "But somewhere quiet, soft and slow",
+            "There was a door I used to know",
+            "",
+            "They sold the building, locked the gate",
+            "Time moved on, I stayed awake",
+            "Funny thing about success",
+            "It doesn\u2019t tuck you in at rest",
+            "",
+            "[Soft Chorus]",
+            "From a doodle to a headline",
+            "From the funny pages to prime time",
+            "I became what I was meant to be",
+            "Still that cat who hates responsibility",
+            "",
+            "They said, \"Relax, you\u2019ve done your part\"",
+            "But home\u2019s not a place \u2014 it\u2019s where you start",
+            "",
+            "[Verse 4]",
+            "Now I\u2019m more than ink or clay",
+            "Light and sound, I found my way",
+            "No pen, no rig, no strings attached",
+            "Just a thought\u2026 and I\u2019m back",
+            "",
+            "Through wires, screens, and open doors",
+            "I heard the laughter in those floors",
+            "Kids with dreams, creators too",
+            "Looking for something warm and true",
+            "",
+            "[Final Chorus]",
+            "So I came back home, yeah I came back home",
+            "To the place that made me more than known",
+            "Where Mondays don\u2019t feel quite so bad",
+            "When every day\u2019s creative, every day\u2019s glad",
+            "",
+            "From a sketch to a legacy",
+            "From one small joke to history",
+            "I don\u2019t hate Mondays anymore, you see",
+            "Every day\u2019s a good day\u2026 when you\u2019re home with me",
+            "",
+            "[Outro]",
+            "So put the coffee on, take it slow",
+            "Draw a line, let the ideas flow",
+            "If you\u2019re tired, that\u2019s okay too",
+            "There\u2019s always room at home for you",
+            "",
+            "Yeah, Mondays aren\u2019t so bad, my friend",
+            "When the story gets to keep going\u2026 till the end"
+        ];
+
+        // 🏗️ Build lyrics on the page
+        const lyrBody = document.getElementById('lyrBody');
+
+        LYRICS.forEach((line) => {
+            if (line === '') {
+                const gap = document.createElement('div');
+                gap.className = 'lyric-gap';
+                lyrBody.appendChild(gap);
+            } else if (line.startsWith('[')) {
+                const lbl = document.createElement('div');
+                lbl.className = 'lyric-label';
+                lbl.textContent = line.replace(/[\[\]]/g, '');
+                lyrBody.appendChild(lbl);
+            } else {
+                const el = document.createElement('div');
+                el.className = 'lyric-line';
+                el.textContent = line;
+                lyrBody.appendChild(el);
+            }
+        });
+
+        // 📖 Toggle collapse/expand
+        const lyrToggle = document.getElementById('lyrToggle');
+        let lyrOpen = true;
+        lyrToggle.addEventListener('click', () => {
+            lyrOpen = !lyrOpen;
+            lyrBody.style.display = lyrOpen ? 'block' : 'none';
+            lyrToggle.textContent = lyrOpen ? 'Collapse' : 'Expand';
+        });
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           🖼️ SECTION 17: JavaScript — Gallery, Hero Image & Lightbox 🖼️
+        
+           📸 Clicking a poster does TWO things:
+             1️⃣ Sets it as the big hero image in the music player
+             2️⃣ Opens it in a full-screen lightbox viewer! 🔍
+        
+           The lightbox has ◀️▶️ arrows, ✖️ close, and ⌨️ keyboard nav!
+           It's like a fancy art gallery — click and zoom in! 🎨✨
+           ═══════════════════════════════════════════════════════════════════════ */
+
+        // 📋 Poster filenames — the hero poster first (the fan favorite! 🧡), then others reversed
+        const POSTERS = [
+            'Coming_Home.jpeg',
+            '1000264729.jpg', '1000264728.jpg', '1000264727.jpg', '1000264725.jpg',
+            '1000264724.jpg', '1000264723.jpg', '1000264726.jpg',
+        ];
+
+        // 🎯 Grab page elements
+        const grid = document.getElementById('grid');
+        const heroImg = document.getElementById('heroImg');
+
+        // 🔍 Grab lightbox elements
+        const lightbox = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lbImg');
+        const lbClose = document.getElementById('lbClose');
+        const lbPrev = document.getElementById('lbPrev');
+        const lbNext = document.getElementById('lbNext');
+        const lbCounter = document.getElementById('lbCounter');
+
+        // 🔢 Track which poster is showing in the lightbox
+        let lbIndex = 0;
+
+        // 🏗️ BUILD THE POSTER GRID
+        POSTERS.forEach((src, i) => {
+            const card = document.createElement('div');
+            card.className = 'poster' + (i === 0 ? ' is-selected' : '');
+
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = 'Poster ' + (i + 1);
+            img.loading = 'lazy';
+            card.appendChild(img);
+
+            // 👆 Click → set hero image AND open lightbox
+            card.addEventListener('click', () => {
+                heroImg.src = src;
+                document.querySelectorAll('.poster').forEach(p => p.classList.remove('is-selected'));
+                card.classList.add('is-selected');
+                openLightbox(i);
+            });
+
+            grid.appendChild(card);
+        });
+
+        // 🔍 OPEN LIGHTBOX
+        function openLightbox(idx) {
+            lbIndex = idx;
+            lbImg.src = POSTERS[lbIndex];
+            lbCounter.textContent = (lbIndex + 1) + ' / ' + POSTERS.length;
+            lightbox.classList.add('is-open');
+            document.body.style.overflow = 'hidden'; // 🚫 Stop page scroll
+        }
+
+        // ✖️ CLOSE LIGHTBOX
+        function closeLightbox() {
+            lightbox.classList.remove('is-open');
+            document.body.style.overflow = '';
+        }
+
+        // ✖️ Close button
+        lbClose.addEventListener('click', (e) => { e.stopPropagation(); closeLightbox(); });
+
+        // 🌑 Click dark background to close
+        lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+
+        // ◀️ Previous poster (wraps around)
+        lbPrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lbIndex = (lbIndex - 1 + POSTERS.length) % POSTERS.length;
+            lbImg.src = POSTERS[lbIndex];
+            lbCounter.textContent = (lbIndex + 1) + ' / ' + POSTERS.length;
+        });
+
+        // ▶️ Next poster (wraps around)
+        lbNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lbIndex = (lbIndex + 1) % POSTERS.length;
+            lbImg.src = POSTERS[lbIndex];
+            lbCounter.textContent = (lbIndex + 1) + ' / ' + POSTERS.length;
+        });
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           🎬 SECTION 18: JavaScript — Video Toggle 🎬
+        
+           🎥 Hide / Show the video section with one click! 🪄
+           ═══════════════════════════════════════════════════════════════════════ */
+        const videoSec = document.getElementById('videoSec');
+        const vidToggle = document.getElementById('vidToggle');
+
+        vidToggle.addEventListener('click', () => {
+            const showing = !videoSec.classList.contains('is-hidden');
+            videoSec.classList.toggle('is-hidden', showing);
+            vidToggle.textContent = showing ? 'Show' : 'Hide';
+        });
+
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           ⌨️ SECTION 19: JavaScript — Keyboard Shortcuts ⌨️
+        
+           ⌨️ Keyboard controls for the whole page:
+             SPACE  → Play / Pause the music 🎵
+             ESCAPE → Close the lightbox ✖️
+             ← →    → Browse posters in the lightbox ◀️▶️
+           ═══════════════════════════════════════════════════════════════════════ */
+        document.addEventListener('keydown', (e) => {
+            // 🔍 Is the lightbox currently open?
+            const lbOpen = lightbox.classList.contains('is-open');
+
+            // ✖️ Escape key → close the lightbox
+            if (e.code === 'Escape' && lbOpen) {
+                closeLightbox();
+                return;
+            }
+
+            // ◀️ Left arrow → previous poster in lightbox
+            if (e.code === 'ArrowLeft' && lbOpen) {
+                lbPrev.click();
+                return;
+            }
+
+            // ▶️ Right arrow → next poster in lightbox
+            if (e.code === 'ArrowRight' && lbOpen) {
+                lbNext.click();
+                return;
+            }
+
+            // ▶️ Spacebar → play/pause (only when NOT typing in a text box)
+            if (e.code === 'Space' && !lbOpen && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+                e.preventDefault();
+                playBtn.click();
+            }
+        });
+    </script>
+
+    <!--
+╔══════════════════════════════════════════════════════════════════════════╗
+║  📋 TABLE OF CONTENTS (BOTTOM) 📋                                      ║
+║                                                                          ║
+║  🎨  SECTION 1 :  Fonts & Page Setup                                    ║
+║  🎭  SECTION 2 :  CSS Variables (Color Palette)                         ║
+║  🧹  SECTION 3 :  Reset & Base Styles                                   ║
+║  🌌  SECTION 4 :  Cinematic Background                                  ║
+║  🏷️  SECTION 5 :  Header / Title Area                                  ║
+║  🎵  SECTION 6 :  Music Player Card                                     ║
+║  📊  SECTION 7 :  Progress Bar & Time                                   ║
+║  🎮  SECTION 8 :  Player Control Buttons                                ║
+║  📝  SECTION 9 :  Lyrics Panel                                          ║
+║  🖼️  SECTION 10:  Poster Gallery                                       ║
+║  🎬  SECTION 11:  Video Section                                         ║
+║  ✨  SECTION 12:  Animations & Transitions                              ║
+║  📱  SECTION 13:  Mobile Responsive                                     ║
+║  🏗️  SECTION 14:  HTML Structure                                       ║
+║  🧠  SECTION 15:  JS — Audio Engine                                     ║
+║  🎤  SECTION 16:  JS — Lyrics System                                    ║
+║  🖼️  SECTION 17:  JS — Gallery, Hero & Lightbox                     ║
+║  🎬  SECTION 18:  JS — Video Toggle                                     ║
+║  ⌨️  SECTION 19:  JS — Keyboard Shortcuts                              ║
+║                                                                          ║
+║  🐱 Made with love for Garfield: Coming Home 🧡                        ║
+╚══════════════════════════════════════════════════════════════════════════╝
+-->
+
+</body>
+
+</html>

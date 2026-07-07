@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha Unicorn | Developing Unicorns | By Justin Massion</title>
+    <meta name="description" content="Alpha Unicorn — Increase Productivity. Balance Work, Life, Learning & Entertainment. Enterprise-quality tech for every individual. By Justin Massion.">
+    <meta name="keywords" content="Alpha Unicorn, VirtuOS, Smart Desk, Productivity, Justin Massion, Entrepreneurship">
+    <meta property="og:title" content="Alpha Unicorn | Developing Unicorns">
+    <meta property="og:description" content="Enterprise-quality tech for every individual. Increase productivity with next-generation smart desk technology.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://alphaunicorn.io">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- NAVIGATION WITH DROPDOWNS              -->
+    <!-- ═══════════════════════════════════════ -->
+    <nav id="main-nav" class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" id="nav-logo">
+                <img src="https://alphaunicorn.io/wp-content/uploads/2021/04/alpha-unicorn-left-white.png" alt="Alpha Unicorn Logo" class="nav-logo-img">
+            </a>
+
+            <div class="nav-links" id="nav-links">
+                <a href="#hero" class="nav-link">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#virtuos" class="nav-link">VirtuOS</a>
+
+                <!-- OFFERS DROPDOWN -->
+                <div class="nav-dropdown">
+                    <button class="nav-link nav-dropdown-trigger">
+                        Offers
+                        <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <a href="#" class="dropdown-item disabled-link">Products <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Services <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Investments <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Partner Program <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Licensing <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Shop <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                    </div>
+                </div>
+
+                <!-- VENTURES DROPDOWN -->
+                <div class="nav-dropdown">
+                    <button class="nav-link nav-dropdown-trigger">
+                        Ventures
+                        <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <a href="#virtuos" class="dropdown-item">VirtuOS</a>
+                        <a href="#" class="dropdown-item disabled-link">Body Building Entertainment <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">The High Carb Diet <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Winning 2020 <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Backup Plan <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Leveraged Crowdfunding <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Solving Homelessness <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">New Turf Technologies <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Torah VR <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                    </div>
+                </div>
+
+                <!-- RESOURCES DROPDOWN -->
+                <div class="nav-dropdown">
+                    <button class="nav-link nav-dropdown-trigger">
+                        Resources
+                        <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <a href="#blog" class="dropdown-item">Blog</a>
+                        <a href="#" class="dropdown-item disabled-link">Podcast <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Aggregator <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="#" class="dropdown-item disabled-link">Library <span class="coming-soon-dot" title="Coming Soon"></span></a>
+                        <a href="launchpad.html" class="dropdown-item">Launch Pad</a>
+                    </div>
+                </div>
+
+                <a href="#contact" class="nav-link nav-link-cta">Get Started</a>
+            </div>
+
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- HERO SECTION                            -->
+    <!-- ═══════════════════════════════════════ -->
+    <section id="hero" class="hero">
+        <div class="hero-bg-image"></div>
+        <div class="hero-bg-particles" id="hero-particles"></div>
+        <div class="hero-glow"></div>
+        <div class="hero-container">
+            <div class="hero-badge" data-animate="fade-up">
+                <span class="badge-dot"></span>
+                Developing Unicorns — By Justin Massion
+            </div>
+            <h1 class="hero-title" data-animate="fade-up" data-delay="100">
+                Build Your <br>
+                <span class="gradient-text">Unicorn Enterprise</span><br>
+                <span class="hero-title-light">Fast.</span>
+            </h1>
+            <p class="hero-subtitle" data-animate="fade-up" data-delay="200">
+                Increase Productivity. Balance Work, Life, Learning & Entertainment.<br>
+                Enterprise-quality tech for every individual.
+            </p>
+            <div class="hero-actions" data-animate="fade-up" data-delay="300">
+                <a href="#virtuos" class="btn btn-primary" id="hero-cta-primary">
+                    <span>Explore VirtuOS</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="#contact" class="btn btn-ghost" id="hero-cta-secondary">
+                    Schedule a Call
+                </a>
+            </div>
+            <div class="hero-stats" data-animate="fade-up" data-delay="400">
+                <div class="stat-item">
+                    <div class="stat-row">
+                        <span class="stat-number" data-count="10">0</span><span class="stat-suffix">x</span>
+                    </div>
+                    <span class="stat-label">Productivity Boost</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-row">
+                        <span class="stat-number" data-count="4">0</span>
+                    </div>
+                    <span class="stat-label">Growth Pillars</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-row">
+                        <span class="stat-number" data-count="9">0</span><span class="stat-suffix">+</span>
+                    </div>
+                    <span class="stat-label">Active Ventures</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator" id="scroll-indicator">
+            <div class="scroll-mouse">
+                <div class="scroll-dot"></div>
+            </div>
+            <span>Scroll to explore</span>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- LOGO MARQUEE                            -->
+    <!-- ═══════════════════════════════════════ -->
+    <section class="marquee-section">
+        <div class="marquee-track">
+            <div class="marquee-content">
+                <span class="marquee-item">VirtuOS</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">Smart Desk</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">10x Productivity</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">Enterprise Quality</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">AI Automation</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">Global Assembly Line</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">Speed Learning</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">Wealth Building</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">VirtuOS</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">Smart Desk</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">10x Productivity</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">Enterprise Quality</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">AI Automation</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">Global Assembly Line</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">Speed Learning</span>
+                <span class="marquee-dot">✦</span>
+                <span class="marquee-item">Wealth Building</span>
+                <span class="marquee-dot">✦</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- ABOUT / MISSION SECTION                 -->
+    <!-- ═══════════════════════════════════════ -->
+    <section id="about" class="section section-about">
+        <div class="about-bg-image"></div>
+        <div class="container">
+            <div class="about-intro-layout">
+                <div class="about-intro-content" data-animate="fade-right">
+                    <span class="section-label">Who We Are</span>
+                    <h2 class="section-title">No Fluff. <span class="gradient-text">Just Knowledge.</span></h2>
+                    <p class="about-intro-text">
+                        We focus entirely on you — the entrepreneur, the creator, the visionary. 
+                        Your style, your ideas, your creativity. We want to create something that 
+                        does more than just look nice on a page.
+                    </p>
+                    <p class="about-intro-text">
+                        What makes design so alluring? We believe the answer is designers. That's 
+                        why we've made our entire focus on you — the designer of your own life and business. 
+                        Go on — Try, share and design now!
+                    </p>
+                    <div class="about-intro-actions">
+                        <a href="#contact" class="btn btn-primary">
+                            <span>Let's Meet</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="#pillars" class="btn btn-ghost">Learn More</a>
+                    </div>
+                </div>
+                <div class="about-intro-visual" data-animate="fade-left">
+                    <div class="about-image-container">
+                        <img src="https://alphaunicorn.io/wp-content/uploads/2021/04/Unicorn_Hand-removebg-e1617823790484.png" alt="Alpha Unicorn - Building Unicorns" class="about-unicorn-img">
+                        <div class="about-image-glow"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-cards-grid">
+                <div class="about-card glass-card" data-animate="fade-up" data-delay="100">
+                    <div class="about-card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <h3>Speed to Market</h3>
+                    <p>Unprecedented employee & entrepreneurial performance boosts through next-gen technology integration.</p>
+                </div>
+                <div class="about-card glass-card" data-animate="fade-up" data-delay="200">
+                    <div class="about-card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <h3>Full Stack Solutions</h3>
+                    <p>From creative vision to operations and cash flow — we deliver enterprise-quality technology for every individual.</p>
+                </div>
+                <div class="about-card glass-card" data-animate="fade-up" data-delay="300">
+                    <div class="about-card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <h3>10x Performance</h3>
+                    <p>Learn to consume audiobooks & video at 3x to 10x speed. Integrate AI to perfect every pitch and interaction.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- VIRTUOS SHOWCASE                        -->
+    <!-- ═══════════════════════════════════════ -->
+    <section id="virtuos" class="section section-virtuos">
+        <div class="virtuos-glow"></div>
+        <div class="container">
+            <div class="virtuos-layout">
+                <div class="virtuos-content" data-animate="fade-right">
+                    <span class="section-label">Flagship Product</span>
+                    <h2 class="section-title">
+                        <span class="gradient-text">VirtuOS</span> — The Most Innovative<br>
+                        Computer You've Ever Seen.
+                    </h2>
+                    <p class="virtuos-description">
+                        Interested in upgrading to the most innovative computer you've ever seen? 
+                        Increase your screen real estate to increase your productivity. We're seeing 
+                        unprecedented employee & entrepreneurial performance boosts with VirtuOS — 
+                        the future of smart desk computing.
+                    </p>
+                    <ul class="virtuos-features">
+                        <li><span class="feature-check">✦</span> Super Exclusive, Limited Edition Pre-Beta Access</li>
+                        <li><span class="feature-check">✦</span> Massive Screen Real Estate for Maximum Productivity</li>
+                        <li><span class="feature-check">✦</span> Enterprise-Grade Technology for Individuals</li>
+                        <li><span class="feature-check">✦</span> Be One of the Few to Use a Smart Desk Before Anyone Else</li>
+                    </ul>
+                    <div class="virtuos-actions">
+                        <a href="#contact" class="btn btn-primary" id="virtuos-cta">
+                            <span>Apply for Pre-Beta</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <span class="virtuos-limited">🔒 Limited spots available</span>
+                    </div>
+                </div>
+                <div class="virtuos-visual" data-animate="fade-left">
+                    <div class="virtuos-image-wrapper">
+                        <img src="https://alphaunicorn.io/wp-content/uploads/2021/04/SMART-DESK-TRANSPARENT-MED.png" alt="VirtuOS Smart Desk" class="virtuos-product-img" id="virtuos-product-img">
+                        <div class="virtuos-image-glow"></div>
+                    </div>
+                    <div class="virtuos-float-badge glass-card" data-animate="fade-up" data-delay="300">
+                        <span class="float-emoji">⚡</span>
+                        <div><span class="float-title">10x Faster</span><span class="float-sub">Workflow Speed</span></div>
+                    </div>
+                    <div class="virtuos-float-badge-2 glass-card" data-animate="fade-up" data-delay="400">
+                        <span class="float-emoji">🖥️</span>
+                        <div><span class="float-title">Smart Desk</span><span class="float-sub">Pre-Beta 2026</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- VIRTUOS SHOWCASE IMAGE                  -->
+    <!-- ═══════════════════════════════════════ -->
+    <section class="section section-virtuos-showcase">
+        <div class="container">
+            <div class="virtuos-showcase-wrapper" data-animate="fade-up">
+                <img src="assets/images/virtuos-desk.png" alt="VirtuOS Smart Desk Setup - Future of Computing" class="virtuos-showcase-img">
+                <div class="virtuos-showcase-overlay">
+                    <span class="showcase-badge">VirtuOS Vision</span>
+                    <h3>The Future of Your Workspace</h3>
+                    <p>Massive screen real estate. Intelligent automation. Your entire enterprise — on one desk.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- CHOOSE YOUR GOAL                        -->
+    <!-- ═══════════════════════════════════════ -->
+    <section id="goals" class="section section-goals">
+        <div class="container">
+            <div class="section-header" data-animate="fade-up">
+                <span class="section-label">Your Path</span>
+                <h2 class="section-title">Choose Your <span class="gradient-text">#1 Goal</span></h2>
+                <p class="section-description">
+                    We want to create something that does more than just look nice on a page. 
+                    How are the creative stories of the future going to look like?
+                </p>
+            </div>
+            <div class="goals-grid">
+                <a href="#contact" class="goal-card glass-card" data-animate="fade-up" data-delay="100" id="goal-start-business">
+                    <div class="goal-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+                    <h3>Start My Business</h3>
+                    <p>Launch from zero to revenue with proven frameworks and mentorship.</p>
+                    <span class="goal-link">Get Started →</span>
+                </a>
+                <a href="#contact" class="goal-card glass-card" data-animate="fade-up" data-delay="200" id="goal-automate">
+                    <div class="goal-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg></div>
+                    <h3>Automate My Business</h3>
+                    <p>Design perfect character sheets for every role. Let AI manage your operations as perfect employees.</p>
+                    <span class="goal-link">Get Started →</span>
+                </a>
+                <a href="#contact" class="goal-card glass-card" data-animate="fade-up" data-delay="300" id="goal-productivity">
+                    <div class="goal-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                    <h3>10x My Productivity</h3>
+                    <p>Global assembly line thinking, speed learning at 3x–10x, and smart desk technology.</p>
+                    <span class="goal-link">Get Started →</span>
+                </a>
+                <a href="#contact" class="goal-card glass-card" data-animate="fade-up" data-delay="400" id="goal-wealth">
+                    <div class="goal-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                    <h3>Build My Wealth</h3>
+                    <p>Investments, leveraged crowdfunding, and diversified venture portfolio strategies.</p>
+                    <span class="goal-link">Get Started →</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- 4 PILLARS OF SUCCESS (ONE ROW)          -->
+    <!-- ═══════════════════════════════════════ -->
+    <section id="pillars" class="section section-pillars">
+        <div class="container">
+            <div class="section-header" data-animate="fade-up">
+                <span class="section-label">Our Framework</span>
+                <h2 class="section-title">4 Pillars of <span class="gradient-text">Success</span></h2>
+                <p class="section-description">
+                    From creative vision to cash flow — our proven four-pillar framework 
+                    covers every dimension of building a successful enterprise.
+                </p>
+            </div>
+            <div class="pillars-grid pillars-single-row">
+                <div class="pillar-card" data-animate="fade-up" data-delay="100">
+                    <div class="pillar-number">01</div>
+                    <div class="pillar-icon-wrap">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                    </div>
+                    <h3>Creative</h3>
+                    <p>The vision starts with the first glance of attention. Craft compelling creative that cuts through the noise.</p>
+                    <div class="pillar-line"></div>
+                </div>
+                <div class="pillar-card" data-animate="fade-up" data-delay="200">
+                    <div class="pillar-number">02</div>
+                    <div class="pillar-icon-wrap">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                    </div>
+                    <h3>Marketing</h3>
+                    <p>Direct response marketing designed to elicit instant action. Every pitch perfected through AI analysis.</p>
+                    <div class="pillar-line"></div>
+                </div>
+                <div class="pillar-card" data-animate="fade-up" data-delay="300">
+                    <div class="pillar-number">03</div>
+                    <div class="pillar-icon-wrap">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    </div>
+                    <h3>Operations</h3>
+                    <p>Global assembly line thinking. Design perfect character sheets for every role and automate your company.</p>
+                    <div class="pillar-line"></div>
+                </div>
+                <div class="pillar-card" data-animate="fade-up" data-delay="400">
+                    <div class="pillar-number">04</div>
+                    <div class="pillar-icon-wrap">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <h3>Cash Flow</h3>
+                    <p>Build sustainable wealth through leveraged crowdfunding, smart investments, and multiple revenue streams.</p>
+                    <div class="pillar-line"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- VENTURES SECTION                        -->
+    <!-- ═══════════════════════════════════════ -->
+    <section id="ventures" class="section section-ventures">
+        <div class="container">
+            <div class="section-header" data-animate="fade-up">
+                <span class="section-label">Our Portfolio</span>
+                <h2 class="section-title">Active <span class="gradient-text">Ventures</span></h2>
+                <p class="section-description">A growing portfolio of ventures across technology, health, entertainment, and social impact.</p>
+            </div>
+            <div class="ventures-grid">
+                <div class="venture-card glass-card venture-featured" data-animate="fade-up" data-delay="50">
+                    <div class="venture-tag">🚀 Flagship</div>
+                    <h3>VirtuOS</h3>
+                    <p>Next-generation smart desk computing platform. Massive screen real estate, enterprise-grade technology, available for pre-beta applications now.</p>
+                    <a href="#virtuos" class="venture-link">Learn More →</a>
+                </div>
+                <div class="venture-card glass-card" data-animate="fade-up" data-delay="100">
+                    <div class="venture-tag">🎬 Entertainment</div><h3>Body Building Entertainment</h3>
+                    <p>Merging fitness culture with entertainment for a new genre of engaging content.</p>
+                </div>
+                <div class="venture-card glass-card" data-animate="fade-up" data-delay="150">
+                    <div class="venture-tag">🥗 Health</div><h3>The High Carb Diet</h3>
+                    <p>Rethinking nutrition science with evidence-based high-performance fueling strategies.</p>
+                </div>
+                <div class="venture-card glass-card" data-animate="fade-up" data-delay="200">
+                    <div class="venture-tag">💰 Finance</div><h3>Leveraged Crowdfunding</h3>
+                    <p>Innovative funding mechanisms that multiply capital access for entrepreneurs and ventures.</p>
+                </div>
+                <div class="venture-card glass-card" data-animate="fade-up" data-delay="250">
+                    <div class="venture-tag">🏠 Social Impact</div><h3>Solving Homelessness</h3>
+                    <p>Systematic, technology-driven approaches to one of society's most persistent challenges.</p>
+                </div>
+                <div class="venture-card glass-card" data-animate="fade-up" data-delay="300">
+                    <div class="venture-tag">🌱 AgTech</div><h3>New Turf Technologies</h3>
+                    <p>Advanced turf and agricultural technologies for sustainable land management at scale.</p>
+                </div>
+                <div class="venture-card glass-card" data-animate="fade-up" data-delay="350">
+                    <div class="venture-tag">🕶️ XR / VR</div><h3>Torah VR</h3>
+                    <p>Immersive virtual reality experiences for religious education and cultural preservation.</p>
+                </div>
+                <div class="venture-card glass-card" data-animate="fade-up" data-delay="400">
+                    <div class="venture-tag">🛡️ Strategy</div><h3>Backup Plan</h3>
+                    <p>Strategic contingency and resilience planning for individuals and businesses.</p>
+                </div>
+                <div class="venture-card glass-card" data-animate="fade-up" data-delay="450">
+                    <div class="venture-tag">🏆 Framework</div><h3>Winning 2020</h3>
+                    <p>Framework for achieving audacious goals through structured milestone planning.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- FREE 30 MINUTE COURSE + VIDEO           -->
+    <!-- ═══════════════════════════════════════ -->
+    <section id="course" class="section section-video">
+        <div class="container">
+            <div class="section-header" data-animate="fade-up">
+                <span class="section-label">Watch & Learn</span>
+                <h2 class="section-title" style="font-size: clamp(1.8rem, 4vw, 2.8rem);">
+                    Free 30 Minute Course Where I Get <span class="gradient-text">Straight to the Point!</span>
+                </h2>
+            </div>
+            <div class="video-layout" data-animate="fade-up">
+                <div class="video-content">
+                    <h3 class="video-subheading">Unicorn Builder Case Study</h3>
+                    <p class="section-description" style="text-align:left; margin:0 0 20px 0;">
+                        I love you, won't you tell me your name? These immortal words by legendary 
+                        musician Jim Morrison are still as relevant today, in this digital age, as they were back then.
+                    </p>
+                    <p class="section-description" style="text-align:left; margin:0 0 28px 0;">
+                        No fluff. Just knowledge. Watch the full case study to see how the Alpha Unicorn 
+                        framework transforms productivity and business outcomes.
+                    </p>
+                    <a href="#contact" class="btn btn-primary">
+                        <span>Let's Meet</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+                <div class="video-player-wrap">
+                    <div class="video-player glass-card">
+                        <iframe 
+                            width="100%" height="100%" 
+                            src="https://www.youtube.com/embed/FLMq7o85RC0" 
+                            title="Alpha Unicorn - Free 30 Minute Course" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- BLOG / ARTICLES (CLICKABLE)             -->
+    <!-- ═══════════════════════════════════════ -->
+    <section id="blog" class="section section-blog">
+        <div class="container">
+            <div class="section-header" data-animate="fade-up">
+                <span class="section-label">Latest Insights</span>
+                <h2 class="section-title">From the <span class="gradient-text">Blog</span></h2>
+                <p class="section-description">Insights on technology, marketing, AI, and the future of work.</p>
+            </div>
+            <div class="blog-grid">
+                <a href="blog-enterprise-tech.html" class="blog-card glass-card" data-animate="fade-up" data-delay="100">
+                    <div class="blog-card-image">
+                        <img src="assets/images/blog-enterprise.png" alt="Enterprise quality tech for every individual" loading="lazy">
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="blog-card-tag">Technology</div>
+                        <h3>Enterprise Quality Tech for Every Individual</h3>
+                        <p>How democratizing enterprise-grade tools is reshaping the way individuals compete in the global marketplace.</p>
+                        <span class="blog-card-link">Read Article →</span>
+                    </div>
+                </a>
+                <a href="blog-direct-response.html" class="blog-card glass-card" data-animate="fade-up" data-delay="200">
+                    <div class="blog-card-image">
+                        <img src="assets/images/blog-marketing.png" alt="What is Direct Response Marketing?" loading="lazy">
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="blog-card-tag">Marketing</div>
+                        <h3>What is Direct Response Marketing?</h3>
+                        <p>Direct response is a type of marketing designed to elicit an instant response by encouraging prospects to take a specific action.</p>
+                        <span class="blog-card-link">Read Article →</span>
+                    </div>
+                </a>
+                <a href="blog-ai-calls.html" class="blog-card glass-card" data-animate="fade-up" data-delay="300">
+                    <div class="blog-card-image">
+                        <img src="assets/images/blog-ai-calls.png" alt="Using AI to analyze phone calls" loading="lazy">
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="blog-card-tag">AI</div>
+                        <h3>Using AI to Analyze Your Phone Calls</h3>
+                        <p>Save important info and perfect every pitch and interaction with intelligent call analysis powered by AI.</p>
+                        <span class="blog-card-link">Read Article →</span>
+                    </div>
+                </a>
+                <a href="blog-speed-learning.html" class="blog-card glass-card" data-animate="fade-up" data-delay="100">
+                    <div class="blog-card-image">
+                        <img src="assets/images/blog-speed-learning.png" alt="Listen to audiobooks at 3x to 10x speed" loading="lazy">
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="blog-card-tag">Productivity</div>
+                        <h3>Listen to Audiobooks & Video at 3x–10x Speed</h3>
+                        <p>Master the art of speed consumption to absorb knowledge faster than anyone else on the planet.</p>
+                        <span class="blog-card-link">Read Article →</span>
+                    </div>
+                </a>
+                <a href="blog-character-sheet.html" class="blog-card glass-card" data-animate="fade-up" data-delay="200">
+                    <div class="blog-card-image">
+                        <img src="assets/images/blog-character-sheet.png" alt="Design the perfect character sheet" loading="lazy">
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="blog-card-tag">Operations</div>
+                        <h3>Design the Perfect Character Sheet for Every Role</h3>
+                        <p>Let those intelligent characters manage your entire company as perfect employees using AI-driven role optimization.</p>
+                        <span class="blog-card-link">Read Article →</span>
+                    </div>
+                </a>
+                <a href="blog-assembly-line.html" class="blog-card glass-card" data-animate="fade-up" data-delay="300">
+                    <div class="blog-card-image">
+                        <img src="assets/images/blog-assembly-line.png" alt="Global assembly line thinking" loading="lazy">
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="blog-card-tag">Strategy</div>
+                        <h3>Global Assembly Line Thinking</h3>
+                        <p>Learn the systematic approach to scaling operations across borders, time zones, and industries.</p>
+                        <span class="blog-card-link">Read Article →</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- BOOK A CALL — CALENDLY EMBED            -->
+    <!-- ═══════════════════════════════════════ -->
+    <section id="contact" class="section section-contact">
+        <div class="contact-glow"></div>
+        <div class="container">
+            <div class="contact-layout" data-animate="fade-up">
+                <div class="contact-content">
+                    <span class="section-label">Let's Connect</span>
+                    <h2 class="section-title">Ready to Build Your <span class="gradient-text">Unicorn?</span></h2>
+                    <p class="section-description" style="text-align:left;margin:0 0 24px 0;">
+                        Book a free call to explore how we can help transform your 
+                        productivity and business. Or use the Calendly widget to pick a time 
+                        that works best for you.
+                    </p>
+                    <div class="contact-info">
+                        <div class="contact-info-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            <span>818-295-2795</span>
+                        </div>
+                        <div class="contact-info-item">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <span>Los Angeles, CA</span>
+                        </div>
+                    </div>
+                    <div class="contact-trust">
+                        <div class="trust-item">✦ Free Consultation</div>
+                        <div class="trust-item">✦ No Pressure</div>
+                        <div class="trust-item">✦ Real Results</div>
+                    </div>
+                </div>
+                <div class="calendly-embed-wrap glass-card">
+                    <div class="calendly-inline-widget" data-url="https://calendly.com/justinmassion?hide_gdpr_banner=1" style="min-width:300px;height:580px;"></div>
+                    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- FOOTER                                  -->
+    <!-- ═══════════════════════════════════════ -->
+    <footer id="footer" class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="nav-logo footer-logo">
+                        <img src="https://alphaunicorn.io/wp-content/uploads/2021/04/alpha-unicorn-left-white.png" alt="Alpha Unicorn Logo" class="footer-logo-img">
+                    </a>
+                    <p class="footer-tagline">Developing Unicorns.<br>By Justin Massion.</p>
+                    <p class="footer-phone">📞 818-295-2795</p>
+                </div>
+                <div class="footer-links-group">
+                    <h4>Offers</h4>
+                    <a href="#" class="disabled-footer-link">Products <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">Services <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">Investments <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">Partner Program <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">Licensing <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">Shop <span class="coming-soon-dot"></span></a>
+                </div>
+                <div class="footer-links-group">
+                    <h4>Ventures</h4>
+                    <a href="#virtuos">VirtuOS</a>
+                    <a href="#" class="disabled-footer-link">Body Building Entertainment <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">The High Carb Diet <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">Leveraged Crowdfunding <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">Solving Homelessness <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">New Turf Technologies <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">Torah VR <span class="coming-soon-dot"></span></a>
+                </div>
+                <div class="footer-links-group">
+                    <h4>Resources</h4>
+                    <a href="#blog">Blog</a>
+                    <a href="#" class="disabled-footer-link">Podcast <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">Aggregator <span class="coming-soon-dot"></span></a>
+                    <a href="#" class="disabled-footer-link">Library <span class="coming-soon-dot"></span></a>
+                    <a href="launchpad.html">Launch Pad</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Alpha Unicorn. All rights reserved.</p>
+                <p>Developing Unicorns Since Day One 🦄</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

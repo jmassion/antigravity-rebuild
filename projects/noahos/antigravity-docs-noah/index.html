@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HolodeckOS — AntiGravity Docs</title>
+    <meta name="description"
+        content="AntiGravity Documentation reimagined through Lumi's 3D holodeck world. Explore every feature of the agentic development platform.">
+    <meta property="og:title" content="HolodeckOS — AntiGravity Docs">
+    <meta property="og:description"
+        content="Explore AntiGravity through Lumi's eyes in a 3D gamified holodeck experience.">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav" id="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-icon">🐸</span>
+                <span>Holodeck<span class="logo-text-accent">OS</span></span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#hero" class="active">Home</a></li>
+                <li><a href="#meet-lumi">Characters</a></li>
+                <li><a href="#core-platform">Core</a></li>
+                <li><a href="#agent-capabilities">Agent</a></li>
+                <li><a href="#security">Security</a></li>
+                <li><a href="#artifacts">Artifacts</a></li>
+                <li><a href="#devices">Devices</a></li>
+                <li><a href="wiki.html" class="btn btn-primary" style="padding: 0.35rem 0.9rem; font-size: 0.8rem;">📖
+                        Open Wiki</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-badge animate-in">
+                <span class="dot"></span>
+                AntiGravity Edition
+            </div>
+            <h1 class="animate-in">
+                Welcome to<br>
+                <span class="gradient-text">HolodeckOS</span>
+            </h1>
+            <p class="hero-subtitle animate-in">
+                Step into Lumi's holographic world and discover every feature of AntiGravity —
+                the agentic development platform that evolves the IDE for an agent-first era.
+            </p>
+            <div class="btn-group animate-in">
+                <a href="wiki.html" class="btn btn-primary">📖 Open the Wiki</a>
+                <a href="#core-platform" class="btn btn-secondary">🚀 Explore Sections</a>
+                <a href="#meet-lumi" class="btn btn-secondary">🐸 Meet Lumi</a>
+            </div>
+            <div class="hero-image animate-in">
+                <img src="assets/images/holodeck/hero.png" alt="Lumi in the HolodeckOS Command Center" loading="eager">
+            </div>
+        </div>
+    </section>
+
+    <div class="glow-divider"></div>
+
+    <!-- Meet Lumi Section -->
+    <section class="section" id="meet-lumi">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">✨ Your Guide</span>
+                <h2>Meet <span class="gradient-text">Lumi</span> & Friends</h2>
+                <p>Your companion through the AntiGravity holodeck — Lumi and her crew will guide you through every
+                    feature.</p>
+            </div>
+
+            <div class="character-showcase reveal">
+                <div class="character-image">
+                    <img src="assets/images/character/lumi-turnaround.png" alt="Lumi character turnaround"
+                        loading="lazy">
+                </div>
+                <div class="character-info">
+                    <h3>Lumi — Holodeck Navigator</h3>
+                    <p>A curious young explorer with a knack for technology and a heart full of wonder. With her trusty
+                        frog companion Ribbit by her side, Lumi navigates the holographic worlds of AntiGravity,
+                        mastering every tool and feature along the way.</p>
+                    <div class="character-traits">
+                        <span class="trait-badge">🧠 Curious Explorer</span>
+                        <span class="trait-badge">💜 Purple-Green Iridescent Suit</span>
+                        <span class="trait-badge">🐸 Frog Companion "Ribbit"</span>
+                        <span class="trait-badge">✨ Holodeck Master</span>
+                        <span class="trait-badge">🌿 Bio-Tech Specialist</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: var(--space-3xl);">
+                <div class="character-showcase reveal" style="direction: rtl;">
+                    <div class="character-info" style="direction: ltr;">
+                        <h3>The Crew — Sub-Agent Friends</h3>
+                        <p>Lumi's friends each specialize in different aspects of the holodeck. They appear as
+                            holographic bubbles when collaboration is needed — helping with planning, reviewing, and
+                            multi-agent workflows.</p>
+                        <div class="character-traits">
+                            <span class="trait-badge">🎀 Maya — Planning Specialist</span>
+                            <span class="trait-badge">💚 Kai — Code Reviewer</span>
+                            <span class="trait-badge">🌸 Aria — Creative Designer</span>
+                            <span class="trait-badge">🐸 Ribbit — AI Agent Core</span>
+                        </div>
+                    </div>
+                    <div class="character-image" style="direction: ltr;">
+                        <img src="assets/images/character/companions.png" alt="Lumi's companion characters"
+                            loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="glow-divider"></div>
+
+    <!-- Core Platform Section -->
+    <section class="section circuit-accent" id="core-platform">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">🏠 Core Platform</span>
+                <h2>The Foundation of <span class="gradient-text">AntiGravity</span></h2>
+                <p>Everything you need to get started — from installation to your first holodeck session.</p>
+            </div>
+
+            <div class="docs-grid">
+                <!-- Getting Started -->
+                <a href="wiki.html#getting-started" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/getting-started.png" alt="Getting Started" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag core">Core</span>
+                        <div class="doc-card-icon cyan">🚪</div>
+                        <h3>Getting Started</h3>
+                        <p>Step through the portal. Available on macOS, Windows, and Linux. Access the Agent Manager
+                            with Cmd+E.</p>
+                    </div>
+                </a>
+
+                <!-- Editor -->
+                <a href="wiki.html#editor" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/editor.png" alt="Editor" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag core">Core</span>
+                        <div class="doc-card-icon cyan">✏️</div>
+                        <h3>The Editor</h3>
+                        <p>A VS Code-based environment enhanced with AI superpowers — Tab autocomplete, inline Commands,
+                            and the Agent side panel.</p>
+                    </div>
+                </a>
+
+                <!-- Agent -->
+                <a href="wiki.html#agent" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/agent.png" alt="Agent" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag agent">Agent</span>
+                        <div class="doc-card-icon purple">🐸</div>
+                        <h3>The Agent</h3>
+                        <p>Meet Ribbit — your AI agent powered by frontier LLMs, capable of multi-step reasoning, tool
+                            use, and artifact creation.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="glow-divider"></div>
+
+    <!-- Agent Capabilities Section -->
+    <section class="section" id="agent-capabilities">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">🤖 Agent Powers</span>
+                <h2><span class="gradient-text">Agent</span> Capabilities & Customization</h2>
+                <p>Unlock the full power of your AI companion with models, modes, rules, and skills.</p>
+            </div>
+
+            <div class="docs-grid">
+                <!-- Models -->
+                <a href="wiki.html#models" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/models.png" alt="Models" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag agent">Agent</span>
+                        <div class="doc-card-icon purple">🌌</div>
+                        <h3>AI Models</h3>
+                        <p>Choose from a constellation of models — Gemini, Claude, and GPT. Each brings unique strengths
+                            to your holodeck.</p>
+                    </div>
+                </a>
+
+                <!-- Agent Modes -->
+                <a href="wiki.html#agent-modes" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/agent-modes.png" alt="Agent Modes" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag agent">Agent</span>
+                        <div class="doc-card-icon purple">⚡</div>
+                        <h3>Agent Modes</h3>
+                        <p>Switch between Planning Mode for deep research and Fast Mode for quick, focused tasks.</p>
+                    </div>
+                </a>
+
+                <!-- Rules & Workflows -->
+                <a href="wiki.html#rules-workflows" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/rules-workflows.png" alt="Rules & Workflows" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag agent">Agent</span>
+                        <div class="doc-card-icon mint">📜</div>
+                        <h3>Rules & Workflows</h3>
+                        <p>Place glowing rune stones along your path — set global rules and define repeatable workflow
+                            steps.</p>
+                    </div>
+                </a>
+
+                <!-- Skills -->
+                <a href="wiki.html#skills" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/skills.png" alt="Skills" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag agent">Agent</span>
+                        <div class="doc-card-icon gold">🎒</div>
+                        <h3>Skills</h3>
+                        <p>Open your inventory — reusable skill packs that extend Ribbit's abilities for specialized
+                            tasks.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="glow-divider"></div>
+
+    <!-- Security Section -->
+    <section class="section" id="security">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">🛡️ Security & Integration</span>
+                <h2>Advanced <span class="gradient-text">Protection</span> & Connectivity</h2>
+                <p>Keep your holodeck safe while connecting to the tools and services you need.</p>
+            </div>
+
+            <div class="docs-grid">
+                <!-- Browser Subagent -->
+                <a href="wiki.html#browser-subagent" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/browser-subagent.png" alt="Browser Subagent" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag agent">Agent</span>
+                        <div class="doc-card-icon cyan">🌐</div>
+                        <h3>Browser Subagent</h3>
+                        <p>Send mini-Ribbit into the browser — clicking, scrolling, capturing screenshots, and recording
+                            sessions.</p>
+                    </div>
+                </a>
+
+                <!-- Strict Mode -->
+                <a href="wiki.html#strict-mode" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/security.png" alt="Strict Mode" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag security">Security</span>
+                        <div class="doc-card-icon pink">🔒</div>
+                        <h3>Strict Mode</h3>
+                        <p>Raise the shields — URL allow/deny lists, review policies, and workspace isolation for
+                            maximum protection.</p>
+                    </div>
+                </a>
+
+                <!-- Sandbox -->
+                <a href="wiki.html#sandbox" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/sandbox.png" alt="Sandbox" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag security">Security</span>
+                        <div class="doc-card-icon pink">🔮</div>
+                        <h3>Sandbox Mode</h3>
+                        <p>Step inside the snow globe — kernel-level isolation for safe experimentation with full
+                            protection.</p>
+                    </div>
+                </a>
+
+                <!-- MCP -->
+                <a href="wiki.html#mcp" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/mcp.png" alt="MCP Integration" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag core">Integration</span>
+                        <div class="doc-card-icon cyan">🔌</div>
+                        <h3>MCP Integration</h3>
+                        <p>Connect the cables — link your local tools, databases, and services via the Model Context
+                            Protocol.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="glow-divider"></div>
+
+    <!-- Artifacts Section -->
+    <section class="section" id="artifacts">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">📋 Artifacts & Monitoring</span>
+                <h2><span class="gradient-text">Artifacts</span> & Transparency</h2>
+                <p>Track every task, plan, and insight — your complete record of holodeck operations.</p>
+            </div>
+
+            <div class="docs-grid">
+                <!-- Task Groups -->
+                <a href="wiki.html#task-groups" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/tasks.png" alt="Task Groups" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag artifacts">Artifacts</span>
+                        <div class="doc-card-icon mint">📋</div>
+                        <h3>Task Groups</h3>
+                        <p>Organize on the tree-branch kanban — break complex plans into smaller, auditable units of
+                            work.</p>
+                    </div>
+                </a>
+
+                <!-- Task List -->
+                <a href="wiki.html#task-list" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/tasks.png" alt="Task List" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag artifacts">Artifacts</span>
+                        <div class="doc-card-icon mint">✅</div>
+                        <h3>Task List</h3>
+                        <p>Watch your progress grow like vines — a living checklist that tracks your overarching goals.
+                        </p>
+                    </div>
+                </a>
+
+                <!-- Implementation Plan -->
+                <a href="wiki.html#implementation-plan" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/walkthrough.png" alt="Implementation Plan" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag artifacts">Artifacts</span>
+                        <div class="doc-card-icon mint">📐</div>
+                        <h3>Implementation Plan</h3>
+                        <p>Review the holographic blueprints — a technical plan for proposed changes requiring your
+                            approval.</p>
+                    </div>
+                </a>
+
+                <!-- Walkthrough -->
+                <a href="wiki.html#walkthrough" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/walkthrough.png" alt="Walkthrough" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag artifacts">Artifacts</span>
+                        <div class="doc-card-icon mint">🖼️</div>
+                        <h3>Walkthrough</h3>
+                        <p>Walk through the gallery — a post-task summary helping you understand the updated codebase
+                            state.</p>
+                    </div>
+                </a>
+
+                <!-- Knowledge -->
+                <a href="wiki.html#knowledge" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/knowledge.png" alt="Knowledge" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag artifacts">Artifacts</span>
+                        <div class="doc-card-icon gold">🌳</div>
+                        <h3>Knowledge</h3>
+                        <p>Touch the memory tree — a persistent system that captures and updates insights from your
+                            interactions.</p>
+                    </div>
+                </a>
+
+                <!-- Visual Logs -->
+                <a href="wiki.html#browser-recordings" class="doc-card reveal">
+                    <div class="doc-card-image">
+                        <img src="assets/images/docs/visual-logs.png" alt="Visual Logs" loading="lazy">
+                    </div>
+                    <div class="doc-card-body">
+                        <span class="doc-card-tag artifacts">Artifacts</span>
+                        <div class="doc-card-icon gold">📹</div>
+                        <h3>Visual Logs</h3>
+                        <p>Watch the replays — screenshots and browser recordings that provide full transparency.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div class="glow-divider"></div>
+
+    <!-- Devices Section -->
+    <section class="section" id="devices">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">📱 Multi-Device</span>
+                <h2>AntiGravity <span class="gradient-text">Everywhere</span></h2>
+                <p>See what the holodeck looks like across every device — from your wrist to your living room wall.</p>
+            </div>
+
+            <div class="devices-grid" id="devicesGrid">
+                <!-- Device cards will be populated by JS or statically below -->
+                <div class="device-card reveal">
+                    <div class="device-card-image">
+                        <img src="assets/images/devices/mobile.png" alt="Mobile" loading="lazy"
+                            onerror="this.closest('.device-card').style.display='none'">
+                    </div>
+                    <div class="device-card-body">
+                        <h3>📱 Mobile</h3>
+                        <p>AntiGravity in the palm of your hand — manage agents and projects on the go.</p>
+                    </div>
+                </div>
+
+                <div class="device-card reveal">
+                    <div class="device-card-image">
+                        <img src="assets/images/devices/desktop.png" alt="Desktop" loading="lazy"
+                            onerror="this.closest('.device-card').style.display='none'">
+                    </div>
+                    <div class="device-card-body">
+                        <h3>🖥️ Desktop</h3>
+                        <p>The full holodeck experience on a large crystalline monitor workstation.</p>
+                    </div>
+                </div>
+
+                <div class="device-card reveal">
+                    <div class="device-card-image">
+                        <img src="assets/images/devices/laptop.png" alt="Laptop" loading="lazy"
+                            onerror="this.closest('.device-card').style.display='none'">
+                    </div>
+                    <div class="device-card-body">
+                        <h3>💻 Laptop</h3>
+                        <p>Take the holodeck anywhere — a portable command station for coding in any environment.</p>
+                    </div>
+                </div>
+
+                <div class="device-card reveal">
+                    <div class="device-card-image">
+                        <img src="assets/images/devices/tv.png" alt="TV" loading="lazy"
+                            onerror="this.closest('.device-card').style.display='none'">
+                    </div>
+                    <div class="device-card-body">
+                        <h3>📺 TV</h3>
+                        <p>The holodeck projected on your living room wall — immersive big-screen development.</p>
+                    </div>
+                </div>
+
+                <div class="device-card reveal">
+                    <div class="device-card-image">
+                        <img src="assets/images/devices/multi-monitor.png" alt="Multi-Monitors" loading="lazy"
+                            onerror="this.closest('.device-card').style.display='none'">
+                    </div>
+                    <div class="device-card-body">
+                        <h3>🖥️🖥️ Multi-Monitors</h3>
+                        <p>The ultimate command center — surround yourself with holographic panels.</p>
+                    </div>
+                </div>
+
+                <div class="device-card reveal">
+                    <div class="device-card-image">
+                        <img src="assets/images/devices/vr-ar.png" alt="VR/AR" loading="lazy"
+                            onerror="this.closest('.device-card').style.display='none'">
+                    </div>
+                    <div class="device-card-body">
+                        <h3>🥽 VR/AR</h3>
+                        <p>Step fully inside the holodeck — holographic UI projected all around you.</p>
+                    </div>
+                </div>
+
+                <div class="device-card reveal">
+                    <div class="device-card-image">
+                        <img src="assets/images/devices/watch.png" alt="Watch" loading="lazy"
+                            onerror="this.closest('.device-card').style.display='none'">
+                    </div>
+                    <div class="device-card-body">
+                        <h3>⌚ Watch</h3>
+                        <p>A miniature holodeck on your wrist — quick commands and status checks.</p>
+                    </div>
+                </div>
+
+                <div class="device-card reveal">
+                    <div class="device-card-image">
+                        <img src="assets/images/devices/speaker.png" alt="Smart Speaker" loading="lazy"
+                            onerror="this.closest('.device-card').style.display='none'">
+                    </div>
+                    <div class="device-card-body">
+                        <h3>🔊 Smart Speakers</h3>
+                        <p>Voice-controlled holodeck — talk to your AI agent through ambient orbs.</p>
+                    </div>
+                </div>
+
+                <div class="device-card reveal">
+                    <div class="device-card-image">
+                        <img src="assets/images/devices/stream-deck.png" alt="Stream Deck" loading="lazy"
+                            onerror="this.closest('.device-card').style.display='none'">
+                    </div>
+                    <div class="device-card-body">
+                        <h3>🎛️ Input Devices</h3>
+                        <p>Stream decks, custom controllers, and fun peripherals — tactile holodeck control.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-brand">
+                🐸 Holodeck<span class="accent">OS</span> — AntiGravity Edition
+            </p>
+            <p>Lumi's style guide — one of many character perspectives on the AntiGravity platform.</p>
+            <p style="margin-top: var(--space-md); font-size: 0.75rem;">© 2026 AntiGravity. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+
+</html>

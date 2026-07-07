@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwipeRate — Rate Anything in 3D Space | Spatial Rating Engine</title>
+    <meta name="description"
+        content="The next evolution beyond swipe left/right. Rate, tag, and sort anything using XY and XYZ spatial gestures. Try it free.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06050d;
+            --bg-card: rgba(16, 14, 30, 0.85);
+            --glass: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.07);
+            --text: #e8e4f0;
+            --muted: #7c7891;
+            --primary: #7c3aed;
+            --primary-glow: rgba(124, 58, 237, 0.25);
+            --accent: #06b6d4;
+            --accent2: #f472b6;
+            --success: #22c55e;
+            --font: 'Inter', system-ui, sans-serif;
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ═══ NAV ═══ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 64px;
+            background: rgba(6, 5, 13, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-cta {
+            padding: 10px 24px;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: #6d28d9;
+            transform: translateY(-1px);
+        }
+
+        /* ═══ HERO ═══ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 30%, rgba(124, 58, 237, 0.12), transparent 50%),
+                radial-gradient(ellipse at 70% 60%, rgba(6, 182, 212, 0.08), transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(244, 114, 182, 0.06), transparent 40%);
+        }
+
+        .hero-inner {
+            position: relative;
+            max-width: 1200px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 100px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 80px);
+            font-weight: 900;
+            line-height: 1.05;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--accent2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-sub {
+            font-size: 20px;
+            color: var(--muted);
+            max-width: 650px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 16px 36px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), #9333ea);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 4px 20px var(--primary-glow);
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--primary-glow);
+        }
+
+        .btn-secondary {
+            padding: 16px 36px;
+            border-radius: 16px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            background: var(--primary-glow);
+        }
+
+        /* Interactive demo widget */
+        .hero-demo {
+            margin-top: 60px;
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 100px var(--primary-glow);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            height: 100%;
+            gap: 1px;
+        }
+
+        .demo-zone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            opacity: 0.3;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .demo-zone:hover {
+            opacity: 1;
+            background: var(--primary-glow);
+        }
+
+        .demo-zone:nth-child(1) {
+            background: rgba(239, 68, 68, 0.08);
+        }
+
+        .demo-zone:nth-child(2) {
+            background: rgba(249, 115, 22, 0.08);
+        }
+
+        .demo-zone:nth-child(3) {
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .demo-zone:nth-child(4) {
+            background: rgba(245, 158, 11, 0.08);
+        }
+
+        .demo-zone:nth-child(5) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .demo-zone:nth-child(6) {
+            background: rgba(6, 182, 212, 0.08);
+        }
+
+        .demo-zone:nth-child(7) {
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .demo-zone:nth-child(8) {
+            background: rgba(168, 85, 247, 0.08);
+        }
+
+        .demo-zone:nth-child(9) {
+            background: rgba(124, 58, 237, 0.08);
+        }
+
+        .demo-label {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 13px;
+            color: var(--muted);
+            padding: 6px 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            backdrop-filter: blur(8px);
+        }
+
+        /* ═══ SECTION BASE ═══ */
+        section {
+            padding: 120px 40px;
+        }
+
+        .section-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 100px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .section-sub {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 48px;
+        }
+
+        /* ═══ FEATURES ═══ */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            padding: 32px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* ═══ HOW IT WORKS ═══ */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 32px;
+            counter-reset: step;
+        }
+
+        .step {
+            text-align: center;
+            padding: 32px;
+            counter-increment: step;
+        }
+
+        .step::before {
+            content: counter(step);
+            display: flex;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-weight: 800;
+            font-size: 20px;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .step h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .step p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* ═══ COMPARISON ═══ */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table th {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            background: var(--glass);
+        }
+
+        .comparison-table td {
+            font-size: 14px;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .check {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .cross {
+            color: var(--muted);
+            opacity: 0.4;
+        }
+
+        .highlight-col {
+            background: rgba(124, 58, 237, 0.06);
+        }
+
+        .highlight-col.th-highlight {
+            color: var(--primary) !important;
+        }
+
+        /* ═══ PRICING ═══ */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            align-items: start;
+        }
+
+        .pricing-card {
+            padding: 36px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 0 60px var(--primary-glow);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 4px 16px;
+            border-radius: 100px;
+            background: var(--primary);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .pricing-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 900;
+            margin: 16px 0;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pricing-price span {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .pricing-features {
+            list-style: none;
+            text-align: left;
+            margin: 24px 0;
+        }
+
+        .pricing-features li {
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pricing-features li::before {
+            content: '✓ ';
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .pricing-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        /* ═══ USE CASES ═══ */
+        .usecases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .usecase {
+            padding: 24px;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        .usecase-emoji {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .usecase h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .usecase p {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* ═══ CTA ═══ */
+        .cta-section {
+            text-align: center;
+            padding: 120px 40px;
+            background: radial-gradient(ellipse at 50% 50%, rgba(124, 58, 237, 0.1), transparent 60%);
+        }
+
+        .cta-section h2 {
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 900;
+            margin-bottom: 16px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            color: var(--muted);
+            margin-bottom: 36px;
+        }
+
+        /* ═══ FOOTER ═══ */
+        footer {
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        footer p {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 768px) {
+            nav {
+                padding: 0 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            section {
+                padding: 80px 20px;
+            }
+
+            .hero {
+                padding: 100px 20px 40px;
+            }
+
+            .hero-demo {
+                height: 280px;
+            }
+
+            .comparison-table {
+                font-size: 12px;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-logo">SwipeRate</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how">How It Works</a>
+            <a href="#compare">Compare</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#usecases">Use Cases</a>
+        </div>
+        <a href="app/index.html" class="nav-cta">Try Free →</a>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-inner">
+            <span class="hero-badge">🚀 Beyond Swipe Left / Right</span>
+            <h1>Rate Anything<br>in <span class="gradient">3D Space</span></h1>
+            <p class="hero-sub">SwipeRate replaces binary swipe decisions with spatial XY and XYZ gestures — rate on 2
+                or 3 properties simultaneously. Tag, sort, and review at 10× speed.</p>
+            <div class="hero-ctas">
+                <a href="app/index.html" class="btn-primary">Try the Live Demo</a>
+                <a href="demos/dating/index.html" class="btn-secondary">Dating Demo</a>
+                <a href="demos/agents/index.html" class="btn-secondary">Agent Demo</a>
+            </div>
+
+            <!-- Interactive Zone Grid -->
+            <div class="hero-demo">
+                <div class="demo-grid">
+                    <div class="demo-zone" data-zone="↖ Low Quality + High Priority">↖</div>
+                    <div class="demo-zone" data-zone="↑ High Priority">↑</div>
+                    <div class="demo-zone" data-zone="↗ High Quality + High Priority">↗</div>
+                    <div class="demo-zone" data-zone="← Low Quality">←</div>
+                    <div class="demo-zone" data-zone="● Neutral">●</div>
+                    <div class="demo-zone" data-zone="→ High Quality">→</div>
+                    <div class="demo-zone" data-zone="↙ Low Quality + Low Priority">↙</div>
+                    <div class="demo-zone" data-zone="↓ Low Priority">↓</div>
+                    <div class="demo-zone" data-zone="↘ High Quality + Low Priority">↘</div>
+                </div>
+                <div class="demo-label" id="demo-label">Hover zones to see how 2D rating works</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features">
+        <div class="section-inner">
+            <span class="section-badge">Features</span>
+            <h2 class="section-title">Everything You Need to Rate Smarter</h2>
+            <p class="section-sub">From simple image sorting to complex multi-reviewer content curation — SwipeRate
+                handles it all.</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📐</div>
+                    <h3>XY Spatial Rating</h3>
+                    <p>Drag to any position on a 2D grid to rate two properties simultaneously. 9 distinct zones for
+                        nuanced tagging.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧊</div>
+                    <h3>XYZ Depth Rating</h3>
+                    <p>Add a third dimension with scroll/pinch gestures. Rate 3 properties at once without any extra
+                        steps.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Multi-Reviewer</h3>
+                    <p>Multiple people or AI characters can rate the same content. Compare ratings, resolve conflicts,
+                        track attribution.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📎</div>
+                    <h3>Any File Type</h3>
+                    <p>Images, videos, audio, 3D models, and documents. Each gets a tailored preview with zero
+                        configuration.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Annotations + Threads</h3>
+                    <p>Pin annotations, draw regions, add timestamped markers. Full threaded conversations with
+                        @mentions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Backlinks + Sync</h3>
+                    <p>Files can exist in multiple places. Backlinking, forward linking, sync vs local mode, and
+                        revision history.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how" style="background: var(--glass);">
+        <div class="section-inner">
+            <span class="section-badge">How it Works</span>
+            <h2 class="section-title">Rate in Seconds, Not Minutes</h2>
+            <p class="section-sub">SwipeRate turns content review from a tedious process into an instant spatial
+                gesture.</p>
+            <div class="steps">
+                <div class="step">
+                    <h3>Load Content</h3>
+                    <p>Import a deck of items — images, profiles, agents, products. Any file type works.</p>
+                </div>
+                <div class="step">
+                    <h3>Configure Axes</h3>
+                    <p>Label X, Y, and Z axes with your rating properties. "Quality vs Priority", "Skill vs Creativity",
+                        etc.</p>
+                </div>
+                <div class="step">
+                    <h3>Drag to Rate</h3>
+                    <p>Each card appears in the arena. Drag it to the zone that represents your rating. Scroll for
+                        depth.</p>
+                </div>
+                <div class="step">
+                    <h3>Export Results</h3>
+                    <p>Full rating data, tags, tiers, reviewer attribution, and revision history — all exportable as
+                        JSON.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMPARISON -->
+    <section id="compare">
+        <div class="section-inner">
+            <span class="section-badge">Comparison</span>
+            <h2 class="section-title">Why SwipeRate Wins</h2>
+            <p class="section-sub">See how spatial rating compares to traditional methods.</p>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Swipe Apps<br><small>(Tinder, etc.)</small></th>
+                        <th>Star Ratings<br><small>(1-5 stars)</small></th>
+                        <th>Manual Tags<br><small>(Spreadsheets)</small></th>
+                        <th class="highlight-col th-highlight">SwipeRate<br><small>(XY/XYZ)</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Properties per action</td>
+                        <td>1 (yes/no)</td>
+                        <td>1 (score)</td>
+                        <td>Many (slow)</td>
+                        <td class="highlight-col"><span class="check">2-3 instant</span></td>
+                    </tr>
+                    <tr>
+                        <td>Speed per item</td>
+                        <td>~1s</td>
+                        <td>~3s</td>
+                        <td>~30s</td>
+                        <td class="highlight-col"><span class="check">~2s</span></td>
+                    </tr>
+                    <tr>
+                        <td>Nuanced ratings</td>
+                        <td><span class="cross">✗</span></td>
+                        <td>Basic</td>
+                        <td><span class="check">✓</span></td>
+                        <td class="highlight-col"><span class="check">✓ 9-zone + depth</span></td>
+                    </tr>
+                    <tr>
+                        <td>Multi-reviewer</td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td class="highlight-col"><span class="check">✓ Built-in</span></td>
+                    </tr>
+                    <tr>
+                        <td>Annotations</td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="cross">✗</span></td>
+                        <td>Notes column</td>
+                        <td class="highlight-col"><span class="check">✓ Spatial + Temporal</span></td>
+                    </tr>
+                    <tr>
+                        <td>Undo / History</td>
+                        <td>Limited</td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td class="highlight-col"><span class="check">✓ Full stack</span></td>
+                    </tr>
+                    <tr>
+                        <td>File type support</td>
+                        <td>Images only</td>
+                        <td>Any</td>
+                        <td>Any</td>
+                        <td class="highlight-col"><span class="check">✓ Img/Vid/Audio/3D/Doc</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" style="background: var(--glass);">
+        <div class="section-inner">
+            <span class="section-badge">Pricing</span>
+            <h2 class="section-title">Simple, Transparent Pricing</h2>
+            <p class="section-sub">Start free. Upgrade when you're ready to go multi-reviewer or need advanced features.
+            </p>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-name">Starter</div>
+                    <div class="pricing-price">$0<span>/mo</span></div>
+                    <ul class="pricing-features">
+                        <li>XY rating (2 properties)</li>
+                        <li>Up to 100 items</li>
+                        <li>1 reviewer</li>
+                        <li>Basic annotations</li>
+                        <li>JSON export</li>
+                    </ul>
+                    <a href="app/index.html" class="pricing-btn btn-secondary">Get Started Free</a>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="pricing-name">Pro</div>
+                    <div class="pricing-price">$29<span>/mo</span></div>
+                    <ul class="pricing-features">
+                        <li>XYZ rating (3 properties)</li>
+                        <li>Unlimited items</li>
+                        <li>5 reviewers</li>
+                        <li>Full annotation suite</li>
+                        <li>Sync + backlinking</li>
+                        <li>Revision history</li>
+                        <li>Priority support</li>
+                    </ul>
+                    <a href="app/index.html" class="pricing-btn btn-primary">Start Pro Trial</a>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-name">Enterprise</div>
+                    <div class="pricing-price">$99<span>/mo</span></div>
+                    <ul class="pricing-features">
+                        <li>Everything in Pro</li>
+                        <li>Unlimited reviewers</li>
+                        <li>API access</li>
+                        <li>Custom zone labels</li>
+                        <li>SSO + team management</li>
+                        <li>Webhook integrations</li>
+                        <li>Dedicated support</li>
+                    </ul>
+                    <a href="#" class="pricing-btn btn-secondary">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- USE CASES -->
+    <section id="usecases">
+        <div class="section-inner">
+            <span class="section-badge">Use Cases</span>
+            <h2 class="section-title">Built for Anything That Needs Rating</h2>
+            <div class="usecases-grid">
+                <div class="usecase">
+                    <div class="usecase-emoji">🖼️</div>
+                    <h4>Image Curation</h4>
+                    <p>Sort and rate thousands of images by aesthetic quality and relevance in minutes.</p>
+                </div>
+                <div class="usecase">
+                    <div class="usecase-emoji">🤖</div>
+                    <h4>AI Agent Evaluation</h4>
+                    <p>Rate agents on skill, creativity, and reliability. Build optimal teams from rated pools.</p>
+                </div>
+                <div class="usecase">
+                    <div class="usecase-emoji">💜</div>
+                    <h4>Profile Matching</h4>
+                    <p>Replace binary swipes with nuanced multi-property ratings for better matches.</p>
+                </div>
+                <div class="usecase">
+                    <div class="usecase-emoji">📋</div>
+                    <h4>Content Moderation</h4>
+                    <p>Rate content by severity and type simultaneously. Process moderation queues 5× faster.</p>
+                </div>
+                <div class="usecase">
+                    <div class="usecase-emoji">🎵</div>
+                    <h4>Music & Audio</h4>
+                    <p>Rate tracks by energy and mood, with timestamped annotations for key moments.</p>
+                </div>
+                <div class="usecase">
+                    <div class="usecase-emoji">📊</div>
+                    <h4>Research & Survey</h4>
+                    <p>Spatial rating as a survey tool — faster, more intuitive, and produces richer data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2>Ready to Rate <span
+                style="background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Smarter</span>?
+        </h2>
+        <p>Join the next generation of content curation. Start free, no credit card required.</p>
+        <div class="hero-ctas">
+            <a href="app/index.html" class="btn-primary">Try SwipeRate Free →</a>
+            <a href="demos/dating/index.html" class="btn-secondary">Explore Demos</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 SwipeRate by AntiGravity Systems · <a href="#"
+                style="color:var(--primary);text-decoration:none;">Privacy</a> · <a href="#"
+                style="color:var(--primary);text-decoration:none;">Terms</a></p>
+    </footer>
+
+    <script>
+        // Interactive demo zones
+        document.querySelectorAll('.demo-zone').forEach(zone => {
+            zone.addEventListener('mouseenter', () => {
+                document.getElementById('demo-label').textContent = zone.dataset.zone;
+            });
+            zone.addEventListener('mouseleave', () => {
+                document.getElementById('demo-label').textContent = 'Hover zones to see how 2D rating works';
+            });
+        });
+    </script>
+</body>
+
+</html>

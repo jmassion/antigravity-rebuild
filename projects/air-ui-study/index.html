@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asset Library — Alphaunicorn.io</title>
+  <meta name="description" content="Digital Asset Management browser for Lovart and Higgsfield media assets">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="loadingOverlay" style="position:fixed;inset:0;z-index:9999;background:#0a0a0f;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#e4e4f0;font-family:Inter,system-ui,sans-serif">
+<div style="font-size:24px;font-weight:700;background:linear-gradient(135deg,#7b6cf6,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px">Asset Library</div>
+<div style="color:#8888a0;font-size:14px">Loading assets...</div>
+<div style="width:200px;height:4px;background:#1a1a26;border-radius:2px;margin-top:12px;overflow:hidden"><div style="width:30%;height:100%;background:linear-gradient(90deg,#7b6cf6,#22d3ee);border-radius:2px;animation:pulse 1.5s ease-in-out infinite"></div></div>
+<style>@keyframes pulse{0%,100%{width:30%}50%{width:70%}}</style>
+</div>
+  <div id="app">
+    <!-- ═══ LEFT SIDEBAR ═══ -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="workspace-logo">
+          <div class="logo-icon">α</div>
+          <span class="workspace-name">Alphaunicorn.io</span>
+        </div>
+        <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Collapse sidebar">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item" data-action="global-search">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>Search</span>
+        </a>
+        <a href="#" class="nav-item" id="favoritesNav" data-action="favorites">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l1.9 3.8 4.2.6-3 3 .7 4.2L8 11.3l-3.8 2L4.9 9 1.9 5.9l4.2-.6L8 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          <span>Favorites</span>
+        </a>
+        <a href="#" class="nav-item" data-nf data-nf-tooltip="Not connected">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 6.5V5a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M11 9v2h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Recently deleted</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-section">
+        <div class="section-header">
+          <span>Boards</span>
+          <button class="icon-btn" title="Create board" data-action="create-board" data-nf data-nf-tooltip="Not connected">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div id="boardTree" class="board-tree"></div>
+      </div>
+    </aside>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <main id="mainContent" class="main-content">
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <div class="breadcrumbs" id="breadcrumbs"></div>
+        <div class="top-bar-center">
+          <div class="search-bar" id="searchBar">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <input type="text" id="searchInput" placeholder="Search assets..." autocomplete="off">
+            <div class="search-mode-toggle" id="searchModeToggle" title="Toggle search mode">
+              <span class="active">Exact</span>
+              <span>Smart</span>
+            </div>
+          </div>
+        </div>
+        <div class="top-bar-actions">
+          <button class="btn btn-secondary" id="uploadBtn" data-nf data-nf-tooltip="Not connected">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 10V3M8 3L5 6M8 3l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 10v2a1 1 0 001 1h8a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Upload a file
+          </button>
+          <button class="btn btn-primary" id="createBtn" data-nf data-nf-tooltip="Not connected">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Create
+          </button>
+        </div>
+      </header>
+
+      <!-- Board Header -->
+      <div class="board-header" id="boardHeader">
+        <div class="board-title-row">
+          <h1 id="boardTitle" class="board-title">All Assets</h1>
+          <button class="icon-btn" id="favBtn" title="Favorite" data-nf data-nf-tooltip="Not connected">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2l2.12 4.3 4.74.69-3.43 3.34.81 4.73L9 12.77l-4.24 2.23.81-4.73L2.14 6.93l4.74-.69L9 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-btn" id="boardSettingsBtn" title="Board settings" data-nf data-nf-tooltip="Not connected">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="4" r="1.5" fill="currentColor"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="9" cy="14" r="1.5" fill="currentColor"/></svg>
+          </button>
+        </div>
+        <div class="board-toolbar">
+          <div class="asset-count" id="assetCount">0 ASSETS</div>
+          <div class="toolbar-right">
+            <div class="sort-control" id="sortControl">
+              <button class="toolbar-btn" id="sortBtn">
+                <span id="sortLabel">Date created</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="dropdown-menu sort-dropdown" id="sortDropdown">
+                <div class="dropdown-item active" data-sort="dateCreated">Date created</div>
+                <div class="dropdown-item" data-sort="dateModified">Date modified</div>
+                <div class="dropdown-item" data-sort="name">Name</div>
+                <div class="dropdown-item" data-sort="size">Size</div>
+                <div class="dropdown-item" data-sort="resolution">Resolution</div>
+                <div class="dropdown-item" data-sort="type">Type</div>
+                <div class="dropdown-item" data-sort="extension">Extension</div>
+                <div class="dropdown-separator"></div>
+                <div class="dropdown-item" data-sort="toolName">Tool Name</div>
+                <div class="dropdown-item" data-sort="subAgent">Sub Agent</div>
+                <div class="dropdown-item" data-sort="artifactType">Artifact Type</div>
+              </div>
+            </div>
+            <button class="toolbar-btn icon-only" id="sortDirBtn" title="Sort direction">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M8 3L5 6M8 3l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="toolbar-separator"></div>
+            <button class="toolbar-btn icon-only" id="columnSettingsBtn" title="Column settings">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6.5 2.5a1 1 0 011-1h1a1 1 0 011 1v1a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1zM2 7a1 1 0 011-1h1a1 1 0 011 1v1a1 1 0 01-1 1H3a1 1 0 01-1-1V7zM11 7a1 1 0 011-1h1a1 1 0 011 1v1a1 1 0 01-1 1h-1a1 1 0 01-1-1V7zM6.5 11.5a1 1 0 011-1h1a1 1 0 011 1v1a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1z" stroke="currentColor" stroke-width="1.2"/><path d="M8 4v2M4.5 8h2M9.5 8h2M8 10v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="view-toggle" id="viewToggle">
+              <button class="view-btn active" data-view="gallery" title="Gallery view">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+              </button>
+              <button class="view-btn" data-view="table" title="Table view">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              </button>
+              <button class="view-btn" data-view="kanban" title="Board view">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="4" height="12" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="6" y="2" width="4" height="8" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="2" width="4" height="10" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Chips -->
+      <div class="filter-chips-bar" id="filterChipsBar">
+        <div class="filter-chips" id="filterChips"></div>
+        <button class="filter-clear-btn hidden" id="filterClearBtn">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Clear filters
+        </button>
+      </div>
+
+      <!-- Content Area -->
+      <div class="content-area" id="contentArea">
+        <div id="galleryView" class="gallery-grid"></div>
+        <div id="tableView" class="table-view hidden"></div>
+        <div id="kanbanView" class="kanban-view hidden"></div>
+        <div id="emptyState" class="empty-state hidden">
+          <div class="empty-state-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="4" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="22" r="4" stroke="currentColor" stroke-width="2"/><path d="M6 34l10-8 6 4 8-10 12 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="empty-state-title" id="emptyStateTitle">No assets found</div>
+          <div class="empty-state-desc" id="emptyStateDesc">Try adjusting your search or filters</div>
+        </div>
+      </div>
+
+      <!-- Status Bar -->
+      <footer class="status-bar">
+        <div class="storage-info">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7 4v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="storageLabel">28K / 30K</span>
+        </div>
+        <div id="statusInfo" class="status-info"></div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ═══ ASSET DETAIL MODAL ═══ -->
+  <div id="detailModal" class="detail-modal hidden">
+    <div class="detail-top-bar">
+      <div class="detail-breadcrumbs" id="detailBreadcrumbs"></div>
+      <div class="detail-actions">
+        <button class="icon-btn" title="Share" data-nf data-nf-tooltip="Not connected">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="12" cy="4" r="2" stroke="currentColor" stroke-width="1.3"/><circle cx="4" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M5.7 7.1l4.6-2.2M5.7 8.9l4.6 2.2" stroke="currentColor" stroke-width="1.3"/></svg>
+          Share
+        </button>
+        <button class="icon-btn" id="detailFavBtn" title="Favorite" data-nf data-nf-tooltip="Not connected">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l1.9 3.8 4.2.6-3 3 .7 4.2L8 11.3l-3.8 2L4.9 9 1.9 5.9l4.2-.6L8 1.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="icon-btn" id="detailPrevBtn" title="Previous asset">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="icon-btn" id="detailNextBtn" title="Next asset">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="icon-btn" id="detailCloseBtn" title="Close">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5 5l8 8M13 5l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="detail-body">
+      <!-- Left Panel: Chapters / Transcript -->
+      <div class="detail-left-panel hidden" id="detailLeftPanel">
+        <div class="left-panel-header">
+          <span id="leftPanelTitle">Chapters</span>
+          <div class="left-panel-actions">
+            <button class="icon-btn" id="leftPanelCopyBtn" title="Copy">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="4" y="4" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M10 4V3a1 1 0 00-1-1H3a1 1 0 00-1 1v6a1 1 0 001 1h1" stroke="currentColor" stroke-width="1.2"/></svg>
+            </button>
+            <button class="icon-btn" id="leftPanelCloseBtn" title="Close">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 4l6 6M10 4l-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="left-panel-content" id="leftPanelContent"></div>
+      </div>
+
+      <!-- Center: Media Viewer -->
+      <div class="detail-center" id="detailCenter">
+        <div class="detail-view-tabs">
+          <div class="left-panel-toggles" id="leftPanelToggles">
+            <button class="icon-btn" id="searchToggleBtn" title="Search" data-nf data-nf-tooltip="Not connected">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+            <button class="icon-btn" id="chaptersToggleBtn" title="View chapters">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="3" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="7" width="12" height="3" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="12" width="8" height="2" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+            </button>
+            <button class="icon-btn" id="transcriptToggleBtn" title="View transcript">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3h10M3 6h8M3 9h10M3 12h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </button>
+            <button class="icon-btn" id="chatToggleBtn" title="View chat timeline">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v7a1 1 0 01-1 1H6l-3 2.5V11H3a1 1 0 01-1-1V3z" stroke="currentColor" stroke-width="1.2"/><path d="M5 5h6M5 7.5h4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div class="view-mode-tabs">
+            <button class="view-tab active" data-tab="view">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/></svg>
+              View
+            </button>
+            <button class="view-tab" data-tab="edit">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 12l.8-3.2L9.6 2l1.8 1.8-6.8 6.8L2 12z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              Edit
+            </button>
+            <button class="view-tab" data-tab="comment">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3a1 1 0 011-1h8a1 1 0 011 1v6a1 1 0 01-1 1H6l-3 2.5V10H3a1 1 0 01-1-1V3z" stroke="currentColor" stroke-width="1.2"/></svg>
+              Comment
+            </button>
+          </div>
+          <div class="detail-tag-pills" id="detailTagPills"></div>
+        </div>
+        <div class="media-viewer" id="mediaViewer"></div>
+        <div class="media-controls" id="mediaControls"></div>
+      </div>
+
+      <!-- Right Panel: Info -->
+      <div class="detail-right-panel" id="detailRightPanel">
+        <div class="right-panel-tabs">
+          <button class="rp-tab active" data-rp-tab="info">Info</button>
+          <button class="rp-tab" data-rp-tab="provenance">Provenance</button>
+          <button class="rp-tab" data-rp-tab="comments">Comments</button>
+          <button class="icon-btn rp-collapse-btn" id="rpCollapseBtn" title="Collapse panel">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="right-panel-content" id="rightPanelContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Column Settings Dropdown -->
+  <div class="dropdown-menu column-settings-dropdown hidden" id="columnSettingsDropdown">
+    <div class="dropdown-header">Toggle columns</div>
+    <div id="columnToggles"></div>
+  </div>
+
+  <!-- Kanban Group-By Dropdown -->
+  <div class="dropdown-menu kanban-groupby-dropdown hidden" id="kanbanGroupByDropdown">
+    <div class="dropdown-header">Group by</div>
+    <div class="dropdown-item active" data-groupby="toolName">Tool Name</div>
+    <div class="dropdown-item" data-groupby="subAgent">Sub Agent</div>
+    <div class="dropdown-item" data-groupby="artifactType">Artifact Type</div>
+    <div class="dropdown-item" data-groupby="source">Source</div>
+    <div class="dropdown-item" data-groupby="type">Type</div>
+    <div class="dropdown-item" data-groupby="category">Category</div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+// An empty holodeck — the starting point for all creation.
+
+space "Empty Holodeck"
+  sky: void
+  gravity: earth
+  mood: neutral

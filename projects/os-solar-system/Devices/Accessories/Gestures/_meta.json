@@ -1,0 +1,10 @@
+{
+  "icon": "Hand",
+  "tags": [
+    "gestures",
+    "input",
+    "trackpad",
+    "touch"
+  ],
+  "description": "Gesture recognition settings"
+}

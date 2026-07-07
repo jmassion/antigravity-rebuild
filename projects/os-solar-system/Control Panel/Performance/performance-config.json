@@ -1,0 +1,6 @@
+{
+  "mode": "balanced",
+  "gpuAcceleration": true,
+  "animationQuality": "high",
+  "backgroundApps": "managed"
+}

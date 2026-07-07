@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Walkthrough — AntiGravity Engine Wiki</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a14;
+            --bg2: #111122;
+            --accent: #5078ff;
+            --dim: rgba(255, 255, 255, 0.4);
+            --green: #00ffa3;
+        }
+
+        body {
+            background: var(--bg);
+            color: #e0e0e0;
+            font-family: 'Inter', system-ui, sans-serif;
+            line-height: 1.7;
+            padding: 40px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .back {
+            font-size: 13px;
+            color: var(--dim);
+            margin-bottom: 32px;
+            display: block;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        .subtitle {
+            color: var(--dim);
+            font-size: 13px;
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin: 32px 0 12px;
+        }
+
+        p {
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th {
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--dim);
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        td {
+            padding: 8px 12px;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(80, 120, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent);
+            font-size: 13px;
+        }
+
+        .card {
+            background: rgba(20, 20, 40, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(80, 120, 255, 0.15);
+            color: var(--accent);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            margin: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../index.html" class="back">← Back to Wiki</a>
+    <h1>Walk<span>through</span></h1>
+    <p class="subtitle">What was built and how it works — updated after each session.</p>
+
+    <h2>Session: March 1, 2026</h2>
+
+    <h3>What Was Built</h3>
+    <p>Complete architectural scaffold and first interactive demo for the AntiGravity imagination engine.</p>
+
+    <div class="card">
+        <strong>Interactive Demo</strong> — <code>GameEngine/demo.html</code><br>
+        A single-file Three.js app with: 7 shape primitives, orbit/pan/zoom camera, tool belt (select, create, rotate,
+        scale, paint, erase, wish wand), shape picker, wish bar ("create a red sphere"), properties panel,
+        breathing/floating traits, toast notifications, glassmorphism HUD.
+    </div>
+
+    <div class="card">
+        <strong>Wiki System</strong> — <code>GameEngine/wiki/</code><br>
+        HTML documentation hub with sidebar navigation, architecture docs for all 7 layers, changelog, walkthrough, and
+        artifacts pages.
+    </div>
+
+    <h3>Architecture Layers</h3>
+    <table>
+        <tr>
+            <th>Layer</th>
+            <th>Purpose</th>
+            <th>Key Modules</th>
+        </tr>
+        <tr>
+            <td>1. Foundation</td>
+            <td>Core loop, rendering, audio, events</td>
+            <td>Heartbeat, Painter, Speaker, Messenger</td>
+        </tr>
+        <tr>
+            <td>2. World</td>
+            <td>Scenes, objects, materials</td>
+            <td>Space, Thing, Shape, Surface, Portal</td>
+        </tr>
+        <tr>
+            <td>3. Senses</td>
+            <td>Universal input from all devices</td>
+            <td>Listener, Pointer, Voice/Ear, Gestures</td>
+        </tr>
+        <tr>
+            <td>4. Life</td>
+            <td>Physics and behaviours</td>
+            <td>Gravity, Trait (Floats, Spins, Breathes...)</td>
+        </tr>
+        <tr>
+            <td>5. Memory</td>
+            <td>Time, history, branching</td>
+            <td>Timeline, Moment, Branch, Journal</td>
+        </tr>
+        <tr>
+            <td>6. Tools</td>
+            <td>Panels, gizmos, widgets</td>
+            <td>Panel, Widget, Gizmo, ToolBelt, Pin</td>
+        </tr>
+        <tr>
+            <td>7. Stories</td>
+            <td>Wish system, AI creation</td>
+            <td>Wish, Imagine, Style, Mood, Template</td>
+        </tr>
+    </table>
+
+    <h3>Next Steps</h3>
+    <p>User selecting visualization style. Scaffold modules to be recreated. First playable vertical slice targeting
+        Foundation + World + Senses.</p>
+</body>
+
+</html>

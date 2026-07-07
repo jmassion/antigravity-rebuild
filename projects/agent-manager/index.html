@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AntiGravity — Agent Manager Dashboard</title>
+  <meta name="description"
+    content="Track all AntiGravity Agent Manager conversations, workspaces, and project statuses from March 1, 2026.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+</head>
+
+<body>
+  <div class="app">
+    <div class="info-banner">
+      📡 This dashboard is updated by your AI agent. Ask it to "refresh the Agent Manager Dashboard" to pull in new
+      conversations and status changes. Last updated: March 1, 2026.
+    </div>
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">🚀</div>
+        <h1>AntiGravity <span>Agent Manager Dashboard</span></h1>
+      </div>
+      <div class="header-date">📅 March 1, 2026 · Agent Manager Session Report</div>
+    </header>
+    <main id="content"></main>
+  </div>
+
+  <!-- Feedback FAB & Panel -->
+  <button class="feedback-fab" onclick="toggleFeedbackPanel()">💬</button>
+  <div class="feedback-overlay" id="feedbackOverlay" onclick="toggleFeedbackPanel()"></div>
+  <div class="feedback-panel" id="feedbackPanel">
+    <div class="feedback-header">
+      <h3>Submit Feedback</h3>
+      <button class="close-btn" onclick="toggleFeedbackPanel()">✕</button>
+    </div>
+    <div class="feedback-body">
+      <select id="feedbackCategory" class="feedback-select">
+        <option value="Bug">Bug Report</option>
+        <option value="Feature Request">Feature Request</option>
+        <option value="Status Update">Status Update</option>
+        <option value="General">General Note</option>
+      </select>
+      <textarea id="feedbackText" placeholder="Enter your feedback or notes for the agent..." rows="5"></textarea>
+      <div style="display:flex;gap:12px;margin-top:16px;">
+        <button class="btn-primary" onclick="submitFeedback()">Submit Feedback</button>
+        <button class="btn-secondary" onclick="toggleFeedbackPanel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

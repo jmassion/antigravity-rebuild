@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FranchiseOS — AntiGravity</title>
+    <meta name="description"
+        content="FranchiseOS — Turn any brand, IP, or business into a scalable franchise with AI-powered operations">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06060b;
+            --surface: #0f0f18;
+            --card: #151520;
+            --card-hover: #1c1c2e;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(251, 191, 36, 0.3);
+            --text: #f0f0f5;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent: #fbbf24;
+            --accent-bright: #fcd34d;
+            --accent-glow: rgba(251, 191, 36, 0.12);
+            --purple: #a78bfa;
+            --green: #34d399;
+            --blue: #60a5fa;
+            --pink: #f472b6;
+            --gradient: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 900px 500px at 20% 10%, rgba(251, 191, 36, 0.06), transparent),
+                radial-gradient(ellipse 700px 400px at 80% 85%, rgba(167, 139, 250, 0.04), transparent);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 5rem 0 3rem;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: var(--accent-glow);
+            border: 1px solid var(--border-accent);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.04em;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Franchise Grid */
+        .franchise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+
+        .franchise-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .franchise-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--card-accent, var(--gradient));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .franchise-card:hover {
+            border-color: var(--border-accent);
+            background: var(--card-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .franchise-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .card-tag {
+            display: inline-flex;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .tag-entertainment {
+            background: rgba(244, 114, 182, 0.12);
+            color: var(--pink);
+            border: 1px solid rgba(244, 114, 182, 0.2);
+        }
+
+        .tag-hospitality {
+            background: rgba(96, 165, 250, 0.12);
+            color: var(--blue);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+        }
+
+        .tag-gaming {
+            background: rgba(167, 139, 250, 0.12);
+            color: var(--purple);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
+        .tag-ecommerce {
+            background: rgba(52, 211, 153, 0.12);
+            color: var(--green);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .tag-education {
+            background: rgba(251, 191, 36, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        /* What Is Section */
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .info-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+        }
+
+        .info-box p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            background: var(--surface);
+            border-radius: 10px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-item span:first-child {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2.5rem 0;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .franchise-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding: 3rem 0 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="hero">
+            <div class="hero-badge">🏢 FRANCHISE OPERATING SYSTEM</div>
+            <h1>FranchiseOS</h1>
+            <p>Turn any brand, IP, or business concept into a scalable franchise operation — powered by AI automation,
+                templated workflows, and managed infrastructure.</p>
+        </div>
+
+        <div class="franchise-grid">
+            <a href="Barry's Tickets/" class="franchise-card"
+                style="--card-accent: linear-gradient(135deg, #f472b6, #ec4899)">
+                <span class="card-icon">🎫</span>
+                <div class="card-title">Barry's Tickets</div>
+                <div class="card-desc">Premium ticket marketplace with dynamic pricing, event discovery, and AI-powered
+                    seat recommendations.</div>
+                <span class="card-tag tag-entertainment">Entertainment</span>
+            </a>
+
+            <a href="CoHost Company/" class="franchise-card"
+                style="--card-accent: linear-gradient(135deg, #60a5fa, #3b82f6)">
+                <span class="card-icon">🏠</span>
+                <div class="card-title">CoHost Company</div>
+                <div class="card-desc">Short-term rental management platform for co-hosting operations — listings,
+                    scheduling, and guest communications.</div>
+                <span class="card-tag tag-hospitality">Hospitality</span>
+            </a>
+
+            <a href="CoPlay/" class="franchise-card" style="--card-accent: linear-gradient(135deg, #a78bfa, #8b5cf6)">
+                <span class="card-icon">🎮</span>
+                <div class="card-title">CoPlay</div>
+                <div class="card-desc">Multiplayer gaming experiences with matchmaking, social features, and
+                    cross-platform session management.</div>
+                <span class="card-tag tag-gaming">Gaming</span>
+            </a>
+
+            <a href="KittyBird Blooms/" class="franchise-card"
+                style="--card-accent: linear-gradient(135deg, #34d399, #10b981)">
+                <span class="card-icon">🌸</span>
+                <div class="card-title">KittyBird Blooms</div>
+                <div class="card-desc">Artisanal flower delivery service with subscription models, event floristry, and
+                    AI-curated arrangements.</div>
+                <span class="card-tag tag-ecommerce">E-Commerce</span>
+            </a>
+
+            <a href="Petrock Hotel/" class="franchise-card"
+                style="--card-accent: linear-gradient(135deg, #fbbf24, #f59e0b)">
+                <span class="card-icon">🏨</span>
+                <div class="card-title">Petrock Hotel</div>
+                <div class="card-desc">Pet-friendly hospitality brand with boarding facilities, grooming services, and
+                    wellness programs.</div>
+                <span class="card-tag tag-hospitality">Hospitality</span>
+            </a>
+
+            <a href="Skool/" class="franchise-card" style="--card-accent: linear-gradient(135deg, #fcd34d, #fbbf24)">
+                <span class="card-icon">🎓</span>
+                <div class="card-title">Skool</div>
+                <div class="card-desc">Community-based education platform for building courses, managing memberships,
+                    and scaling knowledge businesses.</div>
+                <span class="card-tag tag-education">Education</span>
+            </a>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🧬 What is FranchiseOS?</div>
+            <div class="info-box">
+                <p>FranchiseOS is AntiGravity's framework for transforming standalone business concepts into <strong
+                        style="color:var(--text)">scalable, repeatable franchise operations</strong>. Each franchise
+                    gets its own identity, workflows, and AI-powered automation stack — while sharing the underlying
+                    infrastructure.</p>
+                <p>Think of it as a factory for businesses: define the concept, configure the template, and deploy new
+                    instances with consistent branding, operations, and growth systems.</p>
+                <div class="features-list">
+                    <div class="feature-item"><span>🔧</span> Templated business operations</div>
+                    <div class="feature-item"><span>🤖</span> AI-powered customer engagement</div>
+                    <div class="feature-item"><span>📊</span> Unified analytics dashboard</div>
+                    <div class="feature-item"><span>🌐</span> Multi-location deployment</div>
+                    <div class="feature-item"><span>🎨</span> White-label branding system</div>
+                    <div class="feature-item"><span>📱</span> Cross-platform presence</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <a href="../">AntiGravity</a> · FranchiseOS · franchiseos.holodeckos.com
+        </footer>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+// A cozy living room to demonstrate SpaceML features.
+
+space "Cozy Living Room"
+  sky: warm-sunset
+  gravity: earth
+
+  light "Main Light"
+    kind: overhead
+    color: warm-white
+    brightness: 0.8
+
+  light "Ambient"
+    kind: ambient
+    brightness: 0.3
+
+  thing "Coffee Table"
+    shape: box
+    position: 0, 0.3, 0
+    surface: oak-wood
+    tags: furniture, wooden
+
+    thing "Laptop"
+      shape: box
+      position: 0, 0.55, 0
+      surface: metal
+
+    thing "Coffee Mug"
+      shape: cylinder
+      position: 0.4, 0.55, 0.1
+      surface: glass
+
+  thing "Sofa"
+    shape: box
+    position: 0, 0.4, -2
+    surface: oak-wood
+    tags: furniture, seating
+
+  thing "Floor Lamp"
+    shape: cylinder
+    position: 2, 1, -1.5
+    surface: metal
+
+  portal "To Garden"
+    position: 3, 0, 0
+    leads-to: Garden Space
+    frame: wooden-arch
+    preview: on

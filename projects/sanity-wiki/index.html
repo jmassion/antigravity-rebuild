@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanity Wiki — AntiGravity</title>
+    <meta name="description" content="Project organization and setup guide for the AntiGravity ecosystem. Browse documentation, agent orchestration, design systems, and more.">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Marked.js for markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Ambient background -->
+    <div class="ambient-bg">
+        <div class="ambient-orb orb-1"></div>
+        <div class="ambient-orb orb-2"></div>
+        <div class="ambient-orb orb-3"></div>
+    </div>
+
+    <!-- Top Bar -->
+    <header class="top-bar">
+        <div class="top-bar-left">
+            <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle Sidebar">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-cube"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>Sanity Wiki</h1>
+                    <span class="brand-sub">AntiGravity</span>
+                </div>
+            </div>
+        </div>
+        <div class="top-bar-center">
+            <div class="search-box" id="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="search-input" placeholder="Search wiki..." autocomplete="off">
+                <kbd class="search-shortcut">⌘K</kbd>
+                <div class="search-results" id="search-results"></div>
+            </div>
+        </div>
+        <div class="top-bar-right">
+            <div class="breadcrumbs" id="breadcrumbs"></div>
+            <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button class="context-toggle" id="context-toggle" title="Toggle Page Context">
+                <i class="fa-solid fa-layer-group"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="layout">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-label">Navigation</span>
+            </div>
+            <div class="sidebar-nav" id="sidebar-nav">
+                <!-- Generated from _config.json -->
+            </div>
+            <div class="sidebar-footer">
+                <div class="orchestration-status" id="orchestration-badge">
+                    <div class="status-dot"></div>
+                    <span>System Active</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+            <!-- Welcome / Loading -->
+            <div class="content-loading" id="content-loading">
+                <div class="loader-ring"></div>
+                <p>Loading wiki...</p>
+            </div>
+
+            <!-- Markdown Rendered Content -->
+            <article class="content-article" id="content-article">
+                <div class="article-header" id="article-header"></div>
+                <div class="article-body markdown-body" id="article-body"></div>
+                <div class="article-footer" id="article-footer"></div>
+            </article>
+
+            <!-- Article Content Ends -->
+        </main>
+
+        <!-- Context Drawer (Right Sidebar) -->
+        <aside class="context-drawer collapsed" id="context-drawer">
+            <div class="drawer-header">
+                <span class="drawer-label">Page Context</span>
+            </div>
+            <div class="drawer-content">
+                <!-- Table of Contents -->
+                <div class="toc-panel hidden" id="toc-panel">
+                    <div class="toc-header">
+                        <i class="fa-solid fa-list-ul"></i>
+                        <span>On This Page</span>
+                    </div>
+                    <div class="toc-list" id="toc-list"></div>
+                </div>
+
+                <!-- Backlinks Panel -->
+                <div class="backlinks-panel" id="backlinks-panel">
+                    <div class="backlinks-header">
+                        <i class="fa-solid fa-link"></i>
+                        <span>Backlinks</span>
+                        <span class="backlink-count" id="backlink-count">0</span>
+                    </div>
+                    <div class="backlinks-list" id="backlinks-list"></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="search-overlay"></div>
+
+    <script src="app.js" type="module"></script>
+</body>
+</html>

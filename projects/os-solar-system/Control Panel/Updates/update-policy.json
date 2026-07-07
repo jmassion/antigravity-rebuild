@@ -1,0 +1,6 @@
+{
+  "autoUpdate": true,
+  "channel": "stable",
+  "checkInterval": "daily",
+  "lastCheck": null
+}

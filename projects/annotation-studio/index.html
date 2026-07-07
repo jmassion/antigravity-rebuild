@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annotation Studio — Review, Comment, Annotate</title>
+    <meta name="description" content="Spatial and temporal annotations with threaded reviews for any media type.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="an-app" id="an-app">
+        <header class="an-header">
+            <div class="an-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                <span>Annotation Studio</span>
+            </div>
+            <div class="an-tools">
+                <button class="an-tool-btn active" data-tool="pin" id="tool-pin" title="Pin Annotation">📌</button>
+                <button class="an-tool-btn" data-tool="region" id="tool-region" title="Region Select">⬜</button>
+                <button class="an-tool-btn" data-tool="note" id="tool-note" title="Add Note">📝</button>
+                <button class="an-tool-btn" data-tool="timestamp" id="tool-timestamp"
+                    title="Timestamp Marker">⏱️</button>
+                <div class="an-separator"></div>
+                <span class="an-annotation-count" id="an-count">0 annotations</span>
+            </div>
+        </header>
+
+        <main class="an-workspace">
+            <div class="an-canvas-area" id="an-canvas">
+                <!-- Demo image with annotation overlay -->
+                <div class="an-media-container" id="an-media">
+                    <img src="data:image/svg+xml,${encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;800&quot; height=&quot;500&quot;><defs><linearGradient id=&quot;g&quot; x1=&quot;0%&quot; y1=&quot;0%&quot; x2=&quot;100%&quot; y2=&quot;100%&quot;><stop offset=&quot;0%&quot; style=&quot;stop-color:#1e1b4b&quot;/><stop offset=&quot;50%&quot; style=&quot;stop-color:#7c3aed&quot;/><stop offset=&quot;100%&quot; style=&quot;stop-color:#06b6d4&quot;/></linearGradient></defs><rect fill=&quot;url(#g)&quot; width=&quot;800&quot; height=&quot;500&quot;/><text x=&quot;400&quot; y=&quot;250&quot; text-anchor=&quot;middle&quot; fill=&quot;white&quot; font-family=&quot;sans-serif&quot; font-size=&quot;32&quot; font-weight=&quot;700&quot;>Click anywhere to annotate</text></svg>')}"
+                        alt="Demo canvas" class="an-media-img" id="an-media-img">
+                    <div class="an-overlay" id="an-overlay"></div>
+                </div>
+            </div>
+
+            <aside class="an-comment-sidebar" id="an-sidebar">
+                <div class="an-sidebar-header">
+                    <h3>Comments</h3>
+                    <select id="an-filter" class="an-select">
+                        <option value="all">All</option>
+                        <option value="open">Open</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+                </div>
+                <div class="an-threads-list" id="an-threads"></div>
+                <div class="an-add-note">
+                    <textarea id="an-note-input" placeholder="Add a general note..." rows="2"></textarea>
+                    <button class="an-btn an-btn-primary" id="an-add-note-btn">Add Note</button>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>

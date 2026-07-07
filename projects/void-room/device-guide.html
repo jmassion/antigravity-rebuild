@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║                                                                      ║
+║   🌌  V O I D   R O O M  —  D E V I C E   D A S H B O A R D  🌌  ║
+║   How to get the 3D collaborative space on EVERY device you own     ║
+║                                                                      ║
+║   Covers: 🍎 Apple · 🪟 Windows · 🤖 Android · 📺 Smart TVs      ║
+║           🔥 Fire Stick · ⌚ Watches · 🔊 Smart Speakers           ║
+║           🎮 Game Consoles · 🥽 VR · 🖥️ Raspberry Pi              ║
+║                                                                      ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────┐
+│  📖 TABLE OF CONTENTS (TOP)                                │
+│                                                             │
+│  1. 🎨 STYLES, FONTS & THEME VARIABLES                    │
+│  2. 🏗️ HTML STRUCTURE & LAYOUT                            │
+│  3. 📱 DEVICE CARDS DATA                                   │
+│     3a. 🍎 Apple Devices (iPhone, iPad, Mac, Apple TV,    │
+│          Apple Watch, Vision Pro)                           │
+│     3b. 🪟 Windows Devices (Desktop, Laptop, Surface,     │
+│          Xbox)                                             │
+│     3c. 🤖 Android Devices (Phone, Tablet, Chromebook)    │
+│     3d. 📺 Smart TVs (Samsung Tizen, LG webOS, Android    │
+│          TV, Roku TV)                                      │
+│     3e. 🔥 Amazon Fire (Fire Stick, Fire Tablet,          │
+│          Echo Show, Echo Speaker)                          │
+│     3f. ⌚ Wearables (Apple Watch, Wear OS, Galaxy Watch) │
+│     3g. 🎮 Game Consoles (PlayStation, Xbox, Switch)      │
+│     3h. 🖥️ DIY & Other (Raspberry Pi, Smart Fridge,      │
+│          Car Displays)                                     │
+│  4. 🔧 HOSTING SECTION (how to put it online)             │
+│  5. ✨ INTERACTIVE FEATURES (search, filter, animations)   │
+│  6. 🚀 INITIALIZATION                                      │
+│                                                             │
+│  📖 TABLE OF CONTENTS (BOTTOM) ↓↓↓                        │
+└─────────────────────────────────────────────────────────────┘
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌌 Void Room — Device Setup Dashboard</title>
+
+<!-- ════════════════════════════════════════════════════════
+     🔤 FONTS
+     We use two fonts:
+     - JetBrains Mono: for code and techy stuff
+     - DM Sans: for readable body text
+     ════════════════════════════════════════════════════════ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- ════════════════════════════════════════════════════════
+
+     ╔═══════════════════════════════════════════════════╗
+     ║  🎨 SECTION 1: STYLES, FONTS & THEME VARIABLES  ║
+     ║  Everything that controls how this page LOOKS    ║
+     ╚═══════════════════════════════════════════════════╝
+
+     ════════════════════════════════════════════════════════ -->
+<style>
+
+/* ── 🎨 COLOR PALETTE ──────────────────────────────────
+   These CSS variables are like labeled paint cans.
+   Change one variable = change the whole theme! */
+:root {
+  --bg-deep: #060610;
+  --bg-card: #0d0d1c;
+  --bg-card-hover: #12122a;
+  --surface-1: #1a1a35;
+  --surface-2: #242448;
+  --border: rgba(100, 80, 200, 0.15);
+  --border-hover: rgba(140, 120, 255, 0.35);
+  --accent-purple: #8b6cff;
+  --accent-pink: #ff5ea0;
+  --accent-teal: #3dd9c6;
+  --accent-amber: #f5b731;
+  --accent-blue: #4d9fff;
+  --accent-green: #44d97e;
+  --text-1: #eae8f4;
+  --text-2: #9994b8;
+  --text-3: #5c5776;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* ── 🧹 RESET ──────────────────────────────────────────
+   Clean slate: no weird browser defaults */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+/* ── 📄 PAGE BODY ──────────────────────────────────────
+   The whole page background, font, and scroll behavior */
+body {
+  background: var(--bg-deep);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── 🌌 ANIMATED BACKGROUND GLOW ──────────────────────
+   A soft animated gradient that floats behind everything */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(139, 108, 255, 0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(255, 94, 160, 0.04) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 50%, rgba(61, 217, 198, 0.03) 0%, transparent 40%);
+  z-index: 0;
+  animation: bgDrift 20s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes bgDrift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-3%, 2%) rotate(2deg); }
+}
+
+/* ── 📦 MAIN CONTAINER ────────────────────────────────
+   Holds all the content, centered on the page */
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* ── 🏷️ HERO / HEADER ─────────────────────────────────
+   The big title at the top of the page */
+.hero {
+  text-align: center;
+  padding: 48px 0 40px;
+}
+
+.hero-icon {
+  font-size: 56px;
+  display: block;
+  margin-bottom: 12px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.hero h1 {
+  font-family: var(--font-mono);
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 700;
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink), var(--accent-teal));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero p {
+  color: var(--text-2);
+  font-size: 16px;
+  margin-top: 10px;
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+/* ── 🔎 SEARCH & FILTER BAR ───────────────────────────
+   Lets you search for a specific device */
+.search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 240px;
+  max-width: 400px;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+.search-input:focus {
+  border-color: var(--accent-purple);
+}
+.search-input::placeholder { color: var(--text-3); }
+
+/* ── 🏷️ FILTER CHIPS ──────────────────────────────────
+   Little clickable tags to filter by category */
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+
+.chip {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.chip:hover { border-color: var(--accent-purple); color: var(--text-1); }
+.chip.active {
+  background: var(--accent-purple);
+  border-color: var(--accent-purple);
+  color: #fff;
+}
+
+/* ── 📊 CATEGORY SECTIONS ─────────────────────────────
+   Big section headers like "Apple Devices", "Windows", etc. */
+.category-section {
+  margin-bottom: 48px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.category-header .cat-icon {
+  font-size: 28px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--surface-1);
+}
+
+.category-header h2 {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.category-header .cat-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+}
+
+/* ── 🃏 DEVICE CARDS ──────────────────────────────────
+   Each card = one device with instructions */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 400px) {
+  .cards-grid { grid-template-columns: 1fr; }
+}
+
+.device-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.device-card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(139, 108, 255, 0.08);
+}
+
+/* Card header row: icon + name + difficulty badge */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px 12px;
+}
+
+.card-header .device-icon {
+  font-size: 28px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--surface-1);
+  flex-shrink: 0;
+}
+
+.card-header .device-name {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.card-header .device-sub {
+  font-size: 12px;
+  color: var(--text-2);
+  margin-top: 1px;
+}
+
+.difficulty-badge {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.difficulty-badge.easy {
+  background: rgba(68, 217, 126, 0.12);
+  color: var(--accent-green);
+  border: 1px solid rgba(68, 217, 126, 0.25);
+}
+.difficulty-badge.medium {
+  background: rgba(245, 183, 49, 0.12);
+  color: var(--accent-amber);
+  border: 1px solid rgba(245, 183, 49, 0.25);
+}
+.difficulty-badge.hard {
+  background: rgba(255, 94, 160, 0.12);
+  color: var(--accent-pink);
+  border: 1px solid rgba(255, 94, 160, 0.25);
+}
+.difficulty-badge.hackery {
+  background: rgba(139, 108, 255, 0.12);
+  color: var(--accent-purple);
+  border: 1px solid rgba(139, 108, 255, 0.25);
+}
+
+/* ── 📝 CARD BODY (steps, method, notes) ───────────── */
+.card-body {
+  padding: 0 18px 16px;
+  display: none; /* 👈 Hidden by default, toggled on click! */
+}
+
+.device-card.expanded .card-body {
+  display: block;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* The "method" tag (e.g. "Built-in Browser", "Screen Mirror") */
+.method-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 14px;
+}
+.method-tag.browser    { background: rgba(77, 159, 255, 0.12); color: var(--accent-blue); border: 1px solid rgba(77, 159, 255, 0.2); }
+.method-tag.mirror     { background: rgba(139, 108, 255, 0.12); color: var(--accent-purple); border: 1px solid rgba(139, 108, 255, 0.2); }
+.method-tag.sideload   { background: rgba(245, 183, 49, 0.12); color: var(--accent-amber); border: 1px solid rgba(245, 183, 49, 0.2); }
+.method-tag.app        { background: rgba(68, 217, 126, 0.12); color: var(--accent-green); border: 1px solid rgba(68, 217, 126, 0.2); }
+.method-tag.voice      { background: rgba(255, 94, 160, 0.12); color: var(--accent-pink); border: 1px solid rgba(255, 94, 160, 0.2); }
+.method-tag.cast       { background: rgba(61, 217, 198, 0.12); color: var(--accent-teal); border: 1px solid rgba(61, 217, 198, 0.2); }
+.method-tag.hdmi       { background: rgba(255, 255, 255, 0.06); color: var(--text-2); border: 1px solid rgba(255, 255, 255, 0.1); }
+
+/* Numbered steps */
+.steps {
+  list-style: none;
+  counter-reset: step-counter;
+}
+
+.steps li {
+  counter-increment: step-counter;
+  position: relative;
+  padding-left: 36px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+.steps li::before {
+  content: counter(step-counter);
+  position: absolute;
+  left: 0; top: 1px;
+  width: 24px; height: 24px;
+  border-radius: 8px;
+  background: var(--surface-1);
+  color: var(--accent-purple);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.steps li strong { color: var(--text-1); }
+.steps li code {
+  background: var(--surface-1);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent-teal);
+}
+
+/* ⚠️ Pro tips and warnings */
+.tip-box {
+  margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.tip-box.info {
+  background: rgba(77, 159, 255, 0.08);
+  border-left: 3px solid var(--accent-blue);
+  color: var(--text-2);
+}
+.tip-box.warn {
+  background: rgba(245, 183, 49, 0.08);
+  border-left: 3px solid var(--accent-amber);
+  color: var(--text-2);
+}
+.tip-box.success {
+  background: rgba(68, 217, 126, 0.08);
+  border-left: 3px solid var(--accent-green);
+  color: var(--text-2);
+}
+
+/* ── "expand" arrow indicator ───────────────────────── */
+.expand-arrow {
+  margin-left: 8px;
+  font-size: 12px;
+  color: var(--text-3);
+  transition: transform 0.3s;
+}
+.device-card.expanded .expand-arrow {
+  transform: rotate(180deg);
+}
+
+/* ── 🏗️ HOSTING SECTION ───────────────────────────────
+   The "how to put Void Room online" section at the bottom */
+.hosting-section {
+  margin-top: 56px;
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.hosting-section h2 {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hosting-section p {
+  color: var(--text-2);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.hosting-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.hosting-option {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  transition: border-color 0.2s;
+}
+.hosting-option:hover { border-color: var(--border-hover); }
+
+.hosting-option h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hosting-option p {
+  font-size: 13px;
+  color: var(--text-2);
+  margin: 0;
+}
+
+.hosting-option code {
+  display: block;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--bg-deep);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent-teal);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* ── 🦶 FOOTER ─────────────────────────────────────── */
+.footer {
+  text-align: center;
+  padding: 40px 0 20px;
+  color: var(--text-3);
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+/* ── 💫 STAGGER ANIMATION for cards ────────────────── */
+.device-card {
+  opacity: 0;
+  animation: cardIn 0.4s ease forwards;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 🙈 HIDDEN when filtered out ──────────────────── */
+.category-section.hidden { display: none; }
+.device-card.hidden { display: none; }
+
+/* ── 📱 Mobile tweaks ─────────────────────────────── */
+@media (max-width: 500px) {
+  .container { padding: 20px 12px 60px; }
+  .hosting-section { padding: 20px; }
+  .card-header { padding: 12px 14px 10px; }
+  .card-body { padding: 0 14px 14px; }
+}
+
+/* ── No-results message ───────────────────────────── */
+.no-results {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-3);
+  font-size: 15px;
+  display: none;
+}
+.no-results.visible { display: block; }
+</style>
+</head>
+
+<!-- ════════════════════════════════════════════════════════
+
+     ╔═══════════════════════════════════════════╗
+     ║  🏗️ SECTION 2: HTML STRUCTURE            ║
+     ║  The skeleton of the dashboard page!      ║
+     ╚═══════════════════════════════════════════╝
+
+     ════════════════════════════════════════════════════════ -->
+<body>
+
+<div class="container">
+
+  <!-- 🏷️ Big hero title -->
+  <header class="hero">
+    <span class="hero-icon">🌌</span>
+    <h1>VOID ROOM</h1>
+    <p>How to access your collaborative 3D space from every device you own — and some you didn't think possible.</p>
+  </header>
+
+  <!-- 🔎 Search bar -->
+  <div class="search-bar">
+    <input type="text" class="search-input" id="search" placeholder="🔍  Search devices... (e.g. Fire Stick, Apple Watch)">
+  </div>
+
+  <!-- 🏷️ Filter chips -->
+  <div class="filter-chips" id="filter-chips">
+    <button class="chip active" data-filter="all">All Devices</button>
+    <button class="chip" data-filter="apple">🍎 Apple</button>
+    <button class="chip" data-filter="windows">🪟 Windows</button>
+    <button class="chip" data-filter="android">🤖 Android</button>
+    <button class="chip" data-filter="tv">📺 Smart TVs</button>
+    <button class="chip" data-filter="amazon">🔥 Amazon/Fire</button>
+    <button class="chip" data-filter="wearable">⌚ Wearables</button>
+    <button class="chip" data-filter="console">🎮 Consoles</button>
+    <button class="chip" data-filter="diy">🖥️ DIY/Other</button>
+  </div>
+
+  <!-- 📋 All device cards get injected here by JavaScript -->
+  <main id="device-sections"></main>
+
+  <!-- 😢 No results message -->
+  <div class="no-results" id="no-results">
+    No devices match your search. Try a different term!
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════
+
+       ╔═══════════════════════════════════════════════════════╗
+       ║  🔧 SECTION 4: HOSTING — How to Put Void Room Online ║
+       ╚═══════════════════════════════════════════════════════╝
+
+       ════════════════════════════════════════════════════════ -->
+  <section class="hosting-section">
+    <h2>🚀 Step Zero: Host Void Room Online</h2>
+    <p>Before ANY device can access Void Room, you need it hosted at a URL. It's a single HTML file — here are the easiest ways to get it online for free:</p>
+
+    <div class="hosting-grid">
+
+      <div class="hosting-option">
+        <h3>⚡ Netlify Drop</h3>
+        <p>Drag and drop the HTML file. Live in seconds. Free. No account needed for a quick test.</p>
+        <code>1. Go to app.netlify.com/drop
+2. Drag void-room.html onto it
+3. Get your URL instantly!</code>
+      </div>
+
+      <div class="hosting-option">
+        <h3>🔺 Vercel</h3>
+        <p>Push to GitHub, auto-deploys. Free tier is generous. Great for permanent hosting.</p>
+        <code>npm i -g vercel
+vercel deploy --prod</code>
+      </div>
+
+      <div class="hosting-option">
+        <h3>📄 GitHub Pages</h3>
+        <p>Free hosting straight from a GitHub repo. Push the file, enable Pages in settings.</p>
+        <code>1. Create repo, push HTML file
+2. Settings → Pages → main branch
+3. Live at username.github.io/repo</code>
+      </div>
+
+      <div class="hosting-option">
+        <h3>🌊 DigitalOcean</h3>
+        <p>Your existing droplet! Just serve the file with nginx, caddy, or even Python.</p>
+        <code>cd /var/www/html
+# copy void-room.html here
+python3 -m http.server 8080</code>
+      </div>
+
+      <div class="hosting-option">
+        <h3>☁️ Cloudflare Pages</h3>
+        <p>Blazing fast global CDN. Free tier. Connect to Git or direct upload.</p>
+        <code>1. dash.cloudflare.com → Pages
+2. Upload void-room.html
+3. Instant global deployment</code>
+      </div>
+
+      <div class="hosting-option">
+        <h3>🏠 Local Network</h3>
+        <p>For home-only use: run a simple server on any computer. All local devices can connect.</p>
+        <code># From the folder with the file:
+python3 -m http.server 8080
+# Open http://YOUR-IP:8080</code>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    VOID ROOM — universal collaborative 3D space<br>
+    works on everything with a screen (and some things without one)
+  </footer>
+
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+
+     ╔═══════════════════════════════════════════════════════════╗
+     ║  🧠 SECTIONS 3-6: JAVASCRIPT — THE BRAIN OF THE PAGE   ║
+     ╚═══════════════════════════════════════════════════════════╝
+
+     ════════════════════════════════════════════════════════ -->
+<script>
+
+/* ============================================================
+   ╔═══════════════════════════════════════════════════════════╗
+   ║  📱 SECTION 3: ALL DEVICE DATA                           ║
+   ║  Every device, its category, and step-by-step setup!     ║
+   ╚═══════════════════════════════════════════════════════════╝
+
+   Each object has:
+   - name: the device name 📛
+   - icon: an emoji 🎨
+   - sub: short description 📝
+   - category: which filter group it belongs to 🏷️
+   - difficulty: easy / medium / hard / hackery 🎯
+   - method: how you access it (browser, mirror, sideload, etc.)
+   - methodClass: CSS class for the colored tag 🎨
+   - steps: array of instruction strings 📋
+   - tip: optional info/warning box 💡
+   - tipType: info / warn / success
+   ============================================================ */
+
+const ALL_DEVICES = [
+
+  // ╔═══════════════════════════════════╗
+  // ║  🍎 SECTION 3a: APPLE DEVICES    ║
+  // ╚═══════════════════════════════════╝
+
+  {
+    name: "iPhone",
+    icon: "📱",
+    sub: "Safari — just open the URL",
+    category: "apple",
+    difficulty: "easy",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Open <strong>Safari</strong> (or Chrome, Firefox — any browser works)",
+      "Type in your Void Room URL (e.g. <code>yourdomain.com/void-room</code>)",
+      "Tap <strong>Share → Add to Home Screen</strong> to make it feel like a native app",
+      "The app will open fullscreen — no browser bars!",
+      "Touch controls: <strong>one finger</strong> = interact, <strong>two fingers</strong> = orbit camera, <strong>pinch</strong> = zoom"
+    ],
+    tip: "💡 Adding to Home Screen makes it a PWA (Progressive Web App) — it launches fullscreen like a real app and even works offline!",
+    tipType: "success"
+  },
+  {
+    name: "iPad",
+    icon: "📲",
+    sub: "Safari or any browser — touch + Apple Pencil",
+    category: "apple",
+    difficulty: "easy",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Open <strong>Safari</strong> on your iPad",
+      "Navigate to your Void Room URL",
+      "For the best experience, use <strong>Split View</strong> to keep tools visible alongside",
+      "Apple Pencil supported: use it for precise object placement!",
+      "Add to Home Screen for a fullscreen app experience"
+    ],
+    tip: "💡 The iPad's large screen + Apple Pencil makes this the best mobile creation experience. Pencil pressure could map to scale in a future update!",
+    tipType: "info"
+  },
+  {
+    name: "Mac (Desktop/Laptop)",
+    icon: "💻",
+    sub: "Any browser — full mouse + keyboard",
+    category: "apple",
+    difficulty: "easy",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Open <strong>Safari, Chrome, Firefox, or Arc</strong>",
+      "Navigate to your Void Room URL",
+      "Full keyboard shortcuts active: <strong>M</strong>=Move, <strong>P</strong>=Place, <strong>R</strong>=Rotate, <strong>S</strong>=Scale, <strong>X</strong>=Delete",
+      "Right-click + drag = orbit camera. Scroll wheel = zoom",
+      "Number keys <strong>1-9</strong> switch shapes instantly"
+    ],
+    tip: "💡 This is the power-user experience. All keyboard shortcuts, mouse precision, and the biggest viewport.",
+    tipType: "success"
+  },
+  {
+    name: "Apple TV",
+    icon: "📺",
+    sub: "AirPlay mirror from iPhone/Mac",
+    category: "apple",
+    difficulty: "medium",
+    method: "AirPlay Mirror",
+    methodClass: "mirror",
+    steps: [
+      "Apple TV does <strong>not have a web browser</strong> — you'll mirror from another device",
+      "On your iPhone/iPad: open <strong>Control Center → Screen Mirroring</strong>",
+      "Select your <strong>Apple TV</strong> from the list",
+      "Open Void Room in Safari on your phone — it appears on the TV!",
+      "On Mac: <strong>System Settings → Displays → AirPlay Display</strong> to your Apple TV",
+      "Control the 3D scene from your phone/Mac while viewing on the big screen"
+    ],
+    tip: "⚠️ There's a slight delay with AirPlay. For a lag-free TV experience, consider a Fire Stick or HDMI-connected mini PC instead.",
+    tipType: "warn"
+  },
+  {
+    name: "Apple Watch",
+    icon: "⌚",
+    sub: "Hidden WebKit browser — very limited",
+    category: "wearable",
+    difficulty: "hackery",
+    method: "Hidden Browser",
+    methodClass: "browser",
+    steps: [
+      "Apple Watch has a <strong>hidden browser</strong> (no Safari app, but WebKit is built in)",
+      "On your <strong>iPhone</strong>, send yourself an iMessage with your Void Room URL",
+      "On your <strong>Apple Watch</strong>, open the Messages app and tap the link",
+      "The page will load in a mini browser overlay",
+      "Alternatively, say <strong>\"Hey Siri, search for [your URL]\"</strong> and tap the result",
+      "Or install <strong>µBrowser</strong> ($1) or <strong>Watch Browser</strong> (free) from the App Store for a proper URL bar"
+    ],
+    tip: "⚠️ The watch screen is tiny and the browser is extremely limited — it won't run Three.js/WebGL. The best watch use is as a <strong>remote control</strong> for the app running on another device (a future companion app could do this!).",
+    tipType: "warn"
+  },
+  {
+    name: "Apple Vision Pro",
+    icon: "🥽",
+    sub: "Safari in spatial computing — 3D in 3D!",
+    category: "apple",
+    difficulty: "easy",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Open <strong>Safari</strong> in visionOS — it floats as a window in your space",
+      "Navigate to your Void Room URL",
+      "The 3D scene renders inside the browser window using WebGL",
+      "Use <strong>eye tracking + pinch gestures</strong> to interact",
+      "Resize the Safari window to make the 3D scene as large as you want"
+    ],
+    tip: "💡 A native visionOS version with true spatial rendering would be incredible — but the web version already works great as a floating 3D canvas.",
+    tipType: "success"
+  },
+
+  // ╔═══════════════════════════════════════╗
+  // ║  🪟 SECTION 3b: WINDOWS DEVICES      ║
+  // ╚═══════════════════════════════════════╝
+
+  {
+    name: "Windows PC / Laptop",
+    icon: "🖥️",
+    sub: "Any browser — full power user experience",
+    category: "windows",
+    difficulty: "easy",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Open <strong>Chrome, Edge, Firefox, or Brave</strong>",
+      "Navigate to your Void Room URL",
+      "All keyboard shortcuts + mouse + scroll wheel fully supported",
+      "In Chrome/Edge: click <strong>⋮ → Install as app</strong> for a standalone window",
+      "Gamepad support works too — plug in an Xbox controller!"
+    ],
+    tip: "💡 Install as a PWA for the cleanest experience — no browser UI, just pure 3D space.",
+    tipType: "success"
+  },
+  {
+    name: "Surface / 2-in-1 Tablet",
+    icon: "📋",
+    sub: "Touch + pen + keyboard — best of everything",
+    category: "windows",
+    difficulty: "easy",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Open <strong>Edge</strong> (or any browser) — touch is natively supported",
+      "Navigate to your Void Room URL",
+      "Use <strong>Surface Pen</strong> for precision object placement",
+      "Switch between <strong>touch</strong> (orbit) and <strong>pen</strong> (place/move) seamlessly",
+      "Detach keyboard for tablet mode — all touch controls work"
+    ],
+    tip: "💡 Surface devices combine every input type — mouse, touch, pen, and keyboard — making them one of the most versatile ways to use Void Room.",
+    tipType: "info"
+  },
+  {
+    name: "Xbox (Console)",
+    icon: "🎮",
+    sub: "Edge browser built-in + controller support",
+    category: "console",
+    difficulty: "medium",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "From the Xbox home screen, open the <strong>Microsoft Edge</strong> app",
+      "If not installed, find it in the <strong>Microsoft Store</strong> on Xbox",
+      "Navigate to your Void Room URL using the on-screen keyboard",
+      "Use your <strong>Xbox controller</strong> — Void Room has built-in gamepad support!",
+      "Left stick = orbit camera, Right stick = move objects, Triggers = zoom",
+      "Connect a <strong>USB keyboard + mouse</strong> to Xbox for full desktop-like control"
+    ],
+    tip: "💡 Xbox supports mouse and keyboard over USB! Plug them in for the best experience. The controller works but mouse is more precise.",
+    tipType: "info"
+  },
+
+  // ╔═══════════════════════════════════════╗
+  // ║  🤖 SECTION 3c: ANDROID DEVICES      ║
+  // ╚═══════════════════════════════════════╝
+
+  {
+    name: "Android Phone",
+    icon: "📱",
+    sub: "Chrome or any browser — touch native",
+    category: "android",
+    difficulty: "easy",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Open <strong>Chrome</strong> (or Firefox, Brave, Samsung Internet)",
+      "Navigate to your Void Room URL",
+      "Tap <strong>⋮ → Add to Home Screen</strong> for PWA mode",
+      "Touch: <strong>one finger</strong> = interact, <strong>two fingers</strong> = orbit, <strong>pinch</strong> = zoom",
+      "Works great on Galaxy Fold in both folded and unfolded modes!"
+    ],
+    tip: "💡 On Galaxy Fold, unfold for the big screen to build, then fold to use as a controller — both states work perfectly.",
+    tipType: "success"
+  },
+  {
+    name: "Android Tablet",
+    icon: "📲",
+    sub: "Big screen + touch — great creative canvas",
+    category: "android",
+    difficulty: "easy",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Open <strong>Chrome</strong> on your tablet",
+      "Navigate to your Void Room URL",
+      "With Samsung S Pen or any stylus — get precise object placement",
+      "Use <strong>Samsung DeX mode</strong> for a desktop-like experience with mouse support",
+      "Install as PWA for fullscreen mode"
+    ],
+    tip: "💡 Samsung DeX mode gives you a desktop with mouse cursor — the best way to use Void Room on a Galaxy Tab.",
+    tipType: "info"
+  },
+  {
+    name: "Chromebook",
+    icon: "💻",
+    sub: "Chrome browser — it's literally Chrome OS",
+    category: "android",
+    difficulty: "easy",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Open <strong>Chrome</strong> (it's the whole OS!)",
+      "Navigate to your Void Room URL",
+      "All keyboard shortcuts and trackpad gestures work",
+      "Click <strong>⋮ → Install as app</strong> for standalone window",
+      "Touchscreen Chromebooks get full touch support too"
+    ],
+    tip: "💡 Chromebooks are the cheapest way to get a full keyboard+mouse Void Room experience.",
+    tipType: "success"
+  },
+
+  // ╔═══════════════════════════════════════════════╗
+  // ║  📺 SECTION 3d: SMART TVs                    ║
+  // ╚═══════════════════════════════════════════════╝
+
+  {
+    name: "Samsung Smart TV (Tizen)",
+    icon: "📺",
+    sub: "Built-in Samsung Internet browser",
+    category: "tv",
+    difficulty: "medium",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Press the <strong>Home</strong> button on your Samsung remote",
+      "Navigate to <strong>Apps → Samsung Internet</strong> (or look for the globe icon labeled \"Web\")",
+      "If it's not on the home screen, find it in the <strong>Smart Hub</strong> app list",
+      "Use the remote's <strong>directional pad</strong> as a cursor — it acts like a mouse pointer",
+      "Type your Void Room URL using the on-screen keyboard",
+      "Navigate and interact using the <strong>D-pad + Select button</strong> on your remote"
+    ],
+    tip: "⚠️ Smart TV browsers are slow and may struggle with WebGL. For the best TV experience, plug in a <strong>Fire Stick</strong>, <strong>Chromecast</strong>, or <strong>mini PC via HDMI</strong> instead.",
+    tipType: "warn"
+  },
+  {
+    name: "LG Smart TV (webOS)",
+    icon: "📺",
+    sub: "Built-in LG browser",
+    category: "tv",
+    difficulty: "medium",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Press the <strong>Home</strong> button on your LG Magic Remote",
+      "Look for the <strong>Web Browser</strong> app in the bottom app bar",
+      "Open it and navigate to your Void Room URL",
+      "The LG Magic Remote has a <strong>pointer mode</strong> — wave it like a Wii remote! 🏑",
+      "This pointer mode works well for clicking and dragging in 3D",
+      "Bookmark the URL for quick access later"
+    ],
+    tip: "💡 LG's Magic Remote pointer is actually great for this — it works like a mouse in the air! webOS also has better WebGL support than some competitors.",
+    tipType: "info"
+  },
+  {
+    name: "Android TV / Google TV",
+    icon: "📺",
+    sub: "Sideload Chrome or use TV browser",
+    category: "tv",
+    difficulty: "medium",
+    method: "Sideload Browser",
+    methodClass: "sideload",
+    steps: [
+      "Go to <strong>Settings → Security → Unknown Sources → ON</strong>",
+      "Install <strong>Downloader</strong> from the Google Play Store on your TV",
+      "Open Downloader, type in a URL to download Chrome APK (or use the built-in browser)",
+      "Alternatively: on your phone, go to <strong>play.google.com</strong>, find Chrome, and send-install to your TV",
+      "Open Chrome and navigate to your Void Room URL",
+      "Connect a <strong>Bluetooth mouse</strong> for the best interaction experience"
+    ],
+    tip: "💡 Connecting a Bluetooth mouse + keyboard to your Android TV transforms it into a full desktop experience on a big screen.",
+    tipType: "info"
+  },
+  {
+    name: "Roku TV",
+    icon: "📺",
+    sub: "No native browser — mirror or cast instead",
+    category: "tv",
+    difficulty: "hard",
+    method: "Screen Mirror",
+    methodClass: "mirror",
+    steps: [
+      "Roku does <strong>NOT have a built-in web browser</strong>",
+      "<strong>Method 1 — Screen Mirror from Phone:</strong> On your phone, pull down notifications → <strong>Screen Cast / Smart View / Miracast</strong>",
+      "Select your Roku TV. Open Void Room in your phone browser → it appears on TV!",
+      "<strong>Method 2 — Screen Mirror from Windows:</strong> Press <strong>Win+K</strong> → select your Roku TV",
+      "<strong>Method 3 — HDMI:</strong> Plug in a Fire Stick, Chromecast, or laptop via HDMI",
+      "Control the scene from your phone/computer while viewing on the big screen"
+    ],
+    tip: "⚠️ Roku is the most limited smart TV platform for web browsing. An HDMI dongle (Fire Stick or Chromecast) is the best workaround.",
+    tipType: "warn"
+  },
+
+  // ╔═══════════════════════════════════════════════╗
+  // ║  🔥 SECTION 3e: AMAZON FIRE DEVICES          ║
+  // ╚═══════════════════════════════════════════════╝
+
+  {
+    name: "Fire TV Stick / Fire TV Cube",
+    icon: "🔥",
+    sub: "Silk browser — best cheap TV solution",
+    category: "amazon",
+    difficulty: "easy",
+    method: "Silk Browser",
+    methodClass: "browser",
+    steps: [
+      "From the Fire TV home screen, go to <strong>Find → Search</strong> and type \"Silk Browser\"",
+      "Or say <strong>\"Alexa, open Silk Browser\"</strong> — it launches instantly!",
+      "If not installed, download it free from the <strong>Amazon Appstore</strong>",
+      "Navigate to your Void Room URL",
+      "Use the <strong>Fire TV remote's directional pad</strong> as a mouse cursor",
+      "For better control: pair a <strong>Bluetooth mouse</strong> via <strong>Settings → Remotes & Bluetooth Devices</strong>",
+      "Bookmark the page for instant access: press the <strong>☰ Menu button</strong> → Bookmark"
+    ],
+    tip: "💡 The Fire Stick is the cheapest and easiest way to get Void Room on ANY TV with an HDMI port. At ~$25-30, it's a no-brainer. Pair a Bluetooth mouse for the best experience.",
+    tipType: "success"
+  },
+  {
+    name: "Amazon Fire Tablet",
+    icon: "🔥",
+    sub: "Silk browser — full touch support",
+    category: "amazon",
+    difficulty: "easy",
+    method: "Silk Browser",
+    methodClass: "browser",
+    steps: [
+      "Open the <strong>Silk Browser</strong> (pre-installed on all Fire Tablets)",
+      "Navigate to your Void Room URL",
+      "Full touch support: one finger = interact, two fingers = orbit, pinch = zoom",
+      "Add to home screen: tap <strong>☰ → Add to Home</strong>",
+      "Works in both portrait and landscape mode"
+    ],
+    tip: "💡 Fire Tablets are the cheapest tablets around. At $50-100, they're a great dedicated Void Room device.",
+    tipType: "success"
+  },
+  {
+    name: "Echo Show (5 / 8 / 10 / 15)",
+    icon: "🔊",
+    sub: "Silk browser built in — voice + touch",
+    category: "amazon",
+    difficulty: "medium",
+    method: "Voice + Browser",
+    methodClass: "voice",
+    steps: [
+      "Say <strong>\"Alexa, open Silk\"</strong> to launch the browser",
+      "Use the <strong>touchscreen</strong> to tap the URL bar and type your Void Room URL",
+      "Or use the on-screen keyboard — it's a touchscreen device!",
+      "The Echo Show 10's <strong>rotating screen</strong> will follow you as you move",
+      "The Echo Show 15 (wall-mounted) gives you a permanent 15\" dashboard view",
+      "Bookmark your URL for quick access"
+    ],
+    tip: "💡 The Echo Show 15 mounted on a wall makes an amazing always-on 3D scene display. The Echo Show 10's rotating screen is uniquely cool for an immersive feel.",
+    tipType: "info"
+  },
+  {
+    name: "Echo (Speaker Only — No Screen)",
+    icon: "🔈",
+    sub: "No screen! Use as voice controller instead",
+    category: "amazon",
+    difficulty: "hackery",
+    method: "Voice Command (Advanced)",
+    methodClass: "voice",
+    steps: [
+      "Echo speakers <strong>have no screen</strong> — you can't directly view Void Room",
+      "<strong>What IS possible:</strong> build a custom Alexa Skill that controls Void Room via voice",
+      "The skill would send API commands to your server: \"Alexa, place a red cube at position 5\"",
+      "This requires: an <strong>Alexa Developer Account</strong>, a <strong>Lambda function</strong>, and a <strong>WebSocket bridge</strong>",
+      "The flow: Voice → Alexa Skill → Lambda → WebSocket → Void Room on other devices",
+      "Think of it as a <strong>voice remote</strong> for the scene running on other screens"
+    ],
+    tip: "⚠️ This is an advanced project! It's not \"open a URL\" — it's building a voice-controlled bridge. Cool but requires backend development.",
+    tipType: "warn"
+  },
+
+  // ╔═══════════════════════════════════════════════╗
+  // ║  ⌚ SECTION 3f: WEARABLES                    ║
+  // ╚═══════════════════════════════════════════════╝
+
+  {
+    name: "Wear OS (Pixel Watch, Galaxy Watch 4+)",
+    icon: "⌚",
+    sub: "Limited browser — better as remote",
+    category: "wearable",
+    difficulty: "hackery",
+    method: "Sideload Browser",
+    methodClass: "sideload",
+    steps: [
+      "Wear OS does not ship with a browser, but you can sideload one",
+      "Install <strong>ADB</strong> on your computer and enable <strong>Developer Options</strong> on the watch",
+      "Connect via <strong>adb connect WATCH-IP:5555</strong>",
+      "Sideload a browser APK: <code>adb install browser.apk</code>",
+      "Open the browser and navigate to your Void Room URL",
+      "The tiny screen makes full 3D interaction impractical",
+      "Better approach: build a <strong>companion Wear OS app</strong> that acts as a remote control"
+    ],
+    tip: "⚠️ Like Apple Watch — the real value of a smartwatch here is as a <strong>remote control</strong>, not a 3D viewer. A companion app sending touch/button commands to the main device would be ideal.",
+    tipType: "warn"
+  },
+  {
+    name: "Samsung Galaxy Watch",
+    icon: "⌚",
+    sub: "Samsung Internet on Tizen/Wear OS",
+    category: "wearable",
+    difficulty: "hackery",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Newer Galaxy Watches (Watch 4+) run <strong>Wear OS</strong> — follow the Wear OS instructions above",
+      "Older Galaxy Watches (Watch 3 and earlier) run <strong>Tizen</strong> — Samsung Internet can be installed from the Galaxy Store",
+      "On Tizen models: open <strong>Galaxy Store</strong> on the watch → search \"Samsung Internet\"",
+      "Navigate to your URL using the rotating bezel to scroll and tap to select",
+      "Screen is too small for meaningful 3D interaction",
+      "Best use: as a <strong>notification receiver</strong> for room events (\"someone joined your room!\")"
+    ],
+    tip: "💡 The rotating bezel on older Galaxy Watches could be mapped to object rotation in a custom companion app — a fun future project!",
+    tipType: "info"
+  },
+
+  // ╔═══════════════════════════════════════════════╗
+  // ║  🎮 SECTION 3g: GAME CONSOLES                ║
+  // ╚═══════════════════════════════════════════════╝
+
+  {
+    name: "PlayStation 4 / PS5",
+    icon: "🎮",
+    sub: "Built-in web browser",
+    category: "console",
+    difficulty: "medium",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "From the PS home screen, open the <strong>Web Browser</strong> (PS4: in Library or via a link in Messages)",
+      "PS5: Open any <strong>message with a link</strong>, or find the browser through system features",
+      "Navigate to your Void Room URL",
+      "The PS controller's <strong>touchpad</strong> acts as a mouse — swipe to move cursor, tap to click",
+      "Use the <strong>analog sticks</strong> for scrolling",
+      "For text entry, use the PS on-screen keyboard or PlayStation app on your phone"
+    ],
+    tip: "💡 PS5's browser is hidden but works — send yourself a message with the URL via the PlayStation app, then open it on the console.",
+    tipType: "info"
+  },
+  {
+    name: "Nintendo Switch",
+    icon: "🎮",
+    sub: "Hidden DNS-based browser trick",
+    category: "console",
+    difficulty: "hard",
+    method: "DNS Exploit Browser",
+    methodClass: "sideload",
+    steps: [
+      "The Switch has <strong>no official web browser</strong> — but there's a known trick using DNS",
+      "Go to <strong>System Settings → Internet → Internet Settings</strong>",
+      "Select your WiFi network → <strong>Change Settings → DNS Settings → Manual</strong>",
+      "Set Primary DNS to <strong>045.055.142.122</strong>",
+      "Go back and run <strong>Connection Test</strong> — a browser page will appear!",
+      "Navigate to your Void Room URL from there",
+      "Touch screen works in handheld mode for direct interaction"
+    ],
+    tip: "⚠️ This uses a third-party DNS redirect and may not always work. Nintendo could patch it at any time. The touch screen in handheld mode is the only real interaction option.",
+    tipType: "warn"
+  },
+
+  // ╔═══════════════════════════════════════════════╗
+  // ║  🖥️ SECTION 3h: DIY & OTHER DEVICES          ║
+  // ╚═══════════════════════════════════════════════╝
+
+  {
+    name: "Raspberry Pi",
+    icon: "🍓",
+    sub: "Chromium in kiosk mode — perfect dedicated display",
+    category: "diy",
+    difficulty: "medium",
+    method: "Kiosk Browser",
+    methodClass: "app",
+    steps: [
+      "Flash <strong>Raspberry Pi OS</strong> onto an SD card using Raspberry Pi Imager",
+      "Boot up and connect to WiFi",
+      "Open terminal and run: <code>sudo apt update && sudo apt install chromium-browser</code>",
+      "Launch in kiosk mode: <code>chromium-browser --kiosk --noerrdialogs YOUR-URL</code>",
+      "Add this to <code>~/.config/autostart/</code> to launch on boot automatically",
+      "Connect any HDMI display — from a monitor to a TV to a projector!",
+      "Plug in a mouse, keyboard, or touchscreen for interaction"
+    ],
+    tip: "💡 A Raspberry Pi + touchscreen display = the ultimate dedicated Void Room device. Mount it on a wall, desk, or build it into furniture. Total cost: ~$50-80.",
+    tipType: "success"
+  },
+  {
+    name: "Smart Fridge (Samsung Family Hub)",
+    icon: "🧊",
+    sub: "Samsung Family Hub has a built-in browser!",
+    category: "diy",
+    difficulty: "medium",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Samsung Family Hub fridges run a <strong>Tizen-based OS</strong> with a touchscreen",
+      "Swipe right on the fridge screen to find the <strong>App screen</strong>",
+      "Look for <strong>Internet</strong> or <strong>Web Browser</strong> in the app list",
+      "Navigate to your Void Room URL",
+      "Full touchscreen interaction supported — the fridge screen is quite large!",
+      "Your 3D collaborative space... on your fridge. While making a sandwich. 🥪"
+    ],
+    tip: "💡 Yes, this really works. Samsung Family Hub fridges have a 21.5\" touchscreen that supports web browsing. Your friends will not believe you're manipulating 3D objects on your fridge.",
+    tipType: "success"
+  },
+  {
+    name: "Car Display (Android Auto / CarPlay)",
+    icon: "🚗",
+    sub: "Not natively — mirror from phone",
+    category: "diy",
+    difficulty: "hard",
+    method: "Screen Mirror",
+    methodClass: "mirror",
+    steps: [
+      "Android Auto and CarPlay do <strong>NOT support web browsers</strong> for safety reasons",
+      "<strong>Method 1 — While Parked:</strong> Use your phone directly — most car mounts give a good viewing angle",
+      "<strong>Method 2 — Screen Mirror Apps:</strong> Apps like <strong>InCar</strong> (Android) can mirror your phone screen to the car display",
+      "<strong>Method 3 — Android head units:</strong> Some aftermarket head units run full Android — install Chrome directly",
+      "<strong>Method 4 — Passenger use:</strong> Open Void Room on a tablet mounted in the back seat",
+      "⛔ <strong>NEVER</strong> interact with the 3D scene while driving!"
+    ],
+    tip: "⚠️ SAFETY FIRST: Only use this while parked or as a passenger. Car displays are mentioned for completeness — this is a passenger/parked activity only.",
+    tipType: "warn"
+  },
+  {
+    name: "Projector",
+    icon: "📽️",
+    sub: "HDMI from any device — biggest canvas possible!",
+    category: "diy",
+    difficulty: "easy",
+    method: "HDMI / Wireless Cast",
+    methodClass: "hdmi",
+    steps: [
+      "<strong>Method 1 — HDMI:</strong> Connect any laptop/computer to the projector via HDMI",
+      "Open Void Room in a browser — it's now projected on your wall!",
+      "<strong>Method 2 — Smart Projector:</strong> Many modern projectors run Android TV — use the built-in browser",
+      "<strong>Method 3 — Fire Stick:</strong> Plug a Fire Stick into the projector's HDMI port",
+      "<strong>Method 4 — Wireless:</strong> Use Chromecast or AirPlay to cast from phone/laptop",
+      "Turn off the lights for a truly immersive experience 🌑"
+    ],
+    tip: "💡 A projector + a dark room + Void Room = the most immersive experience possible. Imagine a wall-sized collaborative 3D space!",
+    tipType: "success"
+  },
+  {
+    name: "Meta Quest (VR Headset)",
+    icon: "🥽",
+    sub: "Meta Quest Browser — WebXR capable!",
+    category: "diy",
+    difficulty: "easy",
+    method: "Built-in Browser",
+    methodClass: "browser",
+    steps: [
+      "Open the <strong>Meta Quest Browser</strong> from your app library",
+      "Navigate to your Void Room URL",
+      "The 3D scene renders on a virtual screen in front of you",
+      "Use <strong>hand tracking or controllers</strong> to interact with the browser window",
+      "For a future upgrade: add <strong>WebXR</strong> support to Void Room for true VR immersion!",
+      "The browser supports WebGL so the 3D scene runs inside the headset"
+    ],
+    tip: "💡 Adding WebXR to Void Room would let you step INSIDE the 3D scene and manipulate objects with your hands in VR — an amazing future upgrade.",
+    tipType: "info"
+  },
+  {
+    name: "Steam Deck",
+    icon: "🎮",
+    sub: "Full Linux desktop — Chrome/Firefox",
+    category: "diy",
+    difficulty: "easy",
+    method: "Desktop Browser",
+    methodClass: "browser",
+    steps: [
+      "Switch to <strong>Desktop Mode</strong>: hold the Power button → Switch to Desktop",
+      "Open <strong>Firefox</strong> (pre-installed) or install Chrome from the Discover store",
+      "Navigate to your Void Room URL",
+      "The <strong>touchscreen</strong> and <strong>trackpads</strong> both work as input",
+      "Use the <strong>analog sticks</strong> — Void Room has built-in gamepad support!",
+      "Switch back to Game Mode when done: double-tap the Steam icon"
+    ],
+    tip: "💡 The Steam Deck is essentially a portable Linux PC — it runs everything a desktop does. Its gamepad controls map perfectly to Void Room's built-in gamepad support.",
+    tipType: "success"
+  }
+];
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════════════════════╗
+   ║  ✨ SECTION 5: INTERACTIVE FEATURES                      ║
+   ║  Search, filter, expand/collapse, animations             ║
+   ╚═══════════════════════════════════════════════════════════╝
+   ============================================================ */
+
+// 🏷️ Map category IDs to their display names and icons
+const CATEGORY_INFO = {
+  apple:    { name: "Apple Devices",       icon: "🍎" },
+  windows:  { name: "Windows Devices",     icon: "🪟" },
+  android:  { name: "Android & Chrome OS", icon: "🤖" },
+  tv:       { name: "Smart TVs",           icon: "📺" },
+  amazon:   { name: "Amazon / Fire",       icon: "🔥" },
+  wearable: { name: "Wearables",           icon: "⌚" },
+  console:  { name: "Game Consoles",       icon: "🎮" },
+  diy:      { name: "DIY & Other",         icon: "🖥️" },
+};
+
+// 🏗️ Build all the HTML for the device cards!
+// This function turns our big data array into visible cards
+function renderAllDevices() {
+  const container = document.getElementById('device-sections');
+  container.innerHTML = ''; // 🧹 Clear everything first
+
+  // 📊 Group devices by category
+  const grouped = {};
+  ALL_DEVICES.forEach(device => {
+    if (!grouped[device.category]) grouped[device.category] = [];
+    grouped[device.category].push(device);
+  });
+
+  // 🏗️ Build each category section
+  const catOrder = ['apple', 'windows', 'android', 'tv', 'amazon', 'wearable', 'console', 'diy'];
+
+  catOrder.forEach(catKey => {
+    const devices = grouped[catKey];
+    if (!devices) return; // 🚫 Skip empty categories
+
+    const info = CATEGORY_INFO[catKey];
+
+    // 📦 Create the section element
+    const section = document.createElement('div');
+    section.className = 'category-section';
+    section.dataset.category = catKey;
+
+    // 📊 Header
+    section.innerHTML = `
+      <div class="category-header">
+        <div class="cat-icon">${info.icon}</div>
+        <h2>${info.name}</h2>
+        <span class="cat-count">${devices.length} device${devices.length > 1 ? 's' : ''}</span>
+      </div>
+      <div class="cards-grid"></div>
+    `;
+
+    const grid = section.querySelector('.cards-grid');
+
+    // 🃏 Build each device card
+    devices.forEach((device, i) => {
+      const card = document.createElement('div');
+      card.className = 'device-card';
+      card.style.animationDelay = `${i * 0.06}s`;
+      card.dataset.searchText = `${device.name} ${device.sub} ${device.category} ${device.method}`.toLowerCase();
+
+      // 📝 Steps HTML
+      const stepsHtml = device.steps.map(s => `<li>${s}</li>`).join('');
+
+      // 💡 Tip HTML (if any)
+      const tipHtml = device.tip
+        ? `<div class="tip-box ${device.tipType}">${device.tip}</div>`
+        : '';
+
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="device-icon">${device.icon}</div>
+          <div>
+            <div class="device-name">${device.name}</div>
+            <div class="device-sub">${device.sub}</div>
+          </div>
+          <span class="difficulty-badge ${device.difficulty}">${device.difficulty}</span>
+          <span class="expand-arrow">▼</span>
+        </div>
+        <div class="card-body">
+          <span class="method-tag ${device.methodClass}">${device.method}</span>
+          <ol class="steps">${stepsHtml}</ol>
+          ${tipHtml}
+        </div>
+      `;
+
+      // 👆 Click to expand/collapse
+      card.addEventListener('click', () => {
+        card.classList.toggle('expanded');
+      });
+
+      grid.appendChild(card);
+    });
+
+    container.appendChild(section);
+  });
+}
+
+// 🔎 SEARCH — filter cards as you type
+document.getElementById('search').addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase().trim();
+  let anyVisible = false;
+
+  document.querySelectorAll('.device-card').forEach(card => {
+    const match = !query || card.dataset.searchText.includes(query);
+    card.classList.toggle('hidden', !match);
+    if (match) anyVisible = true;
+  });
+
+  // 🙈 Hide empty category sections
+  document.querySelectorAll('.category-section').forEach(section => {
+    const hasVisible = section.querySelector('.device-card:not(.hidden)');
+    section.classList.toggle('hidden', !hasVisible);
+  });
+
+  // 😢 Show "no results" if nothing matches
+  document.getElementById('no-results').classList.toggle('visible', !anyVisible);
+
+  // 🏷️ Reset chips when searching
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('.chip[data-filter="all"]').classList.add('active');
+});
+
+// 🏷️ FILTER CHIPS — filter by category
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    // 🎨 Update active chip
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+
+    const filter = chip.dataset.filter;
+
+    // 🧹 Clear search
+    document.getElementById('search').value = '';
+    document.getElementById('no-results').classList.remove('visible');
+
+    // 🙈 Show/hide sections
+    document.querySelectorAll('.category-section').forEach(section => {
+      if (filter === 'all') {
+        section.classList.remove('hidden');
+      } else {
+        section.classList.toggle('hidden', section.dataset.category !== filter);
+      }
+    });
+
+    // 👀 Show all cards within visible sections
+    document.querySelectorAll('.device-card').forEach(card => {
+      card.classList.remove('hidden');
+    });
+  });
+});
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════════════════════╗
+   ║  🚀 SECTION 6: INITIALIZATION                            ║
+   ║  Start everything up!                                     ║
+   ╚═══════════════════════════════════════════════════════════╝
+   ============================================================ */
+
+// 🎬 Build all the device cards when the page loads!
+renderAllDevices();
+
+console.log(`
+╔══════════════════════════════════════════════════╗
+║  🌌 VOID ROOM — Device Dashboard Loaded!        ║
+║  ${ALL_DEVICES.length} devices documented                       ║
+║  ${Object.keys(CATEGORY_INFO).length} categories                              ║
+╚══════════════════════════════════════════════════╝
+`);
+
+</script>
+
+<!--
+┌─────────────────────────────────────────────────────────────┐
+│  📖 TABLE OF CONTENTS (BOTTOM)                              │
+│                                                             │
+│  1. 🎨 STYLES, FONTS & THEME VARIABLES                    │
+│  2. 🏗️ HTML STRUCTURE & LAYOUT                            │
+│  3. 📱 DEVICE CARDS DATA                                   │
+│     3a. 🍎 Apple (iPhone, iPad, Mac, Apple TV,             │
+│          Apple Watch, Vision Pro)                           │
+│     3b. 🪟 Windows (PC, Surface, Xbox)                     │
+│     3c. 🤖 Android (Phone, Tablet, Chromebook)             │
+│     3d. 📺 Smart TVs (Samsung, LG, Android TV, Roku)      │
+│     3e. 🔥 Amazon (Fire Stick, Fire Tablet,                │
+│          Echo Show, Echo Speaker)                           │
+│     3f. ⌚ Wearables (Apple Watch, Wear OS, Galaxy Watch)  │
+│     3g. 🎮 Consoles (PlayStation, Xbox, Switch)            │
+│     3h. 🖥️ DIY (Raspberry Pi, Smart Fridge, Car, VR,     │
+│          Projector, Steam Deck)                            │
+│  4. 🔧 HOSTING SECTION                                     │
+│  5. ✨ INTERACTIVE FEATURES                                 │
+│  6. 🚀 INITIALIZATION                                      │
+│                                                             │
+│  Total: 26 devices across 8 categories! 📊                 │
+└─────────────────────────────────────────────────────────────┘
+-->
+</body>
+</html>

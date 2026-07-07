@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Autopilot — The Ultimate Input Device Intelligence Platform</title>
+    <meta name="description"
+        content="AI-powered context-aware automation for Stream Deck, voice, trackpad, and more. Dynamic buttons, AI-generated art, training games, and the best Wispr Flow alternative.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- ═══════ Navigation ═══════ -->
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">AI Autopilot</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#style-lab">Style Lab</a>
+                <a href="#shop">Shop</a>
+                <a href="#pricing">Pricing</a>
+                <a href="wispr-alternative.html">Voice AI</a>
+            </div>
+            <a href="#pricing" class="nav-cta">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- ═══════ Hero ═══════ -->
+    <section class="hero" id="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                Now in Beta — Stream Deck + Voice + Trackpad
+            </div>
+            <h1 class="hero-title">
+                Every Input Device,<br>
+                <span class="gradient-text">Powered by AI</span>
+            </h1>
+            <p class="hero-subtitle">
+                Context-aware shortcuts that adapt to your workflow. AI-generated button art.
+                Training games. Voice transcription. The ultimate input device intelligence platform.
+            </p>
+            <div class="hero-actions">
+                <a href="#pricing" class="btn btn-primary">
+                    <span>Start Free Trial</span>
+                    <span class="btn-arrow">→</span>
+                </a>
+                <a href="#style-lab" class="btn btn-secondary">Try the Style Lab</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">32</span>
+                    <span class="stat-label">Dynamic Buttons</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Pre-loaded Shortcuts</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">∞</span>
+                    <span class="stat-label">AI Styles</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Animated Stream Deck Grid -->
+        <div class="hero-deck">
+            <div class="deck-frame">
+                <div class="deck-grid" id="deckGrid"></div>
+                <div class="deck-label">Stream Deck XL — <span id="deckContextLabel">VS Code Active</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ Style Lab ═══════ -->
+    <section class="style-lab" id="style-lab">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-tag">Style Lab</span>
+                <h2>Design Your <span class="gradient-text">Dream Deck</span></h2>
+                <p>Type a prompt or upload a reference image — watch every button transform in real time.</p>
+            </div>
+
+            <!-- Prompt Box -->
+            <div class="prompt-box">
+                <div class="prompt-input-wrap">
+                    <input type="text" id="stylePrompt" class="prompt-input"
+                        placeholder='Try "cyberpunk neon", "watercolor pastel", "retro terminal"...' />
+                    <button class="prompt-btn" id="promptBtn">
+                        <span>✨ Generate</span>
+                    </button>
+                </div>
+                <div class="prompt-actions">
+                    <label class="upload-btn" id="uploadBtn">
+                        <span>📎 Upload Reference</span>
+                        <input type="file" accept="image/*" style="display:none" />
+                    </label>
+                    <span class="prompt-hint">Powered by AI image generation • Uses 1 credit</span>
+                </div>
+            </div>
+
+            <!-- Theme Gallery -->
+            <div class="theme-gallery">
+                <h3 class="gallery-title">Popular Themes</h3>
+                <div class="theme-grid">
+                    <button class="theme-card active" data-theme="default">
+                        <div class="theme-preview theme-default"></div>
+                        <span>Dark Pro</span>
+                    </button>
+                    <button class="theme-card" data-theme="neon">
+                        <div class="theme-preview theme-neon"></div>
+                        <span>Neon Glow</span>
+                    </button>
+                    <button class="theme-card" data-theme="glass">
+                        <div class="theme-preview theme-glass"></div>
+                        <span>Glassmorphism</span>
+                    </button>
+                    <button class="theme-card" data-theme="pixel">
+                        <div class="theme-preview theme-pixel"></div>
+                        <span>Pixel Art</span>
+                    </button>
+                    <button class="theme-card" data-theme="contrast">
+                        <div class="theme-preview theme-contrast"></div>
+                        <span>High Contrast</span>
+                    </button>
+                    <button class="theme-card" data-theme="minimal">
+                        <div class="theme-preview theme-minimal"></div>
+                        <span>Minimal</span>
+                    </button>
+                    <button class="theme-card" data-theme="retro">
+                        <div class="theme-preview theme-retro"></div>
+                        <span>Retro Terminal</span>
+                    </button>
+                    <button class="theme-card" data-theme="mosaic">
+                        <div class="theme-preview theme-mosaic"></div>
+                        <span>🖼 Mosaic</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Preview Deck -->
+            <div class="style-deck">
+                <div class="deck-frame">
+                    <div class="deck-grid" id="styleDeckGrid"></div>
+                    <div class="deck-label">Live Preview — <span id="styleLabel">Dark Pro</span></div>
+                </div>
+            </div>
+
+            <!-- Accessibility Callout -->
+            <div class="accessibility-bar">
+                <span>♿ Accessibility:</span>
+                <span class="a11y-tag">High Contrast Mode</span>
+                <span class="a11y-tag">Large Text Labels</span>
+                <span class="a11y-tag">Color-Blind Safe</span>
+                <span class="a11y-tag">Haptic Feedback Ready</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ Icon Packs Gallery ═══════ -->
+    <section class="icon-packs" id="icon-packs">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-tag">Icon Packs</span>
+                <h2>AI-Generated <span class="gradient-text">Button Art</span></h2>
+                <p>Choose from stunning pre-made icon packs, or generate your own with a text prompt. Individual tiles
+                    for clear separation, or panoramic mosaics that turn your entire deck into one beautiful image.</p>
+            </div>
+
+            <!-- Individual Tile Packs -->
+            <h3 class="pack-section-title">🎯 Individual Tile Packs</h3>
+            <p class="pack-section-desc">Each button gets its own distinct, clean icon — perfect for fast recognition
+                and touch-typing.</p>
+
+            <div class="pack-gallery">
+                <div class="pack-card" id="pack-clean-pro">
+                    <div class="pack-image-wrap">
+                        <img src="images/packs/clean-pro.png"
+                            alt="Clean Pro icon pack — flat minimalist icons with color-coded zones" class="pack-image"
+                            loading="lazy" />
+                    </div>
+                    <div class="pack-info">
+                        <h4>Clean Pro</h4>
+                        <p>Flat minimalist glyphs with color-coded finger zones. Soft blue, green, amber, coral.</p>
+                        <div class="pack-tags">
+                            <span class="pack-tag">Flat</span>
+                            <span class="pack-tag">Zone Colors</span>
+                            <span class="pack-tag">Premium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pack-card" id="pack-neon-glow">
+                    <div class="pack-image-wrap">
+                        <img src="images/packs/neon-glow.png"
+                            alt="Neon Glow icon pack — cyberpunk style with bloom effects" class="pack-image"
+                            loading="lazy" />
+                    </div>
+                    <div class="pack-info">
+                        <h4>Neon Glow</h4>
+                        <p>Cyberpunk glowing icons on pure black. Hot pink, electric blue, neon green with bloom.</p>
+                        <div class="pack-tags">
+                            <span class="pack-tag">Cyberpunk</span>
+                            <span class="pack-tag">Glow</span>
+                            <span class="pack-tag">Dark</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pack-card" id="pack-glass-frost">
+                    <div class="pack-image-wrap">
+                        <img src="images/packs/glass-frost.png"
+                            alt="Glass Frost icon pack — frosted glass Apple-inspired" class="pack-image"
+                            loading="lazy" />
+                    </div>
+                    <div class="pack-info">
+                        <h4>Glass Frost</h4>
+                        <p>Translucent frosted glass on deep blue-purple gradient. White line-art glyphs.
+                            Apple-inspired.</p>
+                        <div class="pack-tags">
+                            <span class="pack-tag">Glass</span>
+                            <span class="pack-tag">Frosted</span>
+                            <span class="pack-tag">Elegant</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pack-card" id="pack-minimal-light">
+                    <div class="pack-image-wrap">
+                        <img src="images/packs/minimal-light.png"
+                            alt="Minimal Light icon pack — clean white monoline icons" class="pack-image"
+                            loading="lazy" />
+                    </div>
+                    <div class="pack-info">
+                        <h4>Minimal Light</h4>
+                        <p>Ultra-clean monoline icons on white. Japanese minimalism. Muji-style zen simplicity.</p>
+                        <div class="pack-tags">
+                            <span class="pack-tag">Minimal</span>
+                            <span class="pack-tag">Light</span>
+                            <span class="pack-tag">Zen</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pack-card" id="pack-gradient-pastel">
+                    <div class="pack-image-wrap">
+                        <img src="images/packs/gradient-pastel.png"
+                            alt="Gradient Pastel icon pack — soft colorful iOS-style" class="pack-image"
+                            loading="lazy" />
+                    </div>
+                    <div class="pack-info">
+                        <h4>Gradient Pastel</h4>
+                        <p>Soft pastel gradients with white icon glyphs. Pink, lavender, mint, coral. iOS-inspired joy.
+                        </p>
+                        <div class="pack-tags">
+                            <span class="pack-tag">Pastel</span>
+                            <span class="pack-tag">Colorful</span>
+                            <span class="pack-tag">Friendly</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panoramic Mosaics -->
+            <h3 class="pack-section-title">🖼 Panoramic Mosaics</h3>
+            <p class="pack-section-desc">One stunning image spans your entire deck. Shortcut labels float over the art.
+                Your Stream Deck becomes a piece of art.</p>
+
+            <div class="mosaic-gallery">
+                <div class="mosaic-card" id="mosaic-cosmic">
+                    <div class="mosaic-image-wrap">
+                        <img src="images/packs/mosaic-cosmic.png"
+                            alt="Cosmic Nebula — panoramic mosaic spanning all 32 buttons" class="mosaic-image"
+                            loading="lazy" />
+                        <div class="mosaic-grid-overlay">
+                            <div class="mosaic-label">⌘S</div>
+                            <div class="mosaic-label">⌘C</div>
+                            <div class="mosaic-label">⌘V</div>
+                            <div class="mosaic-label">⌘Z</div>
+                            <div class="mosaic-label">⌘P</div>
+                            <div class="mosaic-label">⌘F</div>
+                            <div class="mosaic-label">⌘⇧P</div>
+                            <div class="mosaic-label">F5</div>
+                        </div>
+                    </div>
+                    <div class="mosaic-info">
+                        <h4>🌌 Cosmic Nebula</h4>
+                        <p>Deep space nebula with swirling purple and blue clouds. Shortcut labels float over the stars.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mosaic-card" id="mosaic-forest">
+                    <div class="mosaic-image-wrap">
+                        <img src="images/packs/mosaic-forest.png"
+                            alt="Enchanted Forest — panoramic mosaic spanning all 32 buttons" class="mosaic-image"
+                            loading="lazy" />
+                        <div class="mosaic-grid-overlay">
+                            <div class="mosaic-label">⌘S</div>
+                            <div class="mosaic-label">⌘C</div>
+                            <div class="mosaic-label">⌘V</div>
+                            <div class="mosaic-label">⌘Z</div>
+                            <div class="mosaic-label">⌘P</div>
+                            <div class="mosaic-label">⌘F</div>
+                            <div class="mosaic-label">⌘⇧P</div>
+                            <div class="mosaic-label">F5</div>
+                        </div>
+                    </div>
+                    <div class="mosaic-info">
+                        <h4>🌲 Enchanted Forest</h4>
+                        <p>Misty forest with golden hour light streaming through ancient trees. Organic and calming.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tool-Specific Icon Packs -->
+            <h3 class="pack-section-title">🛠 Designed for Your Tools</h3>
+            <p class="pack-section-desc">AI generates icon packs custom-tailored to each application — branded colors,
+                relevant shortcuts, and creative styles that match each tool's personality.</p>
+
+            <div class="tool-pack-gallery">
+                <div class="tool-pack-card" style="--app-color: #31A8FF" id="tool-pack-photoshop">
+                    <div class="tool-pack-badge" style="background: #31A8FF">
+                        <span>🎨</span> Photoshop
+                    </div>
+                    <div class="pack-image-wrap">
+                        <img src="images/packs/tool-photoshop.png"
+                            alt="Photoshop icon pack — wallpaper-integrated with canvas textures" class="pack-image"
+                            loading="lazy" />
+                    </div>
+                    <div class="pack-info">
+                        <h4>Photoshop Canvas</h4>
+                        <p>Tools float over a painted digital canvas wallpaper. Deep blue accents with brush stroke
+                            textures.</p>
+                        <div class="pack-tags">
+                            <span class="pack-tag"
+                                style="color: #31A8FF; border-color: rgba(49,168,255,.3); background: rgba(49,168,255,.08)">Wallpaper</span>
+                            <span class="pack-tag"
+                                style="color: #31A8FF; border-color: rgba(49,168,255,.3); background: rgba(49,168,255,.08)">Photoshop</span>
+                            <span class="pack-tag">App-Specific</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-pack-card" style="--app-color: #4285F4" id="tool-pack-chrome">
+                    <div class="tool-pack-badge"
+                        style="background: linear-gradient(135deg, #4285F4, #34A853, #FBBC05, #EA4335)">
+                        <span>🌐</span> Chrome
+                    </div>
+                    <div class="pack-image-wrap">
+                        <img src="images/packs/tool-chrome.png"
+                            alt="Chrome icon pack — playful character mascots performing actions" class="pack-image"
+                            loading="lazy" />
+                    </div>
+                    <div class="pack-info">
+                        <h4>Chrome Characters</h4>
+                        <p>Playful mascots perform each action — bookmarking, refreshing, incognito. Google colors
+                            throughout.</p>
+                        <div class="pack-tags">
+                            <span class="pack-tag"
+                                style="color: #4285F4; border-color: rgba(66,133,244,.3); background: rgba(66,133,244,.08)">Mascots</span>
+                            <span class="pack-tag"
+                                style="color: #34A853; border-color: rgba(52,168,83,.3); background: rgba(52,168,83,.08)">Chrome</span>
+                            <span class="pack-tag">App-Specific</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-pack-card" style="--app-color: #FFD02F" id="tool-pack-miro">
+                    <div class="tool-pack-badge" style="background: #FFD02F; color: #1a1a1a">
+                        <span>📋</span> Miro
+                    </div>
+                    <div class="pack-image-wrap">
+                        <img src="images/packs/tool-miro.png"
+                            alt="Miro icon pack — whiteboard sticky notes with hand-drawn icons" class="pack-image"
+                            loading="lazy" />
+                    </div>
+                    <div class="pack-info">
+                        <h4>Miro Whiteboard</h4>
+                        <p>Hand-drawn icons on color-coded sticky notes. Warm yellows, oranges, teal accents. Marker
+                            aesthetic.</p>
+                        <div class="pack-tags">
+                            <span class="pack-tag"
+                                style="color: #D4A017; border-color: rgba(255,208,47,.3); background: rgba(255,208,47,.08)">Sticky
+                                Notes</span>
+                            <span class="pack-tag"
+                                style="color: #D4A017; border-color: rgba(255,208,47,.3); background: rgba(255,208,47,.08)">Miro</span>
+                            <span class="pack-tag">App-Specific</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-pack-card" style="--app-color: #10A37F" id="tool-pack-openai">
+                    <div class="tool-pack-badge" style="background: #10A37F">
+                        <span>🤖</span> ChatGPT
+                    </div>
+                    <div class="pack-image-wrap">
+                        <img src="images/packs/tool-openai.png"
+                            alt="OpenAI icon pack — holographic futuristic minimal style" class="pack-image"
+                            loading="lazy" />
+                    </div>
+                    <div class="pack-info">
+                        <h4>ChatGPT Hologram</h4>
+                        <p>Futuristic holographic UI elements with circuit patterns. Green glow on deep dark. Sci-fi
+                            aesthetic.</p>
+                        <div class="pack-tags">
+                            <span class="pack-tag"
+                                style="color: #10A37F; border-color: rgba(16,163,127,.3); background: rgba(16,163,127,.08)">Holographic</span>
+                            <span class="pack-tag"
+                                style="color: #10A37F; border-color: rgba(16,163,127,.3); background: rgba(16,163,127,.08)">OpenAI</span>
+                            <span class="pack-tag">App-Specific</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-pack-card" style="--app-color: #A259FF" id="tool-pack-figma">
+                    <div class="tool-pack-badge" style="background: linear-gradient(135deg, #A259FF, #FF7262, #F24E1E)">
+                        <span>✏️</span> Figma
+                    </div>
+                    <div class="pack-image-wrap">
+                        <img src="images/packs/tool-figma.png" alt="Figma icon pack — gradient design components"
+                            class="pack-image" loading="lazy" />
+                    </div>
+                    <div class="pack-info">
+                        <h4>Figma Components</h4>
+                        <p>Design tokens as vibrant gradient buttons. Purple, pink, orange, green. Every tool is a
+                            component.</p>
+                        <div class="pack-tags">
+                            <span class="pack-tag"
+                                style="color: #A259FF; border-color: rgba(162,89,255,.3); background: rgba(162,89,255,.08)">Gradient</span>
+                            <span class="pack-tag"
+                                style="color: #A259FF; border-color: rgba(162,89,255,.3); background: rgba(162,89,255,.08)">Figma</span>
+                            <span class="pack-tag">App-Specific</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-pack-card" style="--app-color: #6366F1" id="tool-pack-antigravity">
+                    <div class="tool-pack-badge" style="background: linear-gradient(135deg, #6366F1, #F59E0B)">
+                        <span>⚡</span> AntiGravity
+                    </div>
+                    <div class="pack-image-wrap">
+                        <img src="images/packs/tool-antigravity.png"
+                            alt="AntiGravity icon pack — premium metallic with lightning bolt motifs" class="pack-image"
+                            loading="lazy" />
+                    </div>
+                    <div class="pack-info">
+                        <h4>AntiGravity Premium</h4>
+                        <p>Metallic glass finish with gold & indigo accents. Lightning bolt energy motifs. Ultra-premium
+                            branded.</p>
+                        <div class="pack-tags">
+                            <span class="pack-tag"
+                                style="color: #6366F1; border-color: rgba(99,102,241,.3); background: rgba(99,102,241,.08)">Premium</span>
+                            <span class="pack-tag"
+                                style="color: #F59E0B; border-color: rgba(245,158,11,.3); background: rgba(245,158,11,.08)">AntiGravity</span>
+                            <span class="pack-tag">App-Specific</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pack-cta">
+                <p>These are just the beginning — <strong>name any app or describe any style</strong> and AI generates a
+                    custom icon pack tailored to your workflow.</p>
+                <a href="#style-lab" class="btn btn-primary">
+                    <span>✨ Try the Style Lab</span>
+                    <span class="btn-arrow">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ Features ═══════ -->
+    <section class="features" id="features">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-tag">Features</span>
+                <h2>Everything Adapts to <span class="gradient-text">You</span></h2>
+                <p>No more static buttons. AI Autopilot transforms your Stream Deck into an intelligent, context-aware
+                    command center.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card feature-highlight">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Context-Aware</h3>
+                    <p>Buttons automatically change when you switch between VS Code, Chrome, Figma, Slack, or any other
+                        app. The right shortcuts are always at your fingertips.</p>
+                    <div class="feature-apps">
+                        <span class="app-badge" style="--app-color: #007ACC">VS Code</span>
+                        <span class="app-badge" style="--app-color: #4285F4">Chrome</span>
+                        <span class="app-badge" style="--app-color: #A259FF">Figma</span>
+                        <span class="app-badge" style="--app-color: #4A154B">Slack</span>
+                        <span class="app-badge" style="--app-color: #FF7139">Firefox</span>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">✋</div>
+                    <h3>Ergonomic Layout</h3>
+                    <p>Shortcuts are placed based on finger zones — your most-used commands land where your fingers
+                        naturally rest.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>AI-Generated Art</h3>
+                    <p>Beautiful button icons generated by AI, color-matched to each app. Flat, glass, neon, pixel, or
+                        your own custom style.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Usage Learning</h3>
+                    <p>Tracks which shortcuts you use most and bubbles them to better positions. Your layout gets
+                        smarter over time.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Training Games</h3>
+                    <p>Interactive exercises teach you to touch-type your Stream Deck. Speed drills, button locator
+                        challenges, and daily streaks.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Community Knowledge</h3>
+                    <p>Thousands of shortcuts crowdsourced and verified by the community. Privacy-first — we never share
+                        your data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ Beyond Stream Deck ═══════ -->
+    <section class="platform" id="platform">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-tag">Platform</span>
+                <h2>Beyond <span class="gradient-text">Stream Deck</span></h2>
+                <p>AI Autopilot is growing into the universal input device intelligence platform.</p>
+            </div>
+
+            <div class="platform-grid">
+                <div class="platform-card platform-active">
+                    <div class="platform-status">Live Now</div>
+                    <div class="platform-icon">🎛</div>
+                    <h3>Stream Deck Autopilot</h3>
+                    <p>Dynamic shortcuts, AI art, finger-zone layouts, training games. Works on all Stream Deck models.
+                    </p>
+                </div>
+
+                <a href="wispr-alternative.html" class="platform-card platform-voice">
+                    <div class="platform-status coming-soon">Coming Soon</div>
+                    <div class="platform-icon">🎤</div>
+                    <h3>Voice Autopilot</h3>
+                    <p>The best Wispr Flow alternative. Live text overlay, real-time image gen from speech,
+                        multi-speaker ID.</p>
+                    <span class="platform-link">Learn more →</span>
+                </a>
+
+                <div class="platform-card">
+                    <div class="platform-status coming-soon">Coming Soon</div>
+                    <div class="platform-icon">🖐</div>
+                    <h3>Trackpad Autopilot</h3>
+                    <p>Program custom multi-finger gestures that adapt to your active app. Context-aware swipes and
+                        taps.</p>
+                </div>
+
+                <div class="platform-card">
+                    <div class="platform-status coming-soon">Coming Soon</div>
+                    <div class="platform-icon">🖱</div>
+                    <h3>Mouse Autopilot</h3>
+                    <p>Multi-button mouse programming with AI-suggested bindings. Logitech, Razer, and more.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ How It Works ═══════ -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-tag">How It Works</span>
+                <h2>Setup in <span class="gradient-text">60 Seconds</span></h2>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3>Install the Plugin</h3>
+                        <p>Download from the Stream Deck Marketplace and install. Works on XL, Standard, Mini, Plus, and
+                            Mobile.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-icon">📦</div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3>Choose Your Hand & Style</h3>
+                        <p>Left or right handed? Neon or minimal? The ergonomic engine + AI art system configures
+                            everything.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-icon">✋</div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3>Start Working</h3>
+                        <p>Open any app — your Stream Deck instantly populates with the most useful shortcuts. It just
+                            works.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-icon">🚀</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ Finger Zones ═══════ -->
+    <section class="zones" id="zones">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-tag">Ergonomics</span>
+                <h2>Designed for Your <span class="gradient-text">Fingers</span></h2>
+                <p>Each column is mapped to a specific finger based on natural hand position.</p>
+            </div>
+            <div class="zones-demo">
+                <div class="zone-grid">
+                    <div class="zone-row">
+                        <div class="zone-cell zone-pinky">Esc</div>
+                        <div class="zone-cell zone-ring">View</div>
+                        <div class="zone-cell zone-middle">Undo</div>
+                        <div class="zone-cell zone-middle">Save</div>
+                        <div class="zone-cell zone-index">Rename</div>
+                        <div class="zone-cell zone-index">Debug</div>
+                        <div class="zone-cell zone-index">Split</div>
+                        <div class="zone-cell zone-index">Term</div>
+                    </div>
+                    <div class="zone-row">
+                        <div class="zone-cell zone-pinky">Back</div>
+                        <div class="zone-cell zone-ring">Sidebar</div>
+                        <div class="zone-cell zone-middle">Cut</div>
+                        <div class="zone-cell zone-middle">Copy</div>
+                        <div class="zone-cell zone-index">⌘P</div>
+                        <div class="zone-cell zone-index">⌘⇧P</div>
+                        <div class="zone-cell zone-index">Find</div>
+                        <div class="zone-cell zone-index">Comment</div>
+                    </div>
+                </div>
+                <div class="zone-legend">
+                    <div class="legend-item"><span class="legend-dot" style="background:#EF4444"></span> Pinky —
+                        Navigation</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#F59E0B"></span> Ring — Mode
+                        Switch</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#10B981"></span> Middle —
+                        General</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#3B82F6"></span> Index — Context
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ Training ═══════ -->
+    <section class="training" id="training">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-tag">Training</span>
+                <h2>Learn to <span class="gradient-text">Touch Type</span> Your Deck</h2>
+                <p>Interactive games that build muscle memory so you never need to look down.</p>
+            </div>
+            <div class="training-modes">
+                <div class="training-card">
+                    <div class="training-icon">🎯</div>
+                    <h3>Button Locator</h3>
+                    <p>"Press the button for Copy (⌘C)"</p>
+                    <div class="training-difficulty">Beginner</div>
+                </div>
+                <div class="training-card">
+                    <div class="training-icon">⚡</div>
+                    <h3>Speed Drill</h3>
+                    <p>Execute 10 shortcuts as fast as possible</p>
+                    <div class="training-difficulty">Intermediate</div>
+                </div>
+                <div class="training-card">
+                    <div class="training-icon">🔄</div>
+                    <h3>Context Switch</h3>
+                    <p>Navigate between apps without looking</p>
+                    <div class="training-difficulty">Advanced</div>
+                </div>
+                <div class="training-card">
+                    <div class="training-icon">📅</div>
+                    <h3>Daily Challenge</h3>
+                    <p>5-minute practice with streaks & scores</p>
+                    <div class="training-difficulty">All Levels</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ Pricing ═══════ -->
+    <section class="pricing" id="pricing">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-tag">Pricing</span>
+                <h2>Credits That <span class="gradient-text">Work for You</span></h2>
+                <p>AI features use credits. Every plan includes them — and you'll never be charged for overages.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Starter -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Starter</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">$0</span>
+                            <span class="price-period">forever</span>
+                        </div>
+                    </div>
+                    <div class="credit-display">
+                        <span class="credit-number">50</span>
+                        <span class="credit-label">credits/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ Context-aware shortcuts</li>
+                        <li>✅ 15 buttons active</li>
+                        <li>✅ Basic training games</li>
+                        <li>✅ Right or left hand layout</li>
+                        <li>❌ AI-generated button art</li>
+                        <li>❌ Custom macros & URLs</li>
+                        <li>❌ Bring Your Own API Key</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline" id="btn-starter">Download Free</a>
+                </div>
+
+                <!-- Pro -->
+                <div class="pricing-card pricing-featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3>Pro</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">$9</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                    </div>
+                    <div class="credit-display credit-pro">
+                        <span class="credit-number">500</span>
+                        <span class="credit-label">credits/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ Everything in Starter</li>
+                        <li>✅ <strong>All 32 buttons</strong></li>
+                        <li>✅ <strong>AI-generated icons</strong></li>
+                        <li>✅ Community knowledge base</li>
+                        <li>✅ Custom macros & URL triggers</li>
+                        <li>✅ All training modes + analytics</li>
+                        <li>❌ Bring Your Own API Key</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary btn-full" id="btn-pro">Start 14-Day Trial</a>
+                    <div class="topup-hint">Need more? $5 for 100 credits • $20 for 500</div>
+                </div>
+
+                <!-- Lifetime -->
+                <div class="pricing-card">
+                    <div class="pricing-badge pricing-badge-gold">Best Value</div>
+                    <div class="pricing-header">
+                        <h3>Lifetime</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">$149</span>
+                            <span class="price-period">one-time</span>
+                        </div>
+                    </div>
+                    <div class="credit-display credit-lifetime">
+                        <span class="credit-number">200</span>
+                        <span class="credit-label">credits/month included</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ Everything in Pro</li>
+                        <li>✅ <strong>Pay once, own forever</strong></li>
+                        <li>✅ All future updates</li>
+                        <li>✅ <strong>🔑 Bring Your Own API Key</strong></li>
+                        <li>✅ OpenRouter / OpenAI / Replicate</li>
+                        <li>✅ Choose your own model</li>
+                        <li>✅ Unlimited with your own key</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline" id="btn-lifetime">Get Lifetime Access</a>
+                    <div class="topup-hint">Top-up: $5/100 credits (super discount)</div>
+                </div>
+            </div>
+
+            <div class="credits-explainer">
+                <h4>How Credits Work</h4>
+                <div class="credits-grid">
+                    <div class="credit-item"><span>🎨</span> 1 credit = 1 AI image generation</div>
+                    <div class="credit-item"><span>🔍</span> 1 credit = 1 shortcut discovery</div>
+                    <div class="credit-item"><span>🎮</span> 1 credit = 1 training game session</div>
+                    <div class="credit-item"><span>🛡</span> Hard cap = no surprise charges</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ Shop ═══════ -->
+    <section class="shop" id="shop">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-tag">Shop</span>
+                <h2>Get Your <span class="gradient-text">Device</span></h2>
+                <p>Purchase compatible devices directly. We'll pre-configure AI Autopilot for you.</p>
+            </div>
+
+            <div class="shop-grid">
+                <a href="https://www.elgato.com/us/en/p/stream-deck-xl" target="_blank" rel="noopener"
+                    class="shop-card">
+                    <div class="shop-badge">Recommended</div>
+                    <div class="shop-icon">🖥</div>
+                    <h3>Stream Deck XL</h3>
+                    <p>8 × 4 grid • 32 LCD keys</p>
+                    <div class="shop-price">$249</div>
+                    <span class="shop-cta">Buy at Elgato →</span>
+                </a>
+                <a href="https://www.elgato.com/us/en/p/stream-deck-mk2-black" target="_blank" rel="noopener"
+                    class="shop-card">
+                    <div class="shop-icon">⌨️</div>
+                    <h3>Stream Deck MK.2</h3>
+                    <p>5 × 3 grid • 15 LCD keys</p>
+                    <div class="shop-price">$149</div>
+                    <span class="shop-cta">Buy at Elgato →</span>
+                </a>
+                <a href="https://www.elgato.com/us/en/p/stream-deck-mini" target="_blank" rel="noopener"
+                    class="shop-card">
+                    <div class="shop-icon">📱</div>
+                    <h3>Stream Deck Mini</h3>
+                    <p>3 × 2 grid • 6 LCD keys</p>
+                    <div class="shop-price">$79</div>
+                    <span class="shop-cta">Buy at Elgato →</span>
+                </a>
+                <a href="https://www.elgato.com/us/en/p/stream-deck-plus-black" target="_blank" rel="noopener"
+                    class="shop-card">
+                    <div class="shop-icon">🎛</div>
+                    <h3>Stream Deck +</h3>
+                    <p>4 × 2 + touch strip + dials</p>
+                    <div class="shop-price">$199</div>
+                    <span class="shop-cta">Buy at Elgato →</span>
+                </a>
+                <a href="https://loupedeck.com/products/loupedeck-live-s/" target="_blank" rel="noopener"
+                    class="shop-card shop-alt">
+                    <div class="shop-badge">Alternative</div>
+                    <div class="shop-icon">🎚</div>
+                    <h3>Loupedeck Live S</h3>
+                    <p>Touch buttons + rotary dials</p>
+                    <div class="shop-price">$179</div>
+                    <span class="shop-cta">Buy at Loupedeck →</span>
+                </a>
+                <a href="https://www.razer.com/streaming-controllers/razer-stream-controller-x" target="_blank"
+                    rel="noopener" class="shop-card shop-alt">
+                    <div class="shop-badge">Alternative</div>
+                    <div class="shop-icon">🎮</div>
+                    <h3>Razer Stream Controller X</h3>
+                    <p>15 LCD keys • Synapse compatible</p>
+                    <div class="shop-price">$149</div>
+                    <span class="shop-cta">Buy at Razer →</span>
+                </a>
+                <a href="https://www.touch-portal.com/" target="_blank" rel="noopener" class="shop-card shop-free">
+                    <div class="shop-badge">Free Option</div>
+                    <div class="shop-icon">📲</div>
+                    <h3>Touch Portal (App)</h3>
+                    <p>Turn your phone into a deck</p>
+                    <div class="shop-price">Free / $12</div>
+                    <span class="shop-cta">Download →</span>
+                </a>
+                <a href="https://apps.apple.com/app/elgato-stream-deck-mobile/id1440014184" target="_blank"
+                    rel="noopener" class="shop-card">
+                    <div class="shop-icon">📲</div>
+                    <h3>Stream Deck Mobile</h3>
+                    <p>5 × 3 on your phone</p>
+                    <div class="shop-price">Free / $3.99/mo</div>
+                    <span class="shop-cta">App Store →</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ CTA ═══════ -->
+    <section class="cta">
+        <div class="section-inner">
+            <div class="cta-glow"></div>
+            <h2>Ready to Level Up?</h2>
+            <p>Join thousands of power users who've transformed their workflow with AI Autopilot.</p>
+            <div class="cta-buttons">
+                <a href="#pricing" class="btn btn-primary btn-large">
+                    <span>Get Started Free</span>
+                    <span class="btn-arrow">→</span>
+                </a>
+                <a href="wispr-alternative.html" class="btn btn-secondary btn-large">
+                    <span>🎤 Explore Voice AI</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════ Footer ═══════ -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">AI Autopilot</span>
+                <p>by AntiGravity</p>
+            </div>
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#shop">Shop</a>
+                <a href="wispr-alternative.html">Voice AI</a>
+                <a href="#">Docs</a>
+                <a href="#">Privacy</a>
+            </div>
+            <div class="footer-copy">© 2026 AntiGravity. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="stripe-config.js"></script>
+</body>
+
+</html>

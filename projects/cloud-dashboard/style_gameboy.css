@@ -1,0 +1,249 @@
+/* GameBoy Vector Aesthetic */
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=VT323&display=swap');
+
+:root {
+  --color-gameboy-bg: #8bac0f;
+  --color-gameboy-dark: #0f380f;
+  --color-gameboy-light: #9bbc0f;
+  --color-gameboy-accent: #306230;
+  
+  --color-banana-yellow: #fcd34d;
+  --color-neon-green: #4ade80;
+  --color-black: #000000;
+  --color-white: #ffffff;
+  
+  --border-thick: 4px solid var(--color-black);
+  --border-thin: 2px solid var(--color-black);
+  
+  --shadow-solid: 6px 6px 0px var(--color-black);
+  --shadow-solid-hover: 3px 3px 0px var(--color-black);
+  --shadow-solid-active: 0px 0px 0px var(--color-black);
+}
+
+body {
+    background-color: var(--color-gameboy-bg);
+    background-image: url('assets/gameboy_background_1773790397857.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-blend-mode: soft-light;
+    color: var(--color-black);
+    font-family: 'Chakra Petch', sans-serif;
+}
+
+/* Sliced UI Frame Background */
+.hud-frame-bg {
+    background-image: url('assets/gameboy_ui_frame_1773790366454.png');
+    background-size: cover;
+    background-position: center;
+    border: var(--border-thick);
+    box-shadow: var(--shadow-solid);
+}
+
+.vector-panel {
+    background-color: var(--color-white);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-solid);
+    position: relative;
+    border-radius: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vector-panel:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px var(--color-black);
+}
+
+/* scanlines overlay */
+.scanlines::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    z-index: 50;
+    background-size: 100% 4px, 4px 100%;
+    pointer-events: none;
+}
+
+.title-font {
+    font-family: 'VT323', monospace;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0px var(--color-gameboy-light);
+}
+
+h1, h2, h3, h4 {
+    font-family: 'VT323', monospace;
+    text-transform: uppercase;
+    font-weight: normal;
+}
+
+.btn-vector {
+    background-color: var(--color-banana-yellow);
+    color: var(--color-black);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-solid);
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.1s transform, 0.1s box-shadow;
+    border-radius: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-vector:hover {
+    transform: translate(3px, 3px);
+    box-shadow: var(--shadow-solid-hover);
+    background-color: var(--color-neon-green);
+}
+
+.btn-vector:active {
+    transform: translate(6px, 6px);
+    box-shadow: var(--shadow-solid-active);
+}
+
+.btn-vector.btn-secondary {
+    background-color: var(--color-white);
+}
+.btn-vector.btn-secondary:hover {
+    background-color: var(--color-gameboy-light);
+}
+.btn-vector.btn-danger {
+    background-color: #ff4444;
+}
+.btn-vector.btn-danger:hover {
+    background-color: #ff0000;
+}
+
+.tag-vector {
+    background-color: var(--color-black);
+    color: var(--color-neon-green);
+    border: var(--border-thin);
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 4px 8px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Sliced Sprite Graphics */
+.sliced-graphic {
+    width: 100%;
+    height: 120px;
+    background-image: url('assets/gameboy_ui_sprites_1773790381483.png');
+    background-size: 300%;
+    border-bottom: var(--border-thick);
+}
+.sliced-graphic.sprite-1 { background-position: left top; }
+.sliced-graphic.sprite-2 { background-position: right top; }
+.sliced-graphic.sprite-3 { background-position: left bottom; }
+.sliced-graphic.sprite-4 { background-position: right bottom; }
+.sliced-graphic.sprite-wide { 
+    background-image: url('assets/gameboy_ui_frame_1773790366454.png');
+    background-size: cover;
+    background-position: center 30%;
+}
+
+.vector-tab-btn {
+    border: var(--border-thick);
+    background: var(--color-white);
+    padding: 8px 16px;
+    font-family: 'VT323', monospace;
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px var(--color-black);
+    transition: all 0.1s;
+}
+.vector-tab-btn.active {
+    background: var(--color-neon-green);
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px var(--color-black);
+}
+.vector-tab-btn:hover:not(.active) {
+    background: var(--color-banana-yellow);
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px var(--color-black);
+}
+
+/* Custom Scrollbar for Vector Look */
+::-webkit-scrollbar {
+  width: 14px;
+  border-left: var(--border-thick);
+}
+::-webkit-scrollbar-track {
+  background: var(--color-white);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gameboy-dark);
+  border: var(--border-thick);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-black);
+}
+
+/* Wiki Markdown Overrides */
+.prose-vector {
+    color: var(--color-black);
+}
+.prose-vector h1, .prose-vector h2, .prose-vector h3, .prose-vector h4, .prose-vector h5, .prose-vector h6 {
+    color: var(--color-black);
+    font-family: 'VT323', monospace;
+    text-transform: uppercase;
+    border-bottom: var(--border-thick);
+    padding-bottom: 4px;
+    margin-bottom: 16px;
+}
+.prose-vector a {
+    color: var(--color-gameboy-dark);
+    font-weight: bold;
+    text-decoration: none;
+    background-color: var(--color-banana-yellow);
+    padding: 0 4px;
+    border: 1px solid var(--color-black);
+    transition: all 0.1s;
+}
+.prose-vector a:hover {
+    background-color: var(--color-neon-green);
+    box-shadow: 2px 2px 0px var(--color-black);
+    transform: translate(-1px, -1px);
+}
+.prose-vector code {
+    background-color: var(--color-gameboy-light);
+    color: var(--color-black);
+    padding: 2px 6px;
+    border: var(--border-thin);
+    font-family: 'VT323', monospace;
+    font-size: 1.1em;
+}
+.prose-vector pre {
+    background-color: var(--color-black);
+    color: var(--color-neon-green);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-solid);
+    padding: 16px;
+    font-family: 'VT323', monospace;
+    font-size: 1.2em;
+    border-radius: 0;
+}
+.prose-vector pre code {
+    background-color: transparent;
+    color: inherit;
+    border: none;
+    padding: 0;
+}
+.prose-vector blockquote {
+    border-left: 8px solid var(--color-gameboy-dark);
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 16px;
+    font-style: italic;
+}
+.prose-vector img {
+    border: var(--border-thick);
+    box-shadow: var(--shadow-solid);
+}

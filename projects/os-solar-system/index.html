@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OS Solar System — File Explorer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #020617;
+            --surface: rgba(15, 23, 42, 0.8);
+            --border: rgba(255,255,255,0.1);
+            --cyan: #06b6d4;
+            --pink: #ec4899;
+            --amber: #f59e0b;
+            --emerald: #10b981;
+            --purple: #8b5cf6;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .stars {
+            position: fixed; inset: 0; z-index: 0;
+            background: radial-gradient(ellipse at 20% 50%, #0f172a 0%, #020617 70%);
+        }
+        .stars::after {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #ffffff15, transparent),
+                              radial-gradient(2px 2px at 40px 70px, #ffffff10, transparent),
+                              radial-gradient(1px 1px at 90px 40px, #ffffff18, transparent),
+                              radial-gradient(1px 1px at 130px 80px, #ffffff12, transparent),
+                              radial-gradient(2px 2px at 160px 30px, #ffffff08, transparent);
+            background-size: 200px 100px;
+        }
+        .container { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        header {
+            text-align: center; padding: 3rem 0 2rem;
+            border-bottom: 1px solid var(--border); margin-bottom: 2rem;
+        }
+        header h1 {
+            font-size: 2.5rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--amber), var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        header p { color: var(--muted); margin-top: 0.5rem; font-size: 1rem; }
+        .badge {
+            display: inline-block; font-size: 0.65rem; padding: 0.25rem 0.75rem;
+            border-radius: 999px; margin-top: 0.75rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
+        .link-bar { text-align: center; margin: 1.5rem 0; }
+        .link-bar a {
+            color: var(--cyan); text-decoration: none; font-size: 0.85rem;
+            padding: 0.5rem 1.25rem; border: 1px solid rgba(6,182,212,0.3);
+            border-radius: 0.5rem; display: inline-block; transition: all 0.2s;
+        }
+        .link-bar a:hover { background: rgba(6,182,212,0.1); border-color: var(--cyan); }
+
+        .section-title {
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em;
+            color: var(--muted); font-weight: 700; margin: 2.5rem 0 1rem;
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .section-title::after {
+            content: ''; flex: 1; height: 1px; background: var(--border);
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 1rem; padding: 1.25rem; transition: all 0.25s;
+            cursor: pointer; position: relative; overflow: hidden;
+            text-decoration: none; color: inherit; display: block;
+        }
+        .card:hover {
+            border-color: rgba(255,255,255,0.2); transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .card-icon {
+            width: 40px; height: 40px; border-radius: 0.75rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; margin-bottom: 0.75rem;
+        }
+        .card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .card .desc { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+        .card .tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.75rem; }
+        .card .tag {
+            font-size: 0.6rem; padding: 0.15rem 0.5rem; border-radius: 999px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+            color: var(--muted);
+        }
+        .os-card .card-icon { background: rgba(6,182,212,0.15); color: var(--cyan); }
+        .dev-card .card-icon { background: rgba(139,92,246,0.15); color: var(--purple); }
+        .pref-card .card-icon { background: rgba(245,158,11,0.15); color: var(--amber); }
+        .cp-card .card-icon { background: rgba(16,185,129,0.15); color: var(--emerald); }
+        .acc-card .card-icon { background: rgba(236,72,153,0.15); color: var(--pink); }
+
+        .stats {
+            display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+        .stat {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 0.75rem; padding: 0.75rem 1.5rem; text-align: center;
+        }
+        .stat-val { font-size: 1.5rem; font-weight: 700; }
+        .stat-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.15rem; }
+
+        @media (max-width: 640px) {
+            .grid { grid-template-columns: 1fr; }
+            header h1 { font-size: 1.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="container">
+        <header>
+            <h1>OS Solar System</h1>
+            <p>Unified cross-platform system preferences and control panel structure</p>
+            <span class="badge" style="background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3);">Tag-Based File System</span>
+        </header>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="link-bar">
+            <a href="../AgentWorld/dist/index.html#/workspace">Open in AgentWorld Workspace &rarr;</a>
+        </div>
+
+        <div class="section-title">Operating Systems</div>
+        <div class="grid" id="os-grid"></div>
+
+        <div class="section-title">Devices</div>
+        <div class="grid" id="dev-grid"></div>
+
+        <div class="section-title">Accessories</div>
+        <div class="grid" id="acc-grid"></div>
+
+        <div class="section-title">Preferences</div>
+        <div class="grid" id="pref-grid"></div>
+
+        <div class="section-title">Control Panel</div>
+        <div class="grid" id="cp-grid"></div>
+    </div>
+
+    <script>
+        const CATEGORIES = {
+            os: {
+                items: [
+                    { name: 'Windows', icon: '🪟', tags: ['windows','desktop','laptop','tablet'], color: '#0078d4' },
+                    { name: 'macOS', icon: '🍎', tags: ['macos','desktop','laptop'], color: '#a3aaae' },
+                    { name: 'Android', icon: '🤖', tags: ['android','phone','tablet','tv','watch'], color: '#3ddc84' },
+                    { name: 'Linux', icon: '🐧', tags: ['linux','desktop','laptop'], color: '#f5ba42' },
+                    { name: 'iOS', icon: '📱', tags: ['ios','phone','tablet','watch'], color: '#007aff' },
+                    { name: 'ChromeOS', icon: '🌐', tags: ['chromeos','laptop','desktop'], color: '#4285f4' },
+                    { name: 'HarmonyOS', icon: '🔷', tags: ['harmonyos','phone','tablet','watch','tv'], color: '#c10d0c' },
+                ],
+                grid: 'os-grid', cardClass: 'os-card'
+            },
+            dev: {
+                items: [
+                    { name: 'Phone', icon: '📱', tags: ['phone','android','ios'] },
+                    { name: 'Tablet', icon: '📋', tags: ['tablet','android','ios','windows'] },
+                    { name: 'Laptop', icon: '💻', tags: ['laptop','windows','macos','linux','chromeos'] },
+                    { name: 'Desktop', icon: '🖥️', tags: ['desktop','windows','macos','linux'] },
+                    { name: 'TV', icon: '📺', tags: ['tv','android','harmonyos'] },
+                    { name: 'Watch', icon: '⌚', tags: ['watch','android','ios','harmonyos'] },
+                    { name: 'Headset', icon: '🥽', tags: ['headset','display','audio','input'] },
+                    { name: 'Smart Speaker', icon: '🔊', tags: ['speaker','audio','android','harmonyos'] },
+                    { name: 'Earbuds', icon: '🎧', tags: ['earbuds','audio','android','ios'] },
+                    { name: 'Game System', icon: '🎮', tags: ['game-system','gamepad','display','audio'] },
+                ],
+                grid: 'dev-grid', cardClass: 'dev-card'
+            },
+            acc: {
+                items: [
+                    { name: 'Mouse', icon: '🖱️', tags: ['mouse','input','desktop','laptop'] },
+                    { name: 'Keyboard', icon: '⌨️', tags: ['keyboard','input','desktop','laptop'] },
+                    { name: 'Trackpad', icon: '👆', tags: ['trackpad','input','laptop'] },
+                    { name: 'Webcam', icon: '📷', tags: ['webcam','input','desktop','laptop'] },
+                    { name: 'Stream Deck', icon: '🎛️', tags: ['stream-deck','input','desktop'] },
+                    { name: 'Gestures', icon: '🤌', tags: ['gestures','input','trackpad'] },
+                    { name: 'Gamepad', icon: '🕹️', tags: ['gamepad','input','game-system'] },
+                ],
+                grid: 'acc-grid', cardClass: 'acc-card'
+            },
+            pref: {
+                items: [
+                    { name: 'Display', icon: '☀️', tags: ['display'] },
+                    { name: 'Audio', icon: '🔉', tags: ['audio'] },
+                    { name: 'Input', icon: '👆', tags: ['input'] },
+                    { name: 'Network', icon: '📶', tags: ['network'] },
+                    { name: 'Privacy', icon: '🛡️', tags: ['privacy'] },
+                    { name: 'Accounts', icon: '👤', tags: ['accounts'] },
+                    { name: 'Accessibility', icon: '♿', tags: ['accessibility'] },
+                    { name: 'Notifications', icon: '🔔', tags: ['notifications'] },
+                ],
+                grid: 'pref-grid', cardClass: 'pref-card'
+            },
+            cp: {
+                items: [
+                    { name: 'System Info', icon: 'ℹ️', tags: ['system'] },
+                    { name: 'Updates', icon: '⬇️', tags: ['updates','system'] },
+                    { name: 'Storage', icon: '💾', tags: ['storage','system'] },
+                    { name: 'Battery', icon: '🔋', tags: ['battery'] },
+                    { name: 'Performance', icon: '⚡', tags: ['performance','system'] },
+                    { name: 'Developer Options', icon: '🔧', tags: ['developer','system'] },
+                ],
+                grid: 'cp-grid', cardClass: 'cp-card'
+            }
+        };
+
+        // Render stats
+        const totalItems = Object.values(CATEGORIES).reduce((sum, c) => sum + c.items.length, 0);
+        const allTags = new Set(Object.values(CATEGORIES).flatMap(c => c.items.flatMap(i => i.tags)));
+        document.getElementById('stats').innerHTML = `
+            <div class="stat"><div class="stat-val" style="color:var(--cyan)">${Object.keys(CATEGORIES).length}</div><div class="stat-label">Categories</div></div>
+            <div class="stat"><div class="stat-val" style="color:var(--amber)">${totalItems}</div><div class="stat-label">Items</div></div>
+            <div class="stat"><div class="stat-val" style="color:var(--purple)">${allTags.size}</div><div class="stat-label">Tags</div></div>
+            <div class="stat"><div class="stat-val" style="color:var(--emerald)">7</div><div class="stat-label">OS Platforms</div></div>
+        `;
+
+        // Render cards
+        Object.entries(CATEGORIES).forEach(([key, cat]) => {
+            const grid = document.getElementById(cat.grid);
+            cat.items.forEach(item => {
+                const folderName = item.name;
+                const parentFolder = key === 'os' ? 'Operating Systems' : key === 'dev' ? 'Devices' : key === 'acc' ? 'Devices/Accessories' : key === 'pref' ? 'Preferences' : 'Control Panel';
+                const card = document.createElement('a');
+                card.className = `card ${cat.cardClass}`;
+                card.href = `${parentFolder}/${folderName}/_meta.json`;
+                card.innerHTML = `
+                    <div class="card-icon">${item.icon}</div>
+                    <h3>${item.name}</h3>
+                    <div class="tags">${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+                `;
+                grid.appendChild(card);
+            });
+        });
+    </script>
+</body>
+</html>

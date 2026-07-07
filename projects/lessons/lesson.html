@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <script>
+        // Redirect legacy lesson.html?id=xyz to the single-page view
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        window.location.replace('index.html' + (id ? '#lesson-' + id : ''));
+    </script>
+</head>
+<body></body>
+</html>

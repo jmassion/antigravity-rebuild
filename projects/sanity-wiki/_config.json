@@ -1,0 +1,23 @@
+{
+  "title": "Sanity Setup Wiki",
+  "subtitle": "Project Organization & Setup Guide — AntiGravity",
+  "version": "1.0.0",
+  "repo": "https://github.com/jmassion/sanity",
+  "domain": "sanity.holodeckos.com",
+  "created": "2026-04-10",
+  "sections": [
+    { "id": "00-getting-started", "label": "Getting Started", "icon": "🚀", "description": "Prerequisites, setup, conventions" },
+    { "id": "01-framework", "label": "Framework", "icon": "🏗️", "description": "Core architecture & schema design" },
+    { "id": "02-agents", "label": "Agents", "icon": "🤖", "description": "AI agent configuration & orchestration" },
+    { "id": "03-skills", "label": "Skills", "icon": "⚡", "description": "Reusable agent skill library" },
+    { "id": "04-styles", "label": "Styles", "icon": "🎨", "description": "Design system & visual guidelines" },
+    { "id": "05-rules", "label": "Rules", "icon": "📏", "description": "Global and item-specific rules" },
+    { "id": "06-brand", "label": "Brand", "icon": "💎", "description": "Brand identity & assets" },
+    { "id": "07-publishing", "label": "Publishing", "icon": "📡", "description": "Publishing & distribution channels" },
+    { "id": "08-crm", "label": "CRM", "icon": "👥", "description": "Contacts, organizations, relationships" },
+    { "id": "09-core-objects", "label": "Core Objects", "icon": "🧩", "description": "Worlds, characters, materials — the playset" },
+    { "id": "10-changelog", "label": "Changelog", "icon": "📋", "description": "Version history & changes" },
+    { "id": "11-planning", "label": "Planning", "icon": "🗺️", "description": "Roadmap & future vision" },
+    { "id": "12-chat-logs", "label": "Chat Logs", "icon": "💬", "description": "Saved agent conversations" }
+  ]
+}

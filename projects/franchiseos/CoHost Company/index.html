@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoHost Company — FranchiseOS</title>
+    <meta name="description" content="CoHost Company — Short-term rental management for co-hosting operations">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06060b;
+            --surface: #0f0f18;
+            --card: #151520;
+            --border: rgba(255, 255, 255, 0.06);
+            --text: #f0f0f5;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent: #3b82f6;
+            --accent-bright: #60a5fa;
+            --accent-glow: rgba(59, 130, 246, 0.12);
+            --gradient: linear-gradient(135deg, #60a5fa, #3b82f6, #2563eb);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 800px 500px at 30% 15%, rgba(59, 130, 246, 0.06), transparent), radial-gradient(ellipse 600px 400px at 70% 80%, rgba(96, 165, 250, 0.04), transparent);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            margin-top: 1.5rem;
+            transition: color 0.15s;
+        }
+
+        .back:hover {
+            color: var(--accent-bright);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0 3rem;
+        }
+
+        .hero-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 0.75rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 550px;
+            margin: 0 auto 2rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            padding: 0.3rem 0.8rem;
+            background: var(--accent-glow);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-bright);
+            letter-spacing: 0.04em;
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.75rem;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.6rem 0.8rem;
+            background: var(--surface);
+            border-radius: 10px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .feature span:first-child {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 2.5rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.4
+            }
+        }
+
+        .status-text {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        footer a {
+            color: var(--accent-bright);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="../" class="back">← FranchiseOS</a>
+        <div class="hero">
+            <span class="hero-icon">🏠</span>
+            <h1>CoHost Company</h1>
+            <p>Short-term rental management platform for co-hosting operations — automated listings, scheduling, and
+                guest communications.</p>
+            <span class="badge">HOSPITALITY</span>
+        </div>
+        <div class="status-bar">
+            <div class="status-dot"></div>
+            <div class="status-text">Franchise concept in development — infrastructure being configured</div>
+        </div>
+        <div class="section">
+            <div class="section-title">🎯 Concept Overview</div>
+            <div class="card">
+                <p>CoHost Company provides a <strong style="color:var(--text)">turnkey co-hosting solution</strong> for
+                    short-term rental operators. Manage multiple properties across platforms like Airbnb, VRBO, and
+                    Booking.com from a single intelligent dashboard.</p>
+                <p>The platform automates guest communications, cleaning schedules, pricing adjustments, and performance
+                    reporting — letting co-hosts scale their portfolio without scaling their workload.</p>
+                <div class="features">
+                    <div class="feature"><span>🏡</span> Multi-property management</div>
+                    <div class="feature"><span>💬</span> AI guest messaging</div>
+                    <div class="feature"><span>🧹</span> Automated cleaning schedules</div>
+                    <div class="feature"><span>💰</span> Dynamic pricing engine</div>
+                    <div class="feature"><span>📋</span> Cross-platform sync</div>
+                    <div class="feature"><span>⭐</span> Review management</div>
+                </div>
+            </div>
+        </div>
+        <footer><a href="../">FranchiseOS</a> · CoHost Company · cohost.holodeckos.com</footer>
+    </div>
+</body>
+
+</html>

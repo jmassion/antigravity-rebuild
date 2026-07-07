@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntiGravity Engine — Wiki</title>
+    <meta name="description" content="Documentation wiki for the AntiGravity imagination engine.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a14;
+            --bg2: #111122;
+            --bg3: #1a1a2e;
+            --card: rgba(20, 20, 40, 0.7);
+            --text: #e0e0e0;
+            --dim: rgba(255, 255, 255, 0.4);
+            --accent: #5078ff;
+            --accent2: #7c3aed;
+            --green: #00ffa3;
+            --sidebar-w: 280px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            line-height: 1.7;
+        }
+
+        /* ── Layout ── */
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--bg2);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 24px 16px;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 32px;
+            padding: 0 8px;
+        }
+
+        .sidebar-logo .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .sidebar-logo h1 {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sidebar h3 {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--dim);
+            margin: 24px 8px 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 13px;
+            transition: all 0.15s;
+            margin: 2px 0;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .sidebar a.active {
+            background: rgba(80, 120, 255, 0.15);
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .sidebar a::before {
+            content: attr(data-icon);
+            margin-right: 8px;
+        }
+
+        /* ── Main ── */
+        .main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            padding: 40px 60px;
+            max-width: 900px;
+        }
+
+        .main h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .main h1 span {
+            color: var(--accent);
+        }
+
+        .main .subtitle {
+            color: var(--dim);
+            font-size: 15px;
+            margin-bottom: 32px;
+            font-style: italic;
+        }
+
+        .main h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 48px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .main h2 .layer-num {
+            background: var(--accent);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .main h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 24px 0 8px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .main p {
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .main img {
+            max-width: 100%;
+            border-radius: 12px;
+            margin: 16px 0;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .main code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            background: rgba(80, 120, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent);
+        }
+
+        .main pre {
+            background: var(--bg2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .main pre code {
+            background: none;
+            padding: 0;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* ── Table ── */
+        .main table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        .main th {
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--dim);
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .main td {
+            padding: 8px 12px;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        /* ── Tags ── */
+        .tag {
+            display: inline-block;
+            background: rgba(80, 120, 255, 0.15);
+            color: var(--accent);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            margin: 2px;
+        }
+
+        /* ── Layer Diagram ── */
+        .layer-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin: 16px 0;
+        }
+
+        .layer-block {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .layer-block .desc {
+            font-weight: 400;
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        /* ── Callout ── */
+        .callout {
+            border-left: 3px solid var(--accent);
+            padding: 12px 16px;
+            margin: 16px 0;
+            background: rgba(80, 120, 255, 0.05);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .callout.warn {
+            border-color: #ffc800;
+            background: rgba(255, 200, 0, 0.05);
+        }
+
+        /* ── Changelog ── */
+        .changelog-entry {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .changelog-entry .date {
+            font-size: 11px;
+            color: var(--dim);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .changelog-entry .msg {
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* ── Mobile ── */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-logo">
+                <div class="dot"></div>
+                <h1>ANTIGRAVITY</h1>
+            </div>
+
+            <h3>Engine</h3>
+            <a href="index.html" class="active" data-icon="📐">Architecture</a>
+            <a href="../demo.html" data-icon="🎮" target="_blank">Interactive Demo</a>
+
+            <h3>Layers</h3>
+            <a href="#foundation" data-icon="⚡">1. Foundation</a>
+            <a href="#world" data-icon="🌍">2. World</a>
+            <a href="#senses" data-icon="👁️">3. Senses</a>
+            <a href="#life" data-icon="🌱">4. Life</a>
+            <a href="#memory" data-icon="🕰️">5. Memory</a>
+            <a href="#tools" data-icon="🔧">6. Tools</a>
+            <a href="#stories" data-icon="✨">7. Stories</a>
+
+            <h3>Systems</h3>
+            <a href="#import" data-icon="📦">Import</a>
+            <a href="#spaceml" data-icon="📝">SpaceML</a>
+            <a href="#devices" data-icon="📱">Devices</a>
+
+            <h3>Meta</h3>
+            <a href="pages/changelog.html" data-icon="📋">Changelog</a>
+            <a href="pages/walkthrough.html" data-icon="🗺️">Walkthrough</a>
+            <a href="pages/artifacts.html" data-icon="📁">Artifacts</a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <h1>AntiGravity <span>Engine</span></h1>
+            <p class="subtitle">A holodeck-like creation platform where any device becomes a portal into infinite,
+                wishable 3D spaces.</p>
+
+            <img src="images/arch-overview.png" alt="Architecture overview — 7-layer system visualization">
+
+            <!-- Vision -->
+            <div class="callout">
+                <strong>Vision:</strong> Every space is an empty room that listens. You walk in and wish. Objects
+                appear. Stories unfold. Data breathes as living surfaces. The room remembers everything.
+            </div>
+
+            <!-- Layer Stack -->
+            <h2>System Architecture</h2>
+            <div class="layer-stack">
+                <div class="layer-block" style="background: rgba(255,68,170,0.15); color: #ff44aa;">
+                    <span>7. STORIES</span><span class="desc">Wish fulfilment, AI creation</span>
+                </div>
+                <div class="layer-block" style="background: rgba(255,123,84,0.15); color: #ff7b54;">
+                    <span>6. TOOLS</span><span class="desc">Panels, gizmos, builders</span>
+                </div>
+                <div class="layer-block" style="background: rgba(124,58,237,0.15); color: #7c3aed;">
+                    <span>5. MEMORY</span><span class="desc">Time, history, branching</span>
+                </div>
+                <div class="layer-block" style="background: rgba(255,200,0,0.15); color: #ffc800;">
+                    <span>4. LIFE</span><span class="desc">Physics, gravity, behaviour</span>
+                </div>
+                <div class="layer-block" style="background: rgba(0,212,255,0.15); color: #00d4ff;">
+                    <span>3. SENSES</span><span class="desc">Input from every device</span>
+                </div>
+                <div class="layer-block" style="background: rgba(68,255,68,0.15); color: #44ff44;">
+                    <span>2. WORLD</span><span class="desc">Spaces, things, surfaces</span>
+                </div>
+                <div class="layer-block" style="background: rgba(255,68,68,0.15); color: #ff4444;">
+                    <span>1. FOUNDATION</span><span class="desc">Core loop, painting, sound</span>
+                </div>
+            </div>
+
+            <!-- Naming -->
+            <h2>Naming Philosophy</h2>
+            <p>No jargon. No abbreviations. Every name should read like a sentence a human would say.</p>
+            <table>
+                <tr>
+                    <th>Old Paradigm</th>
+                    <th>Our Way</th>
+                </tr>
+                <tr>
+                    <td>SceneGraphNode</td>
+                    <td><code>Thing</code></td>
+                </tr>
+                <tr>
+                    <td>InputController</td>
+                    <td><code>Listener</code></td>
+                </tr>
+                <tr>
+                    <td>RenderPipeline</td>
+                    <td><code>Painter</code></td>
+                </tr>
+                <tr>
+                    <td>TransformComponent</td>
+                    <td><code>Placement</code></td>
+                </tr>
+                <tr>
+                    <td>AssetManager</td>
+                    <td><code>Library</code></td>
+                </tr>
+                <tr>
+                    <td>EventDispatcher</td>
+                    <td><code>Messenger</code></td>
+                </tr>
+                <tr>
+                    <td>ShaderMaterial</td>
+                    <td><code>Surface</code></td>
+                </tr>
+            </table>
+
+            <!-- Foundation -->
+            <h2 id="foundation"><span class="layer-num">1</span> Foundation — The Heartbeat</h2>
+            <p>Everything starts here. The core loop that keeps the world alive:
+                <code>sense → think → act → paint</code>.
+            </p>
+            <div class="grid-2">
+                <div class="card">
+                    <h4>Heartbeat.js</h4>The eternal loop — runs every frame
+                </div>
+                <div class="card">
+                    <h4>Painter.js</h4>WebGL/WebGPU rendering abstraction
+                </div>
+                <div class="card">
+                    <h4>Speaker.js</h4>3D positional spatial audio
+                </div>
+                <div class="card">
+                    <h4>Messenger.js</h4>Pub/sub event bus for all modules
+                </div>
+                <div class="card">
+                    <h4>Bridge.js</h4>Network, multiplayer, device pairing
+                </div>
+                <div class="card">
+                    <h4>Screen.js</h4>Display management, resolution, DPI
+                </div>
+                <div class="card">
+                    <h4>Clock.js</h4>Frame timing, slow-motion, pause
+                </div>
+                <div class="card">
+                    <h4>Settings.js</h4>Global preferences, persistent config
+                </div>
+            </div>
+
+            <!-- World -->
+            <h2 id="world"><span class="layer-num">2</span> World — Where Everything Lives</h2>
+            <p>The space itself. What's in it. How it looks. <strong>Everything is a <code>Thing</code>.</strong></p>
+            <pre><code>Thing {
+  name: "My Chair"
+  kind: "furniture"
+  placement: Placement       // Where it is
+  shape: Shape               // Geometry
+  surface: Surface           // Visual appearance
+  children: [Thing, ...]     // Nested Things
+  traits: [Trait, ...]       // Behaviours
+  data: {}                   // Data binding
+}</code></pre>
+            <h3>3D Primitives</h3>
+            <p><span class="tag">Box</span> <span class="tag">Sphere</span> <span class="tag">Cylinder</span> <span
+                    class="tag">Cone</span> <span class="tag">Torus</span> <span class="tag">Capsule</span> <span
+                    class="tag">Wedge</span> <span class="tag">Tube</span> <span class="tag">Text3D</span> <span
+                    class="tag">Plane</span></p>
+            <h3>Portals</h3>
+            <p>Doorways connecting one Space to another. Walk through and you're somewhere else. Optional live preview
+                of the other side.</p>
+
+            <!-- Senses -->
+            <h2 id="senses"><span class="layer-num">3</span> Senses — Listening to Every Device</h2>
+            <p>The universal input layer. Every device speaks differently, but the engine hears one language.</p>
+            <h3>The 3D Pointer</h3>
+            <p>A pointer that exists <strong>in 3D space</strong>, not just on a 2D screen. Modes: <code>free</code>,
+                <code>snap</code>, <code>surface</code>, <code>gravity</code>.
+            </p>
+            <table>
+                <tr>
+                    <th>Device</th>
+                    <th>How the Pointer Moves</th>
+                </tr>
+                <tr>
+                    <td>Mouse</td>
+                    <td>Raycast into 3D. Scroll = depth.</td>
+                </tr>
+                <tr>
+                    <td>Touch</td>
+                    <td>One finger = pointer. Pinch = zoom. Long press = grab.</td>
+                </tr>
+                <tr>
+                    <td>Voice</td>
+                    <td>"Move it left." "Put it on the table."</td>
+                </tr>
+                <tr>
+                    <td>Gamepad</td>
+                    <td>Left stick = XY. Right stick = camera. Triggers = depth/grab.</td>
+                </tr>
+                <tr>
+                    <td>Gyroscope</td>
+                    <td>Tilt to look. Roll to rotate pointer.</td>
+                </tr>
+                <tr>
+                    <td>Stream Deck</td>
+                    <td>Buttons trigger macro actions.</td>
+                </tr>
+            </table>
+
+            <!-- Life -->
+            <h2 id="life"><span class="layer-num">4</span> Life — Physics, Gravity, and Behaviour</h2>
+            <p>Instead of complex component hierarchies, Things have <strong>Traits</strong> — simple, stackable
+                behaviour modules.</p>
+            <p><span class="tag">Floats</span> <span class="tag">Spins</span> <span class="tag">Follows</span> <span
+                    class="tag">Breathes</span> <span class="tag">Glows</span> <span class="tag">Reacts</span> <span
+                    class="tag">Speaks</span> <span class="tag">Thinks</span></p>
+            <pre><code>let lamp = new Thing("Magic Lamp")
+lamp.add(new Glows({ color: "warm-gold" }))
+lamp.add(new Breathes({ speed: "slow" }))
+lamp.add(new Reacts({ on: "pointer-near", do: "glow-brighter" }))</code></pre>
+
+            <!-- Memory -->
+            <h2 id="memory"><span class="layer-num">5</span> Memory — Time, History, and Branching</h2>
+            <p>Everything is remembered. Every action, creation, change. Time can branch into alternate realities.</p>
+            <pre><code>Main Timeline:
+─────●─────●─────●─────●─────●──── NOW
+                    │
+               Branch A:
+               ─────●─────●─────●
+                    │
+               Branch B:
+               ─────●─────●</code></pre>
+            <p><span class="tag">Undo</span> <span class="tag">Redo</span> <span class="tag">Bookmark</span> <span
+                    class="tag">Branch</span> <span class="tag">Compare</span> <span class="tag">Merge</span> <span
+                    class="tag">Replay</span> <span class="tag">Journal</span></p>
+
+            <!-- Tools -->
+            <h2 id="tools"><span class="layer-num">6</span> Tools — Panels, Gizmos, and Builders</h2>
+            <p>3D panels that float in space. Gizmos that make moving things beautiful.</p>
+            <h3>Tool Belt</h3>
+            <p><span class="tag">Selector</span> <span class="tag">Mover</span> <span class="tag">Scaler</span> <span
+                    class="tag">Rotator</span> <span class="tag">Painter</span> <span class="tag">Eraser</span> <span
+                    class="tag">Ruler</span> <span class="tag">Connector</span> <span class="tag">Cloner</span> <span
+                    class="tag">Grouper</span> <span class="tag">Wish Wand</span></p>
+            <h3>Gizmo System</h3>
+            <p>SmartSnap (Figma-like alignment guides for 3D), Distance Labels, Bounce Physics, Surface Magnet, Group
+                Handles.</p>
+            <h3>Widgets</h3>
+            <p><span class="tag">Button</span> <span class="tag">Slider</span> <span class="tag">Toggle</span> <span
+                    class="tag">Dropdown</span> <span class="tag">ColorWheel</span> <span class="tag">TextInput</span>
+                <span class="tag">NumberDial</span> <span class="tag">Graph</span> <span class="tag">TreeView</span>
+                <span class="tag">Timeline</span>
+            </p>
+
+            <!-- Stories -->
+            <h2 id="stories"><span class="layer-num">7</span> Stories — The Wish System</h2>
+            <p>Say what you want, and it appears. AI-powered creation from natural language.</p>
+            <table>
+                <tr>
+                    <th>Wish</th>
+                    <th>What Happens</th>
+                </tr>
+                <tr>
+                    <td>"Create a red chair"</td>
+                    <td>A single Thing appears</td>
+                </tr>
+                <tr>
+                    <td>"Make this room feel like a forest"</td>
+                    <td>Scenery + Mood change</td>
+                </tr>
+                <tr>
+                    <td>"Import my sales data"</td>
+                    <td>Spreadsheet → 3D data visualization</td>
+                </tr>
+                <tr>
+                    <td>"Go back to yesterday's version"</td>
+                    <td>Memory timeline navigation</td>
+                </tr>
+                <tr>
+                    <td>"Create a portal to the beach"</td>
+                    <td>Portal to a new Space</td>
+                </tr>
+            </table>
+
+            <!-- Import -->
+            <h2 id="import">Import — Bringing Old Content to Life</h2>
+            <p>Spreadsheets, 3D models, images, videos, audio, documents — all imported and mapped to living 3D Things.
+            </p>
+            <p><span class="tag">CSV/XLSX</span> <span class="tag">GLTF/OBJ/FBX</span> <span
+                    class="tag">PNG/JPG/SVG</span> <span class="tag">MP4/WebM</span> <span class="tag">MP3/WAV</span>
+                <span class="tag">PDF/DOCX</span> <span class="tag">JSON</span>
+            </p>
+
+            <!-- SpaceML -->
+            <h2 id="spaceml">SpaceML — 3D Markup Language</h2>
+            <p>Human-readable markup for describing 3D scenes. Like HTML for holographic spaces.</p>
+            <pre><code>space "My Living Room"
+  sky: warm-sunset
+  gravity: earth
+
+  thing "Coffee Table"
+    shape: box
+    size: 1.2m x 0.5m x 0.6m
+    surface: oak-wood
+
+    thing "Laptop"
+      shape: import "macbook.gltf"
+      position: on-top, center
+      traits:
+        - glows: screen-blue, soft
+
+  portal "To Garden"
+    leads-to: "Garden Space"
+    preview: on</code></pre>
+
+            <!-- Devices -->
+            <h2 id="devices">Devices — One Engine, Every Screen</h2>
+            <table>
+                <tr>
+                    <th>Device</th>
+                    <th>3D View</th>
+                    <th>Tools</th>
+                    <th>Special</th>
+                </tr>
+                <tr>
+                    <td>Phone</td>
+                    <td>Full-screen 3D</td>
+                    <td>Bottom sheet</td>
+                    <td>Tilt to look</td>
+                </tr>
+                <tr>
+                    <td>Tablet</td>
+                    <td>Full 3D + side panel</td>
+                    <td>Slide-out</td>
+                    <td>Split view</td>
+                </tr>
+                <tr>
+                    <td>Desktop</td>
+                    <td>Central viewport</td>
+                    <td>Dockable</td>
+                    <td>Multi-window</td>
+                </tr>
+                <tr>
+                    <td>Foldable</td>
+                    <td>3D on main, map on cover</td>
+                    <td>Fold crease</td>
+                    <td>Hinge = camera</td>
+                </tr>
+                <tr>
+                    <td>Smart Speaker</td>
+                    <td>Audio-only</td>
+                    <td>Voice menus</td>
+                    <td>Audio descriptions</td>
+                </tr>
+                <tr>
+                    <td>Stream Deck</td>
+                    <td>Companion</td>
+                    <td>Physical buttons</td>
+                    <td>Contextual labels</td>
+                </tr>
+            </table>
+        </main>
+    </div>
+
+    <script>
+        // Highlight active sidebar link on scroll
+        const sections = document.querySelectorAll('[id]')
+        const links = document.querySelectorAll('.sidebar a[href^="#"]')
+        window.addEventListener('scroll', () => {
+            let current = ''
+            sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id })
+            links.forEach(l => {
+                l.classList.remove('active')
+                if (l.getAttribute('href') === `#${current}`) l.classList.add('active')
+            })
+        })
+    </script>
+</body>
+
+</html>

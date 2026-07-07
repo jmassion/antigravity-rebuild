@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unreal AI | Cloud Control</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style_gameboy.css" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Chakra Petch", "sans-serif"],
+              mono: ["VT323", "monospace"],
+            },
+            colors: {
+              cloud: {
+                900: "#8bac0f",
+                800: "#9bbc0f",
+                700: "#306230",
+                accent: "#000000",
+                run: "#4ade80",
+                stop: "#ff4444",
+              },
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-6">
+    <div id="app" class="w-full max-w-5xl hidden animate-in fade-in duration-300">
+      <header
+        class="mb-10 text-center md:text-left flex flex-col md:flex-row items-center justify-between vector-panel p-6"
+      >
+        <div>
+          <h1 class="text-5xl font-extrabold tracking-tight mb-2 title-font">
+            <span class="text-cloud-800" style="text-shadow: 2px 2px 0px black;">Unreal AI</span>
+            <span style="color: black; text-shadow: 2px 2px 0px white;">Infrastructure</span>
+          </h1>
+          <!-- TABS -->
+          <div class="mt-6 flex flex-wrap gap-2">
+            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="vector-tab-btn active"><i class="ph-bold ph-hard-drives"></i> Dashboard</button>
+            <button onclick="switchTab('wiki')" id="tab-btn-wiki" class="vector-tab-btn"><i class="ph-bold ph-books"></i> Wiki</button>
+            <button onclick="switchTab('memory')" id="tab-btn-memory" class="vector-tab-btn"><i class="ph-bold ph-brain"></i> Memory Vault</button>
+            <button onclick="switchTab('showcase')" id="tab-btn-showcase" class="vector-tab-btn"><i class="ph-bold ph-palette"></i> Showcase</button>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 mt-6 md:mt-0">
+          <button onclick="toggleInviteModal(true)" class="btn-vector px-4 py-2 text-sm">
+            <i class="ph-bold ph-user-plus mr-1"></i> Invoke
+          </button>
+          <div class="icon-box px-4 py-2 flex items-center gap-2">
+            <i class="ph-fill ph-wallet text-xl"></i>
+            <span class="text-sm font-bold font-mono">EST: <span class="bg-black text-cloud-run px-2 py-0.5 ml-1 border-2 border-cloud-run">$204/mo</span></span>
+          </div>
+          <div id="user-button" class="icon-box p-1"></div>
+        </div>
+      </header>
+
+      <!-- DASHBOARD TAB -->
+      <div id="tab-dashboard" class="animate-in fade-in duration-300">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Windows GPU Workstation -->
+        <div class="vector-panel p-8 relative overflow-hidden group scanlines">
+          <div class="absolute top-0 right-0 p-6 opacity-30 group-hover:opacity-100 transition-opacity">
+            <i class="ph-fill ph-windows-logo text-6xl text-cloud-900 border-2 border-black bg-white p-2"></i>
+          </div>
+
+          <div class="flex justify-between items-start mb-6 relative z-10">
+            <div>
+              <h2 class="text-3xl font-bold mb-1 title-font" style="text-shadow: 2px 2px 0px white;">Unreal Workstation</h2>
+              <p class="text-sm bg-black text-cloud-800 px-2 py-1 inline-block border-2 border-cloud-800 font-bold">
+                Windows Server 2022 • g5.2xlarge
+              </p>
+            </div>
+            <div
+              id="win-badge"
+              class="tag-vector flex items-center gap-2"
+            >
+              <div class="w-2 h-2 rounded-none bg-cloud-800"></div>
+              Loading
+            </div>
+          </div>
+
+          <div class="space-y-3 mb-8 relative z-10 bg-white border-4 border-black p-4 shadow-[inset_2px_2px_0px_rgba(0,0,0,0.1)]">
+            <div class="flex justify-between items-center border-b-2 border-black border-dashed pb-2">
+              <span class="font-bold"><i class="ph-bold ph-hard-drives mr-2 text-cloud-800"></i>STORAGE</span>
+              <span class="font-mono bg-cloud-light px-2 border border-black">500 GB gp3</span>
+            </div>
+            <div class="flex justify-between items-center border-b-2 border-black border-dashed pb-2">
+              <span class="font-bold"><i class="ph-bold ph-money mr-2 text-cloud-800"></i>RUN RATE</span>
+              <span class="font-mono bg-cloud-light px-2 border border-black">~$1.21 / hr</span>
+            </div>
+            <div class="flex justify-between items-center pb-1">
+              <span class="font-bold"><i class="ph-bold ph-globe mr-2 text-cloud-800"></i>PUBLIC IP</span>
+              <span class="font-mono bg-black text-cloud-run px-2 border border-cloud-run" id="win-ip">...</span>
+            </div>
+          </div>
+
+          <div class="flex gap-4 relative z-10">
+            <button
+              id="btn-start"
+              onclick="toggleWin('start')"
+              class="flex-1 btn-vector py-3 flex items-center justify-center gap-2 text-lg"
+            >
+              <i class="ph-fill ph-play"></i> START PC
+            </button>
+            <button
+              id="btn-stop"
+              onclick="toggleWin('stop')"
+              class="flex-1 btn-vector btn-danger py-3 flex items-center justify-center gap-2 text-lg hidden text-white"
+            >
+              <i class="ph-fill ph-stop"></i> STOP PC
+            </button>
+            <div id="btn-rdp-container" class="flex-1 hidden flex flex-col gap-2">
+              <button
+                onclick="downloadRdp()"
+                class="w-full btn-vector btn-secondary border-2 py-2 flex items-center justify-center gap-2"
+              >
+                <i class="ph-bold ph-desktop"></i> CONNECT
+              </button>
+              <div class="text-center group bg-white border-2 border-black p-1">
+                <p class="text-[10px] font-bold uppercase tracking-widest mb-[2px]">RDP Pass</p>
+                <code onclick="navigator.clipboard.writeText(this.innerText); const orig = this.innerText; this.innerText = 'Copied!'; setTimeout(() => this.innerText = orig, 1000)" class="text-sm bg-black text-cloud-run cursor-pointer px-2 block select-all font-mono" title="Click to copy">UnrealAI2026!</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Linux Backend -->
+        <div class="vector-panel p-8 relative overflow-hidden group scanlines">
+          <div class="absolute top-0 right-0 p-6 opacity-30 group-hover:opacity-100 transition-opacity">
+            <i class="ph-fill ph-linux-logo text-6xl text-cloud-900 border-2 border-black bg-white p-2"></i>
+          </div>
+
+          <div class="flex justify-between items-start mb-6 relative z-10">
+            <div>
+              <h2 class="text-3xl font-bold mb-1 title-font" style="text-shadow: 2px 2px 0px white;">Central Backend</h2>
+              <p class="text-sm bg-black text-cloud-800 px-2 py-1 inline-block border-2 border-cloud-800 font-bold">Ubuntu 22.04 LTS • t3.large</p>
+            </div>
+            <div
+              id="lin-badge"
+              class="tag-vector flex items-center gap-2"
+            >
+              <div
+                class="w-2 h-2 rounded-none bg-cloud-run animate-pulse-slow"
+              ></div>
+              Always On
+            </div>
+          </div>
+
+          <div class="space-y-3 mb-8 relative z-10 bg-white border-4 border-black p-4 shadow-[inset_2px_2px_0px_rgba(0,0,0,0.1)]">
+            <div class="flex justify-between items-center border-b-2 border-black border-dashed pb-2">
+              <span class="font-bold"><i class="ph-bold ph-database mr-2 text-cloud-800"></i>SERVICES</span>
+              <span class="text-sm font-bold bg-cloud-light px-2 border border-black">Perforce + SpacetimeDB</span>
+            </div>
+            <div class="flex justify-between items-center border-b-2 border-black border-dashed pb-2">
+              <span class="font-bold"><i class="ph-bold ph-hard-drives mr-2 text-cloud-800"></i>STORAGE</span>
+              <span class="font-mono bg-cloud-light px-2 border border-black">100 GB gp3</span>
+            </div>
+            <div class="flex justify-between items-center pb-1">
+              <span class="font-bold"><i class="ph-bold ph-globe mr-2 text-cloud-800"></i>PUBLIC IP</span>
+              <span class="font-mono bg-black text-cloud-run px-2 border border-cloud-run" id="lin-ip">...</span>
+            </div>
+          </div>
+
+          <div class="p-4 bg-white border-4 border-black relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p
+              class="text-sm font-bold uppercase tracking-wider title-font mb-0"
+            >
+              <i class="ph-fill ph-terminal-window text-xl mr-2 align-middle"></i> SSH Access
+            </p>
+            <code
+              class="text-sm text-cloud-run bg-black px-3 py-2 border-2 border-black select-all font-mono shadow-inner"
+              id="ssh-snippet"
+              >ssh -i key ubuntu@ip</code
+            >
+          </div>
+        </div>
+      </div>
+      
+      <!-- Billing Center -->
+      <div class="vector-panel p-8 mt-8 relative overflow-hidden">
+        <div class="sliced-graphic sprite-3 absolute bottom-0 left-0 w-full h-32 opacity-20 pointer-events-none"></div>
+        <div class="flex justify-between items-end mb-6 relative z-10">
+          <div>
+            <h2 class="text-3xl font-bold mb-1 title-font" style="text-shadow: 2px 2px 0px white;">Billing & Usage</h2>
+            <p class="text-sm bg-black text-cloud-800 px-2 py-1 inline-block border-2 border-cloud-800 font-bold">Current Month via AWS Cost Explorer</p>
+          </div>
+        </div>
+        
+        <div id="billing-loading" class="text-black text-center py-6 animate-pulse title-font text-2xl relative z-10">
+          <i class="ph-bold ph-spinner-gap animate-spin text-4xl mb-2"></i><br>Fetching latest AWS billing intel...
+        </div>
+        
+        <div id="billing-error" class="hidden text-black bg-banana-yellow border-4 border-black p-4 text-lg font-bold mb-4 relative z-10 shadow-[4px_4px_0px_black]">
+          <i class="ph-fill ph-warning-circle mr-2 text-2xl align-middle"></i> <span id="billing-error-text">Billing data takes up to 24 hours to populate for new accounts.</span>
+        </div>
+
+        <div id="billing-data" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+          <div class="bg-white p-6 border-4 border-black shadow-[inset_4px_4px_0px_rgba(0,0,0,0.1)]">
+            <p class="text-sm mb-1 uppercase tracking-wider font-bold title-font"><i class="ph-fill ph-coins"></i> Total Accrued</p>
+            <p class="text-4xl font-bold font-mono" id="bill-total">$0.00</p>
+          </div>
+          <div class="bg-white p-6 border-4 border-black shadow-[inset_4px_4px_0px_rgba(0,0,0,0.1)]">
+            <p class="text-sm mb-1 uppercase tracking-wider font-bold title-font"><i class="ph-fill ph-cpu"></i> Windows GPU Cost</p>
+            <p class="text-4xl font-bold font-mono bg-cloud-light inline-block px-2 border-2 border-black" id="bill-gpu">$0.00</p>
+          </div>
+          <div class="bg-white p-6 border-4 border-black shadow-[inset_4px_4px_0px_rgba(0,0,0,0.1)]">
+            <p class="text-sm mb-1 uppercase tracking-wider font-bold title-font"><i class="ph-fill ph-clock"></i> GPU Usage</p>
+            <p class="text-4xl font-bold font-mono text-cloud-700 bg-banana-yellow inline-block px-2 border-2 border-black"><span id="bill-hours">0</span> <span class="text-2xl text-black">hrs</span></p>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <!-- WIKI TAB -->
+      <div id="tab-wiki" class="hidden animate-in fade-in duration-300 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="vector-panel p-6 h-fit bg-cloud-light">
+          <h3 class="text-sm font-bold tracking-widest text-black uppercase mb-4 title-font"><i class="ph-bold ph-files mr-2"></i> Documents</h3>
+          <ul id="wiki-nav" class="space-y-1">
+            <li class="p-4 text-center text-sm font-bold text-black border-2 border-dashed border-black">Loading...</li>
+          </ul>
+        </div>
+        <div class="md:col-span-3 vector-panel p-10 min-h-[600px] bg-white">
+          <div id="wiki-loading" class="hidden text-center py-20 text-black title-font text-2xl">
+            <i class="ph-bold ph-spinner-gap animate-spin text-4xl mb-4"></i><br>Loading document...
+          </div>
+          <div id="wiki-content" class="prose prose-vector max-w-none w-full">
+            <div id="wiki-home" class="w-full">
+                <!-- Gallery renders here -->
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <!-- MEMORY VAULT TAB -->
+      <div id="tab-memory" class="hidden animate-in fade-in duration-300">
+        <div class="flex flex-col md:flex-row gap-8">
+          <!-- Sidebar: Conversational History -->
+          <div class="w-full md:w-1/3 vector-panel p-6 h-fit bg-cloud-light">
+             <div class="flex justify-between items-center mb-6">
+                <h3 class="text-sm font-bold tracking-widest text-black uppercase title-font"><i class="ph-fill ph-clock-counter-clockwise mr-2"></i> Agent Sessions</h3>
+                <span class="text-lg font-bold font-mono bg-black text-cloud-run px-2 py-1 border-2 border-black" id="vault-count">0</span>
+             </div>
+             <div class="mb-4">
+                 <input type="text" id="vault-search" placeholder="Search memory or #tags..." class="w-full bg-white border-4 border-black px-3 py-2 text-sm focus:outline-none focus:border-cloud-run transition-colors shadow-inner font-bold" oninput="filterVault()" />
+             </div>
+             <ul id="memory-nav" class="space-y-3 max-h-[300px] md:max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+               <li class="p-4 text-center text-sm font-bold border-2 border-dashed border-black">Loading memory vault...</li>
+             </ul>
+          </div>
+          
+          <!-- Main Content: Markdown Renderer & Block Links -->
+          <div class="w-full md:w-2/3 vector-panel p-8 min-h-[600px] bg-white relative overflow-hidden">
+             <!-- Background aesthetic -->
+             <div class="absolute top-0 right-0 p-10 opacity-10 pointer-events-none">
+                 <i class="ph-fill ph-brain text-[15rem]"></i>
+             </div>
+
+             <div id="memory-loading" class="hidden text-center py-20 text-black title-font text-2xl">
+               <i class="ph-bold ph-spinner-gap animate-spin text-4xl mb-4"></i><br>Decrypting agent memory...
+             </div>
+             
+             <div id="memory-empty" class="text-center py-20 text-black flex flex-col items-center relative z-10">
+               <div class="w-20 h-20 bg-cloud-light border-4 border-black shadow-[4px_4px_0px_black] flex items-center justify-center mx-auto mb-6">
+                  <i class="ph-fill ph-magic-wand text-4xl text-black"></i>
+               </div>
+               <h3 class="text-3xl font-bold title-font mb-2 uppercase">Select a session</h3>
+               <p class="text-sm font-bold">Click a session from the timeline to view its artifacts, tags, and agent decisions.</p>
+             </div>
+
+             <div id="memory-content" class="hidden relative z-10 w-full h-[500px] md:h-[700px] overflow-y-auto custom-scrollbar pr-4 prose prose-vector">
+                <!-- Rendered dynamically -->
+             </div>
+          </div>
+        </div>
+      </div>
+      <!-- SHOWCASE TAB -->
+      <div id="tab-showcase" class="hidden animate-in fade-in duration-300">
+        <div class="vector-panel p-8 min-h-[600px] relative overflow-hidden bg-white">
+          <div class="sliced-graphic sprite-wide absolute top-0 left-0 w-full h-40 opacity-20 pointer-events-none"></div>
+          
+          <div class="relative z-10 mb-8 border-b-4 border-black pb-6">
+            <h2 class="text-4xl font-extrabold title-font mb-2 uppercase" style="text-shadow: 2px 2px 0px var(--color-banana-yellow);">Vector Graphics Showcase</h2>
+            <p class="text-lg font-bold">Demonstrating AI Generated "Nano Banana" elements sliced and interactive.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+            <!-- UI Component Slicing -->
+            <div class="vector-panel p-6 bg-cloud-light shadow-[inset_4px_4px_0px_rgba(0,0,0,0.1)]">
+               <h3 class="text-2xl title-font font-bold mb-4 uppercase border-b-2 border-black pb-2">Sprite Sheet Slicing</h3>
+               <div class="flex flex-wrap items-center justify-center gap-4">
+                  <div class="sliced-graphic sprite-1 border-4 border-black box-content hover:-translate-y-1 transition-transform cursor-pointer shadow-[4px_4px_0px_black] max-w-[calc(100vw-6rem)]"></div>
+                  <div class="sliced-graphic sprite-2 border-4 border-black box-content hover:-translate-y-1 transition-transform cursor-pointer shadow-[4px_4px_0px_black] max-w-[calc(100vw-6rem)]"></div>
+                  <div class="sliced-graphic sprite-3 border-4 border-black box-content hover:-translate-y-1 transition-transform cursor-pointer shadow-[4px_4px_0px_black] max-w-[calc(100vw-6rem)]"></div>
+                  <div class="sliced-graphic sprite-4 border-4 border-black box-content hover:-translate-y-1 transition-transform cursor-pointer shadow-[4px_4px_0px_black] max-w-[calc(100vw-6rem)]"></div>
+               </div>
+               <p class="mt-4 text-sm font-bold bg-white p-2 border-2 border-black inline-block shadow-[2px_2px_0px_black]">CSS background-position mapping</p>
+            </div>
+
+            <!-- Interactive Elements -->
+            <div class="vector-panel p-6 bg-cloud-light shadow-[inset_4px_4px_0px_rgba(0,0,0,0.1)] h-fit">
+               <h3 class="text-2xl title-font font-bold mb-4 uppercase border-b-2 border-black pb-2">Event Triggered Movements</h3>
+               
+               <div class="flex flex-col gap-4">
+                  <button class="btn-vector bg-black text-neon-green w-full py-4 text-xl tracking-wider group relative overflow-hidden hover:bg-black">
+                     <span class="relative z-10 group-hover:hidden block">HOVER ME</span>
+                     <span class="relative z-10 hidden group-hover:block transition-transform scale-110">NANO BANANA UNLEASHED</span>
+                  </button>
+                  
+                  <div class="bg-white border-4 border-black p-4 relative group cursor-pointer hover:bg-banana-yellow transition-colors duration-300 shadow-[4px_4px_0px_black]">
+                     <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-black flex items-center justify-center text-white group-hover:rotate-180 transition-transform duration-500">
+                           <i class="ph-bold ph-arrows-clockwise text-2xl text-neon-green"></i>
+                        </div>
+                        <div>
+                           <h4 class="font-bold text-lg title-font">Kinetic Spin Interaction</h4>
+                           <p class="text-xs font-bold">Transform rotate on hover</p>
+                        </div>
+                     </div>
+                  </div>
+                  
+                  <div class="bg-black text-neon-green p-4 border-4 border-cloud-800 font-mono text-sm relative overflow-hidden mt-2">
+                     <div class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(transparent_50%,rgba(0,255,0,0.1)_50%)] bg-[length:100%_4px] pointer-events-none"></div>
+                     > INITIALIZING VECTOR PROTOCOL...<br>
+                     > NANOBANANA.EXE LOADED<br>
+                     <span class="animate-pulse">_</span>
+                  </div>
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Invite Modal -->
+    <div id="invite-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+        <div class="glass-panel p-8 rounded-2xl w-full max-w-sm text-center border border-cloud-accent/30 shadow-2xl shadow-cloud-accent/10">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Invite User</h2>
+                <button onclick="toggleInviteModal(false)" class="text-gray-400 hover:text-white transition-colors"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <p class="text-sm text-gray-400 mb-4 text-left">Send an official Clerk invitation to a new team member.</p>
+            <input type="email" id="invite-email" placeholder="user@example.com" class="w-full bg-cloud-900 border border-gray-700 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:border-cloud-accent transition-colors" />
+            <button id="send-invite-btn" onclick="sendInvite()" class="w-full bg-cloud-accent text-cloud-900 font-bold py-3 rounded-lg hover:bg-teal-300 transition-colors">
+                Send Invitation
+            </button>
+            <p id="invite-feedback" class="mt-4 text-sm hidden"></p>
+        </div>
+    </div>
+
+    <!-- Initialization -->
+    <script>document.addEventListener("DOMContentLoaded", initApp);</script>
+
+    <script>
+      let pollInterval = null;
+
+      // Helper to dynamically get headers
+      async function getAuthHeaders() {
+          return { "Content-Type": "application/json" };
+      }
+
+      async function initApp() {
+          document.getElementById('app').classList.remove('hidden');
+          
+          fetchStatus();
+          fetchCosts();
+          fetchWikiList();
+          // Poll every 3 seconds for real-time responsiveness
+          pollInterval = setInterval(fetchStatus, 3000);
+      }
+
+      function toggleInviteModal(show) {
+          const modal = document.getElementById("invite-modal");
+          const input = document.getElementById("invite-email");
+          const feedback = document.getElementById("invite-feedback");
+          if (show) {
+              modal.classList.remove("hidden");
+              input.value = '';
+              feedback.classList.add("hidden");
+          } else {
+              modal.classList.add("hidden");
+          }
+      }
+
+      async function sendInvite() {
+          const email = document.getElementById("invite-email").value;
+          const feedback = document.getElementById("invite-feedback");
+          const btn = document.getElementById("send-invite-btn");
+          
+          if (!email) return;
+          
+          btn.disabled = true;
+          btn.innerHTML = `<i class="ph ph-spinner-gap animate-spin"></i> Sending...`;
+          feedback.classList.add("hidden");
+          
+          try {
+              const headers = await getAuthHeaders();
+              headers["Content-Type"] = "application/json";
+              
+              const res = await fetch("/api/invite", {
+                  method: "POST",
+                  headers,
+                  body: JSON.stringify({ email })
+              });
+              
+              const json = await res.json();
+              feedback.classList.remove("hidden");
+              if (json.success) {
+                  feedback.className = "mt-4 text-sm text-emerald-400 font-semibold";
+                  feedback.innerText = json.message;
+                  setTimeout(() => toggleInviteModal(false), 2000);
+              } else {
+                  feedback.className = "mt-4 text-sm text-red-500 font-semibold";
+                  feedback.innerText = json.error;
+              }
+          } catch(e) {
+              feedback.classList.remove("hidden");
+              feedback.className = "mt-4 text-sm text-red-500 font-semibold";
+              feedback.innerText = "Network error occurred.";
+          } finally {
+              btn.disabled = false;
+              btn.innerHTML = `Send Invitation`;
+          }
+      }
+
+      function switchTab(tabId) {
+        ['dashboard', 'wiki', 'memory', 'showcase'].forEach(t => {
+            const tab = document.getElementById(`tab-${t}`);
+            const btn = document.getElementById(`tab-btn-${t}`);
+            if (!tab || !btn) return;
+            if (t === tabId) {
+                tab.classList.remove('hidden');
+                btn.className = 'vector-tab-btn active';
+                if (t === 'wiki' && window.wikiFiles) renderWikiHome();
+                if (t === 'memory' && !window.memoryVault) fetchMemoryVault();
+            } else {
+                tab.classList.add('hidden');
+                btn.className = 'vector-tab-btn bg-white';
+            }
+        });
+      }
+
+      async function fetchWikiList() {
+        try {
+          const headers = await getAuthHeaders();
+          const res = await fetch("/api/wiki/list", { headers });
+          const json = await res.json();
+          if (json.success && json.files) {
+            window.wikiFiles = json.files; // Store globally
+            const nav = document.getElementById("wiki-nav");
+            nav.innerHTML = "";
+            
+            // Add Home Button
+            nav.innerHTML += `<li class="mb-4 text-left"><button onclick="renderWikiHome()" class="w-full text-left px-3 py-2 rounded-xl bg-cloud-accent/10 text-cloud-accent hover:bg-cloud-accent/20 transition-colors text-sm font-bold flex items-center gap-2"><i class="ph-fill ph-house"></i> Wiki Home</button></li>`;
+            
+            // Group by category
+            const groups = {};
+            json.files.forEach(file => {
+                if (!groups[file.category]) groups[file.category] = [];
+                groups[file.category].push(file);
+            });
+            
+            // Render Accordion
+            for (const [category, files] of Object.entries(groups)) {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'mb-2';
+                
+                const catHeader = document.createElement('div');
+                catHeader.className = 'px-3 py-2 text-xs font-bold text-gray-500 uppercase tracking-widest cursor-pointer hover:text-gray-300 flex justify-between items-center bg-gray-900/40 rounded-lg';
+                catHeader.innerHTML = `<span>${category}</span> <i class="ph ph-caret-down text-xs"></i>`;
+                catHeader.onclick = () => {
+                    ul.classList.toggle('hidden');
+                    catHeader.querySelector('i').classList.toggle('ph-caret-down');
+                    catHeader.querySelector('i').classList.toggle('ph-caret-right');
+                };
+                
+                const ul = document.createElement('ul');
+                ul.className = 'space-y-1 mt-1 pl-2 border-l border-gray-800 ml-3';
+                
+                files.forEach(file => {
+                    const li = document.createElement("li");
+                    const iconHtml = file.iconUrl ? `<img src="${file.iconUrl}" class="w-4 h-4 object-contain brightness-0 invert opacity-50 group-hover:opacity-100 transition-opacity" />` : `<i class="ph ${file.icon} text-gray-500 group-hover:text-cloud-accent transition-colors"></i>`;
+                    li.innerHTML = `<button onclick="loadWikiPage('${file.id}')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-gray-800 transition-colors text-sm font-semibold text-gray-300 hover:text-white flex items-center gap-2 group">${iconHtml} <span class="truncate">${file.title}</span></button>`;
+                    ul.appendChild(li);
+                });
+                
+                groupDiv.appendChild(catHeader);
+                groupDiv.appendChild(ul);
+                nav.appendChild(groupDiv);
+            }
+            // Trigger initial render
+            if (document.getElementById('tab-wiki').classList.contains('hidden') === false) {
+                renderWikiHome();
+            }
+          }
+        } catch(e) {
+          console.error("Failed to fetch wiki list", e);
+        }
+      }
+
+      function renderWikiHome() {
+          const container = document.getElementById("wiki-content");
+          if (!window.wikiFiles) return;
+
+          let html = `
+            <div class="animate-in fade-in slide-in-from-bottom-4 duration-500 w-full mb-8 pb-8 border-b border-gray-800">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-cloud-accent/20 flex items-center justify-center">
+                        <i class="ph-fill ph-database text-2xl text-cloud-accent"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-extrabold text-white m-0 tracking-tight">System Resources</h1>
+                    </div>
+                </div>
+                <p class="text-gray-400 m-0">A comprehensive view of your active tools, servers, and integrations.</p>
+            </div>
+          `;
+
+          // Generate Database Gallery
+          const categories = [...new Set(window.wikiFiles.map(f => f.category))];
+          
+          categories.forEach(cat => {
+              html += `<h2 class="text-xl font-bold text-gray-300 mb-4 mt-8">${cat}</h2>`;
+              html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">`;
+              
+              const filesInCat = window.wikiFiles.filter(f => f.category === cat);
+              filesInCat.forEach(file => {
+                  const bgIconHtml = file.iconUrl 
+                    ? `<img src="${file.iconUrl}" class="w-10 h-10 object-contain absolute bottom-4 right-4 opacity-10 group-hover:opacity-30 transition-all drop-shadow-md filter grayscale group-hover:grayscale-0" />`
+                    : `<i class="ph-fill ${file.icon} text-5xl absolute bottom-4 right-4 opacity-5 group-hover:opacity-10 transition-all text-white"></i>`;
+                    
+                  const iconHtml = file.iconUrl
+                    ? `<img src="${file.iconUrl}" class="w-6 h-6 object-contain rounded drop-shadow-sm brightness-0 invert opacity-80" />`
+                    : `<i class="ph-fill ${file.icon} text-xl text-gray-300"></i>`;
+                  
+                  // Render pill tags for relations if available
+                  let relationTags = '';
+                  if (file.relations && file.relations.length > 0) {
+                      file.relations.slice(0, 2).forEach(rel => {
+                          const targetObj = window.wikiFiles.find(f => f.id.includes(rel));
+                          const titleStr = targetObj ? targetObj.title : rel;
+                          relationTags += `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-white/5 text-gray-400 border border-white/10 mt-2 mr-1">${titleStr}</span>`;
+                      });
+                      if (file.relations.length > 2) relationTags += `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-white/5 text-gray-400 border border-white/10 mt-2 text-xs">+${file.relations.length-2}</span>`;
+                  }
+
+                  html += `
+                  <div onclick="loadWikiPage('${file.id}')" class="group relative bg-cloud-900 border border-gray-800 rounded-2xl p-5 hover:border-cloud-accent/50 hover:bg-cloud-800 transition-all cursor-pointer overflow-hidden shadow-lg hover:shadow-cloud-accent/10 flex flex-col justify-between h-36">
+                      ${bgIconHtml}
+                      <div class="relative z-10 flex items-center gap-3 mb-2">
+                          <div class="p-2 bg-gray-800 rounded-lg group-hover:bg-cloud-accent flex shrink-0">
+                              ${iconHtml}
+                          </div>
+                          <h3 class="text-base font-bold text-gray-200 group-hover:text-white m-0 truncate">${file.title}</h3>
+                      </div>
+                      <div class="relative z-10">
+                          ${relationTags}
+                      </div>
+                  </div>
+                  `;
+              });
+              html += `</div>`;
+          });
+
+          container.innerHTML = html;
+      }
+
+      // Simple frontmatter parser for the client side
+      function extractFrontmatter(markdown) {
+        let meta = { relations: [] };
+        let content = markdown;
+        const match = markdown.match(/^---\n([\s\S]*?)\n---/);
+        if (match) {
+            content = markdown.slice(match[0].length).trim();
+            const yaml = match[1];
+            
+            // Extract relations list specially
+            const relMatch = yaml.match(/relations:\s*\[(.*?)\]/);
+            if (relMatch && relMatch[1].trim()) {
+                meta.relations = relMatch[1].split(',').map(s => s.trim().replace(/['"]/g, ''));
+            }
+
+            yaml.split('\n').forEach(line => {
+                const colonIdx = line.indexOf(':');
+                if (colonIdx > -1 && !line.startsWith('relations:')) {
+                    const key = line.slice(0, colonIdx).trim();
+                    let val = line.slice(colonIdx + 1).trim();
+                    if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
+                    if (val.startsWith("'") && val.endsWith("'")) val = val.slice(1, -1);
+                    meta[key] = val;
+                }
+            });
+        }
+        return { meta, content };
+      }
+
+      function buildNotionHeader(meta) {
+          if (Object.keys(meta).length === 0) return '';
+          
+          let html = `<div class="mb-8 pb-8 border-b border-gray-800 animate-in fade-in slide-in-from-bottom-4 duration-500">`;
+          
+          if (meta.iconUrl) {
+              html += `<div class="w-20 h-20 bg-white rounded-3xl p-4 shadow-xl border border-gray-700/50 mb-6 flex items-center justify-center">
+                          <img src="${meta.iconUrl}" class="w-full h-full object-contain" />
+                       </div>`;
+          } else if (meta.icon) {
+              html += `<div class="w-16 h-16 rounded-2xl bg-gray-800/50 flex items-center justify-center mb-6 border border-gray-700/50 shadow-inner">
+                         <i class="ph ${meta.icon} text-4xl text-cloud-accent"></i>
+                       </div>`;
+          }
+          
+          if (meta.title) {
+              html += `<h1 class="text-4xl font-extrabold text-white mb-6 tracking-tight">${meta.title}</h1>`;
+          }
+          
+          html += `<div class="space-y-3">`;
+          
+          // Render tags for built-in props
+          const properties = ['products', 'url', 'category', 'status'];
+          const propIcons = {
+              'products': 'ph-stack',
+              'url': 'ph-link',
+              'category': 'ph-folder',
+              'status': 'ph-activity'
+          };
+          
+          properties.forEach(prop => {
+              if (meta[prop]) {
+                  let valHtml = meta[prop];
+                  
+                  // Format tags/products beautifully
+                  if (prop === 'products' || prop === 'category') {
+                      const tags = meta[prop].split(',').map(t => t.trim());
+                      valHtml = tags.map(t => `<span class="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-gray-800 text-gray-300 border border-gray-700 mr-2">${t}</span>`).join('');
+                  } else if (prop === 'url') {
+                      valHtml = `<a href="${meta[prop]}" target="_blank" class="text-cloud-accent hover:underline">${meta[prop]}</a>`;
+                  } else if (prop === 'status') {
+                      valHtml = `<span class="inline-flex items-center gap-1.5"><div class="w-2 h-2 rounded-full ${meta[prop].toLowerCase() === 'active' ? 'bg-cloud-run' : 'bg-cloud-stop'}"></div> ${meta[prop]}</span>`;
+                  }
+                  
+                  html += `
+                  <div class="flex items-center group">
+                      <div class="w-32 flex items-center gap-2 text-gray-500 text-sm">
+                          <i class="ph ${propIcons[prop]}"></i>
+                          <span class="capitalize">${prop}</span>
+                      </div>
+                      <div class="flex-1 text-gray-300 text-sm">
+                          ${valHtml}
+                      </div>
+                  </div>`;
+              }
+          });
+
+          // Custom Relations Row mapping
+          if (meta.relations && meta.relations.length > 0) {
+              let relHtml = meta.relations.map(rel => {
+                  const targetObj = (window.wikiFiles || []).find(f => f.id.includes(rel));
+                  if (!targetObj) return `<span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-white/5 text-gray-400 border border-white/10 mr-2"><i class="ph ph-link-break mr-1"></i> ${rel}</span>`;
+                  
+                  // Wrap target object in button to go to that page
+                  return `<button onclick="loadWikiPage('${targetObj.id}')" class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-cloud-accent/10 hover:bg-cloud-accent/20 text-cloud-accent border border-cloud-accent/30 transition-colors mr-2 cursor-pointer shadow-sm"><i class="ph-fill ${targetObj.icon} mr-1"></i> ${targetObj.title}</button>`;
+              }).join('');
+
+              html += `
+              <div class="flex items-center group mt-3 pt-3 border-t border-gray-800/50">
+                  <div class="w-32 flex items-center gap-2 text-gray-500 text-sm">
+                      <i class="ph ph-intersect"></i>
+                      <span>Relations</span>
+                  </div>
+                  <div class="flex-1 text-gray-300 text-sm flex flex-wrap gap-1">
+                      ${relHtml}
+                  </div>
+              </div>`;
+          }
+          
+          html += `</div></div>`;
+          return html;
+      }
+
+      async function loadWikiPage(pageName) {
+        document.getElementById("wiki-content").classList.add("hidden");
+        document.getElementById("wiki-loading").classList.remove("hidden");
+        try {
+          const headers = await getAuthHeaders();
+          const res = await fetch(`/api/wiki/content?page=${pageName}`, { headers });
+          const json = await res.json();
+          if (json.success) {
+             const { meta, content } = extractFrontmatter(json.content);
+             const headerHtml = buildNotionHeader(meta);
+             const bodyHtml = `<div class="animate-in fade-in duration-700 delay-100 fill-mode-both">${marked.parse(content)}</div>`;
+             
+             document.getElementById("wiki-content").innerHTML = headerHtml + bodyHtml;
+          } else {
+             document.getElementById("wiki-content").innerHTML = `<h1 class="text-red-500">Error loading page</h1><p>${json.error}</p>`;
+          }
+        } catch(e) {
+          document.getElementById("wiki-content").innerHTML = `<h1 class="text-red-500">Connection Error</h1><p>Could not fetch the wiki content.</p>`;
+        } finally {
+          document.getElementById("wiki-loading").classList.add("hidden");
+          document.getElementById("wiki-content").classList.remove("hidden");
+        }
+      }
+
+      async function fetchMemoryVault() {
+          try {
+              const headers = await getAuthHeaders();
+              const res = await fetch("/api/memory/vault", { headers });
+              const json = await res.json();
+              if (json.success && json.vault) {
+                  window.memoryVault = json.vault;
+                  document.getElementById('vault-count').innerText = json.vault.length;
+                  renderMemoryVaultList(window.memoryVault);
+              }
+          } catch(e) {
+              console.error("Failed to fetch memory vault", e);
+          }
+      }
+
+      function renderMemoryVaultList(vaultData) {
+          const nav = document.getElementById("memory-nav");
+          nav.innerHTML = "";
+          
+          if(!vaultData || vaultData.length === 0) {
+              nav.innerHTML = `<li class="p-4 text-center text-sm text-gray-500 border border-dashed border-gray-700 rounded-xl">No memories synced yet.</li>`;
+              return;
+          }
+
+          vaultData.forEach(session => {
+              const dateStr = new Date(session.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+              
+              // Tag pill builder
+              let tagsHtml = '';
+              if (session.tags && session.tags.length > 0) {
+                  const displayTags = session.tags.slice(0, 3);
+                  tagsHtml = displayTags.map(t => `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-900/30 text-emerald-400 border border-emerald-500/20 mr-1 mt-2">${t}</span>`).join('');
+                  if (session.tags.length > 3) tagsHtml += `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold text-gray-500 mt-2">+${session.tags.length - 3}</span>`;
+              }
+              
+              const li = document.createElement("li");
+              li.innerHTML = `
+              <button onclick="loadMemorySession('${session.id}')" class="w-full text-left p-4 rounded-2xl bg-gray-900 border border-gray-800 hover:border-emerald-500/50 hover:bg-gray-800 transition-all group flex flex-col cursor-pointer shadow-sm relative overflow-hidden">
+                  <div class="absolute top-0 right-0 w-1 h-full bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div class="flex justify-between items-start w-full mb-1">
+                      <h4 class="font-bold text-gray-200 text-sm truncate pr-2">${session.title}</h4>
+                  </div>
+                  <p class="text-xs text-gray-500 mb-1 font-mono">${dateStr}</p>
+                  <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">${session.summary}</p>
+                  <div class="flex items-center justify-between w-full">
+                      <div>${tagsHtml}</div>
+                      <div class="flex items-center gap-2 mt-2">
+                         ${session.mediaCount > 0 ? `<span class="text-[10px] text-gray-500 flex items-center bg-gray-800 px-1.5 py-0.5 rounded"><i class="ph-fill ph-image mr-1"></i> ${session.mediaCount}</span>` : ''}
+                         <span class="text-[10px] text-gray-500 flex items-center bg-gray-800 px-1.5 py-0.5 rounded"><i class="ph-fill ph-file-text mr-1"></i> ${session.documents.length}</span>
+                      </div>
+                  </div>
+              </button>`;
+              nav.appendChild(li);
+          });
+      }
+
+      function filterVault() {
+          const query = document.getElementById('vault-search').value.toLowerCase();
+          if (!window.memoryVault) return;
+          const filtered = window.memoryVault.filter(s => 
+              s.title.toLowerCase().includes(query) || 
+              s.summary.toLowerCase().includes(query) || 
+              (s.tags && s.tags.some(t => t.toLowerCase().includes(query)))
+          );
+          renderMemoryVaultList(filtered);
+      }
+
+      function loadMemorySession(id) {
+          if (!window.memoryVault) return;
+          const session = window.memoryVault.find(s => s.id === id);
+          if (!session) return;
+          
+          document.getElementById('memory-empty').classList.add('hidden');
+          const contentDiv = document.getElementById('memory-content');
+          contentDiv.classList.remove('hidden');
+          
+          const dateStr = new Date(session.date).toLocaleString();
+          
+          // Header
+          let html = `
+          <div class="border-b border-gray-800 pb-6 mb-6">
+              <div class="flex items-center gap-3 mb-2">
+                 <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+                     <i class="ph-fill ph-brain text-xl text-emerald-400"></i>
+                 </div>
+                 <div>
+                    <h2 class="text-2xl font-extrabold text-white leading-tight">${session.title}</h2>
+                    <p class="text-xs font-mono text-gray-500 mt-1">${session.id} • ${dateStr}</p>
+                 </div>
+              </div>
+          </div>
+          `;
+          
+          // Render Markdown Documents
+          if (session.documents && session.documents.length > 0) {
+              const priorityDocs = ['walkthrough.md', 'task.md', 'implementation_plan.md'];
+              const sortedDocs = [...session.documents].sort((a,b) => {
+                  let ai = priorityDocs.indexOf(a.name);
+                  let bi = priorityDocs.indexOf(b.name);
+                  if (ai === -1) ai = 99;
+                  if (bi === -1) bi = 99;
+                  return ai - bi;
+              });
+
+              sortedDocs.forEach(doc => {
+                  const rawMd = doc.content;
+                  // Markdown to HTML (with specific styling for block tags)
+                  // Highlight block IDs like ^blk-xxxxxx
+                  const processedMd = rawMd.replace(/\^blk-([a-zA-Z0-9]+)/g, '<span id="blk-$1" class="text-[10px] ml-2 px-1 py-0.5 rounded bg-white/5 font-mono text-emerald-500/50 hover:text-emerald-400 hover:bg-emerald-900/30 cursor-pointer transition-colors" title="Block Reference">#blk-$1</span>');
+                  
+                  const parsedMd = marked.parse(processedMd);
+                  
+                  html += `
+                  <div class="mb-8 bg-black/20 rounded-2xl p-6 border border-gray-800/50 shadow-inner">
+                      <h3 class="text-sm font-bold font-mono text-gray-400 uppercase tracking-widest mb-4 flex items-center border-b border-gray-800 pb-2"><i class="ph-fill ph-file-md mr-2 text-emerald-500"></i> ${doc.name}</h3>
+                      <div class="prose prose-invert prose-emerald max-w-none prose-pre:bg-[#0d1017] prose-pre:border prose-pre:border-gray-800">
+                         ${parsedMd}
+                      </div>
+                  </div>
+                  `;
+              });
+          }
+          
+          contentDiv.innerHTML = html;
+      }
+
+      async function fetchStatus() {
+        try {
+          const headers = await getAuthHeaders();
+          const res = await fetch("/api/status", { headers });
+          if (!res.ok) {
+             console.error("API Error or unauthorized:", res.status);
+             return;
+          }
+
+          const data = await res.json();
+
+          // Update Windows
+          document.getElementById("win-ip").innerText =
+            data.windows.ip || "None";
+          updateWinBadge(data.windows.status);
+
+          // Update Linux
+          document.getElementById("lin-ip").innerText = data.linux.ip;
+          document.getElementById("ssh-snippet").innerText =
+            `ssh -i backend_key ubuntu@${data.linux.ip}`;
+        } catch (e) {
+          console.error("Failed to fetch status", e);
+        }
+      }
+
+      async function fetchCosts() {
+        try {
+          const headers = await getAuthHeaders();
+          const res = await fetch("/api/costs", { headers });
+          const json = await res.json();
+          document.getElementById('billing-loading').classList.add('hidden');
+          
+          if (!json.success || !json.data || json.data.length === 0) {
+            document.getElementById('billing-error').classList.remove('hidden');
+            if (json.error) document.getElementById('billing-error-text').innerText = json.error;
+            return;
+          }
+          
+          // Data is available
+          document.getElementById('billing-data').classList.remove('hidden');
+          
+          let totalCost = 0;
+          let totalHours = 0;
+          
+          json.data.forEach(day => {
+              if (day.Total && day.Total.UnblendedCost) {
+                  totalCost += parseFloat(day.Total.UnblendedCost.Amount || 0);
+              }
+              if (day.Total && day.Total.UsageQuantity) {
+                  totalHours += parseFloat(day.Total.UsageQuantity.Amount || 0);
+              }
+          });
+          
+          document.getElementById('bill-gpu').innerText = '$' + totalCost.toFixed(2);
+          document.getElementById('bill-hours').innerText = totalHours.toFixed(1);
+          
+          // Estimate total accrued (adding proportional linux cost roughly $2/day)
+          const baseMontlyConstant = 48.00; // Storage
+          const totalAccrued = totalCost + baseMontlyConstant;
+          document.getElementById('bill-total').innerText = '$' + totalAccrued.toFixed(2);
+          
+        } catch (e) {
+          console.error(e);
+          document.getElementById('billing-loading').classList.add('hidden');
+          document.getElementById('billing-error').classList.remove('hidden');
+        }
+      }
+
+      function updateWinBadge(status) {
+        const badge = document.getElementById("win-badge");
+        const btnStart = document.getElementById("btn-start");
+        const btnStop = document.getElementById("btn-stop");
+        const btnRdpContainer = document.getElementById("btn-rdp-container");
+
+        const bootStart = parseInt(localStorage.getItem('win_boot_start')) || 0;
+        const now = Date.now();
+        const BOOT_WAIT_MS = 2.5 * 60 * 1000; // 2.5 minutes estimate
+
+        if (status === "running") {
+          if (now - bootStart < BOOT_WAIT_MS) {
+            // OS is still booting
+            const remainingMins = Math.ceil((BOOT_WAIT_MS - (now - bootStart)) / 1000 / 60);
+            badge.className = "px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 bg-yellow-900/30 text-yellow-500 border border-yellow-500/30";
+            badge.innerHTML = `<i class="ph ph-spinner-gap animate-spin"></i> Booting (${remainingMins}m)`;
+            btnStart.classList.add("hidden");
+            btnStop.classList.add("hidden");
+            btnRdpContainer.classList.add("hidden");
+          } else {
+            // Fully booted
+            badge.className = "px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 bg-cloud-run/20 text-cloud-run border border-cloud-run/30";
+            badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-cloud-run animate-pulse-slow"></div> Running`;
+            btnStart.classList.add("hidden");
+            btnStop.classList.remove("hidden");
+            btnRdpContainer.classList.remove("hidden");
+          }
+        } else if (status === "stopped") {
+          localStorage.removeItem('win_boot_start');
+          badge.className = "px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 bg-gray-800 text-gray-400";
+          badge.innerHTML = `<div class="w-2 h-2 rounded-full bg-gray-500"></div> Stopped`;
+          btnStart.classList.remove("hidden");
+          btnStop.classList.add("hidden");
+          btnRdpContainer.classList.add("hidden");
+        } else {
+          badge.className = "px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 bg-yellow-900/30 text-yellow-500 border border-yellow-500/30";
+          badge.innerHTML = `<i class="ph ph-spinner-gap animate-spin"></i> ${status}`;
+          btnStart.classList.add("hidden");
+          btnStop.classList.add("hidden");
+          btnRdpContainer.classList.add("hidden");
+        }
+      }
+
+      function downloadRdp() {
+        const ip = document.getElementById("win-ip").innerText;
+        if (!ip || ip === "None" || ip === "...") return;
+        
+        const rdpContent = `auto connect:i:1\nfull address:s:${ip}:3389\nusername:s:Administrator\nprompt for credentials:i:1`;
+        const blob = new Blob([rdpContent], { type: "application/x-rdp" });
+        const url = window.URL.createObjectURL(blob);
+        
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = "UnrealWorkstation.rdp";
+        document.body.appendChild(a);
+        a.click();
+        
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+
+      async function toggleWin(action) {
+        try {
+          document.getElementById("win-badge").innerHTML =
+            `<i class="ph ph-spinner-gap animate-spin"></i> Requesting...`;
+          document.getElementById("btn-start").classList.add("hidden");
+          document.getElementById("btn-stop").classList.add("hidden");
+
+          const headers = await getAuthHeaders();
+          
+          if (action === 'start') {
+              localStorage.setItem('win_boot_start', Date.now().toString());
+          }
+
+          const res = await fetch(`/api/windows/${action}`, {
+            method: "POST",
+            headers,
+          });
+
+          if (res.ok) {
+            setTimeout(fetchStatus, 3000);
+          }
+        } catch (e) {
+          alert("Commad failed: " + e.message);
+          fetchStatus();
+        }
+      }
+
+    </script>
+  </body>
+</html>

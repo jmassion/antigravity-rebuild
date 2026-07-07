@@ -1,0 +1,11 @@
+{
+  "icon": "Battery",
+  "tags": [
+    "battery",
+    "phone",
+    "tablet",
+    "laptop",
+    "watch"
+  ],
+  "description": "Battery and power settings"
+}

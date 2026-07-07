@@ -1,0 +1,426 @@
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📦🤝🚀  NEXUS — Handoff Packaging Rules  🚀🤝📦                          ║
+║                                                                              ║
+║   How Claude.ai chat packages artifacts for handoff to:                      ║
+║   • Claude Code (terminal agent)                                             ║
+║   • Antigravity IDE                                                          ║
+║   • Any other execution environment                                          ║
+║                                                                              ║
+║   Built for: Justin — March 5, 2026                                          ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                       📋 TABLE OF CONTENTS (TOP) 📋                         ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║   RULE 1   📦  PACKAGE STRUCTURE ............. Standard zip layout            ║
+║   RULE 2   📋  MANIFEST FILE ................. machine-readable instructions ║
+║   RULE 3   🤖  AGENT PROMPT .................. Copy-paste prompt for agent   ║
+║   RULE 4   🏷️  NAMING CONVENTION ............. Predictable file names        ║
+║   RULE 5   📍  PLACEMENT INSTRUCTIONS ........ Where files go in the repo    ║
+║   RULE 6   🔧  DEPENDENCY DECLARATION ........ What needs to be installed    ║
+║   RULE 7   🚀  DEPLOY INSTRUCTIONS ........... How to ship it live           ║
+║   RULE 8   📊  CONTEXT SNAPSHOT ............... State of the project          ║
+║   RULE 9   ✅  VERIFICATION CHECKLIST ........ How to confirm it works       ║
+║   RULE 10  🔄  CONTINUATION PROMPT ........... Resume work in new chat       ║
+║   RULE 11  📋  TABLE OF CONTENTS (BOTTOM) .... Quick reference              ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS — Handoff Packaging Rules</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fafaf8;--bg2:#f2f1ed;--bg3:#e8e7e2;--surface:#fff;--border:#d8d6cf;--text:#2a2a25;--text-dim:#6b6960;--text-muted:#9a9890;--accent:#3d5a80;--accent2:#5a8fbd;--green:#2d6a4f;--green-bg:#d8f3dc;--orange:#bc6c25;--orange-bg:#fefae0;--red:#9b2226;--purple:#7b2d8e;--purple-bg:#f3e8f9;--radius:8px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:15px;line-height:1.75}
+.container{max-width:800px;margin:0 auto;padding:40px 24px 100px}
+.hero{text-align:center;padding:50px 0 36px}
+.hero-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.hero h1{font-family:'Newsreader',serif;font-size:clamp(1.8rem,4.5vw,2.6rem);color:var(--text);line-height:1.15;margin-bottom:10px}
+.hero h1 em{color:var(--accent2);font-style:italic}
+.hero-sub{font-size:.95rem;color:var(--text-dim);max-width:520px;margin:0 auto}
+.section{margin-top:40px;padding-top:36px;border-top:2px solid var(--bg3)}
+.section-num{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.section h2{font-family:'Newsreader',serif;font-size:1.45rem;color:var(--text);margin-bottom:12px}
+.section h3{font-size:1rem;font-weight:600;color:var(--text);margin:24px 0 8px}
+.section p{color:var(--text);margin-bottom:12px}
+.code{background:#1a1a2a;border:1px solid #333;border-radius:var(--radius);padding:16px;margin:14px 0;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.6;color:#69f0ae;white-space:pre}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin:14px 0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card-title{font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:600;color:var(--accent);margin-bottom:8px}
+.callout{border-left:3px solid var(--accent);background:var(--surface);padding:12px 16px;margin:14px 0;border-radius:0 var(--radius) var(--radius) 0;font-size:.88rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.callout strong{color:var(--accent)}
+.callout.warn{border-left-color:var(--orange);background:var(--orange-bg)}
+.callout.warn strong{color:var(--orange)}
+.callout.good{border-left-color:var(--green);background:var(--green-bg)}
+.callout.good strong{color:var(--green)}
+.item{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid var(--bg3);align-items:flex-start}
+.item:last-child{border-bottom:none}
+.item-icon{font-size:1rem;flex-shrink:0;width:24px;text-align:center}
+.item-content{flex:1}
+.item-title{font-weight:600;font-size:.88rem;color:var(--text)}
+.item-desc{color:var(--text-dim);font-size:.82rem;margin-top:2px}
+footer{text-align:center;padding:40px 0 28px;color:var(--text-muted);font-size:.76rem;border-top:2px solid var(--bg3);margin-top:40px}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="hero">
+  <div class="hero-label">Standard Operating Procedure</div>
+  <h1>Handoff <em>Packaging</em> Rules</h1>
+  <p class="hero-sub">How Claude.ai chat packages completed work for seamless handoff to Claude Code, Antigravity, or any execution environment.</p>
+</header>
+
+
+<!-- ═══════════════════════════════════════════
+     RULE 1 — 📦 PACKAGE STRUCTURE
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-num">Rule 01</div>
+  <h2>📦 Standard Package Structure</h2>
+  <p>Every handoff from Claude.ai chat follows the same zip structure. The receiving agent (Claude Code, Antigravity, etc.) can rely on this layout being consistent every single time.</p>
+
+  <div class="code">
+nexus-handoff-[project]-[date]/
+│
+├── 📋 HANDOFF.md              ← THE KEY FILE. Human + agent readable.
+│                                  Contains everything needed to execute.
+│
+├── 📁 src/                    ← All source files
+│   ├── index.html             ← (or App.jsx, main.py, etc.)
+│   ├── styles.css             ← (if separated)
+│   └── app.js                 ← (if separated)
+│
+├── 📁 assets/                 ← Images, fonts, media (if any)
+│
+├── 📄 manifest.json           ← Machine-readable instructions
+│
+├── 📄 netlify.toml            ← Deploy config (if applicable)
+│
+└── 📄 package.json            ← Dependencies (if applicable)</div>
+
+  <div class="callout good">
+    <strong>💡 Single-file projects:</strong> If the project is one HTML file, the zip still follows this structure — the HTML goes in <code>src/</code>, and HANDOFF.md + manifest.json are still included. Consistency matters more than minimalism.
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     RULE 2 — 📋 MANIFEST FILE
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-num">Rule 02</div>
+  <h2>📋 manifest.json — Machine-Readable Instructions</h2>
+  <p>Every handoff includes a manifest.json that any agent can parse to understand what to do without reading prose. This is the "API contract" of the handoff.</p>
+
+  <div class="code">
+{
+  "handoff": {
+    "version": "1.0",
+    "created": "2026-03-05T18:30:00Z",
+    "source": "claude.ai",
+    "project": "nexus-dashboard",
+    "description": "NEXUS Mission Control v4 with billing, compute, API/MCP views"
+  },
+  "placement": {
+    "target": "new-project",
+    "repo": "nexus-os",
+    "path": "apps/nexus-dashboard/",
+    "parent_project": null,
+    "netlify_site": "nexus-dashboard"
+  },
+  "files": [
+    {
+      "source": "src/index.html",
+      "destination": "apps/nexus-dashboard/index.html",
+      "action": "create_or_replace"
+    }
+  ],
+  "dependencies": {
+    "npm": [],
+    "cdn": [
+      "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+    ]
+  },
+  "deploy": {
+    "provider": "netlify",
+    "build_command": "none",
+    "publish_dir": "apps/nexus-dashboard/",
+    "auto_deploy": true
+  },
+  "post_deploy": [
+    "Verify all 11 tabs load correctly",
+    "Test drag-and-drop file import",
+    "Confirm 3D graph renders with Three.js"
+  ],
+  "mcp_required": ["netlify", "github"],
+  "skills_required": [],
+  "context_notes": "Built across 6 iterations in a single chat. v4 adds billing, compute provisioning, and API/MCP management views."
+}</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     RULE 3 — 🤖 AGENT PROMPT
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-num">Rule 03</div>
+  <h2>🤖 Agent Prompt — Copy-Paste Ready</h2>
+  <p>Every HANDOFF.md starts with a prompt block that can be directly pasted into Claude Code, Antigravity, or any agent. The agent reads it and knows exactly what to do.</p>
+
+  <div class="code">
+# HANDOFF.md
+
+## 🤖 AGENT PROMPT (paste this into Claude Code or your IDE agent)
+
+```
+I have a handoff package from Claude.ai chat. Here's what needs to happen:
+
+PROJECT: nexus-dashboard
+ACTION: Deploy new project to monorepo
+REPO: github.com/justin/nexus-os
+PATH: apps/nexus-dashboard/
+
+Steps:
+1. Create branch: feat/nexus-dashboard-v4
+2. Place src/index.html → apps/nexus-dashboard/index.html
+3. Place netlify.toml → apps/nexus-dashboard/netlify.toml
+4. Commit with message: "feat: NEXUS dashboard v4 — billing, compute, API/MCP views"
+5. Push and open PR
+6. The auto-merge workflow will handle the rest
+
+The manifest.json has all file mappings and deploy config.
+```
+
+## 📝 HUMAN SUMMARY
+
+What was built: NEXUS Mission Control dashboard v4 — a browser-based 
+project management UI with 11 tabs including overview, kanban, 3D graph, 
+live preview, deploys, agent queue, links, file import, billing/accounting, 
+compute provisioning, and API/MCP management.
+
+What it needs: Just static file hosting. No build step. Single HTML file 
+with inline CSS/JS. Three.js loaded from CDN.
+
+What changed from v3: Added billing view (credit balance, per-project costs, 
+agent credit cards, transactions), compute view (provision Linux/Win/Mac 
+desktops, auto-provisioning rules), and API/MCP view (key management, 
+MCP server toggles, skills/rules editor, override matrix).</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     RULE 4 — 🏷️ NAMING CONVENTION
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-num">Rule 04</div>
+  <h2>🏷️ Naming Convention</h2>
+  <p>Predictable names so agents and humans can find things without guessing.</p>
+
+  <div class="card">
+    <div class="card-title">📛 File & Folder Naming Rules</div>
+    <div class="item"><div class="item-icon">📦</div><div class="item-content"><div class="item-title">Zip filename</div><div class="item-desc"><code>nexus-handoff-[project]-[YYYY-MM-DD].zip</code> — e.g., <code>nexus-handoff-dashboard-2026-03-05.zip</code></div></div></div>
+    <div class="item"><div class="item-icon">📋</div><div class="item-content"><div class="item-title">Manifest</div><div class="item-desc">Always <code>manifest.json</code> at the root. Never nested.</div></div></div>
+    <div class="item"><div class="item-icon">📝</div><div class="item-content"><div class="item-title">Instructions</div><div class="item-desc">Always <code>HANDOFF.md</code> at the root. Uppercase so it stands out in directory listings.</div></div></div>
+    <div class="item"><div class="item-icon">📁</div><div class="item-content"><div class="item-title">Source code</div><div class="item-desc">Always in <code>src/</code> folder. Even if it's one file.</div></div></div>
+    <div class="item"><div class="item-icon">🔀</div><div class="item-content"><div class="item-title">Branch names</div><div class="item-desc"><code>feat/[project]-[short-description]</code> — e.g., <code>feat/dashboard-billing-views</code></div></div></div>
+    <div class="item"><div class="item-icon">💬</div><div class="item-content"><div class="item-title">Commit messages</div><div class="item-desc"><code>feat: [project] — [what changed]</code> — e.g., <code>feat: dashboard — add billing, compute, API/MCP views</code></div></div></div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     RULE 5 — 📍 PLACEMENT INSTRUCTIONS
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-num">Rule 05</div>
+  <h2>📍 Placement Instructions</h2>
+  <p>Every handoff specifies exactly where files go in the monorepo. No ambiguity.</p>
+
+  <div class="card">
+    <div class="card-title">🎯 Placement Types</div>
+    <div class="item"><div class="item-icon">🆕</div><div class="item-content"><div class="item-title">New project</div><div class="item-desc">Creates a new folder under <code>apps/[project-name]/</code>. Includes netlify.toml for auto-deploy setup.</div></div></div>
+    <div class="item"><div class="item-icon">🔄</div><div class="item-content"><div class="item-title">Update existing project</div><div class="item-desc">Replaces specific files at their existing paths. manifest.json lists each file with <code>"action": "create_or_replace"</code> and exact destination paths.</div></div></div>
+    <div class="item"><div class="item-icon">📁</div><div class="item-content"><div class="item-title">Add to sub-project</div><div class="item-desc">Targets a specific sub-folder like <code>apps/holodeck-os/landing/</code>. Parent project specified in manifest.</div></div></div>
+    <div class="item"><div class="item-icon">♻️</div><div class="item-content"><div class="item-title">Shared component</div><div class="item-desc">Goes into <code>shared/components/</code> or <code>shared/utils/</code> for cross-project reuse.</div></div></div>
+    <div class="item"><div class="item-icon">🤖</div><div class="item-content"><div class="item-title">Agent config update</div><div class="item-desc">Goes into <code>agents/global/</code> or <code>agents/projects/[name]/</code> for rules, skills, or MCP configs.</div></div></div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     RULE 6 — 🔧 DEPENDENCY DECLARATION
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-num">Rule 06</div>
+  <h2>🔧 Dependency Declaration</h2>
+  <p>The manifest declares every external dependency so the receiving agent can install what's needed before deploying.</p>
+
+  <div class="card">
+    <div class="item"><div class="item-icon">📦</div><div class="item-content"><div class="item-title">npm packages</div><div class="item-desc">Listed in manifest.json under <code>dependencies.npm</code>. If non-empty, the agent runs <code>npm install</code>.</div></div></div>
+    <div class="item"><div class="item-icon">🌐</div><div class="item-content"><div class="item-title">CDN scripts</div><div class="item-desc">Listed under <code>dependencies.cdn</code>. Already referenced in the HTML. No installation needed — just documentation.</div></div></div>
+    <div class="item"><div class="item-icon">🐍</div><div class="item-content"><div class="item-title">Python packages</div><div class="item-desc">Listed under <code>dependencies.pip</code> if applicable. Agent runs <code>pip install</code>.</div></div></div>
+    <div class="item"><div class="item-icon">⚙️</div><div class="item-content"><div class="item-title">System tools</div><div class="item-desc">Listed under <code>dependencies.system</code> — things like <code>ffmpeg</code>, <code>imagemagick</code>, etc.</div></div></div>
+  </div>
+
+  <div class="callout">
+    <strong>💡 Most NEXUS projects are zero-dependency.</strong> Single-file HTML with inline CSS/JS and CDN-loaded libraries. The manifest still declares the CDN dependencies for documentation, but no install step is needed.
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     RULE 7 — 🚀 DEPLOY INSTRUCTIONS
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-num">Rule 07</div>
+  <h2>🚀 Deploy Instructions</h2>
+  <p>Every handoff includes explicit deploy config so the agent can ship it without asking questions.</p>
+
+  <div class="code">
+// In manifest.json:
+"deploy": {
+  "provider": "netlify",          // Where it goes
+  "build_command": "none",        // or "npm run build" etc.
+  "publish_dir": "apps/dashboard/", // What folder to publish
+  "auto_deploy": true,            // Auto-deploy on merge?
+  "domain": "nexus-dashboard.netlify.app",  // Expected URL
+  "custom_domain": "dashboard.holodeckos.com" // If assigned
+}
+
+// The agent's job:
+// 1. Place files per manifest
+// 2. Commit to branch
+// 3. Open PR
+// 4. Auto-merge pipeline handles the rest
+// 5. Netlify webhook triggers deploy</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     RULE 8 — 📊 CONTEXT SNAPSHOT
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-num">Rule 08</div>
+  <h2>📊 Context Snapshot</h2>
+  <p>When continuing work across chat sessions or handing off to a different agent, include a snapshot of the current project state so the next agent doesn't start from zero.</p>
+
+  <div class="code">
+## 📊 CONTEXT SNAPSHOT
+
+### Current State
+- Dashboard: v4, 150KB, 2291 lines, 11 tabs functional
+- Repo: Not yet created (Phase 1 pending)
+- Hosting: Not yet deployed (awaiting Netlify setup)
+- DNS: holodeckos.com on GoDaddy → Siteground (migration to Netlify pending)
+
+### What's Been Built
+1. ✅ Master plan document (architecture, roadmap)
+2. ✅ Dashboard mockup v4 (overview, kanban, 3D graph, preview,
+   deploys, queue, links, import, billing, compute, API/MCP)
+3. ✅ Infrastructure strategy (Mac cloud, AWS, corporate, billing)
+4. ✅ Handoff packaging rules (this document)
+5. ⬜ Monorepo setup (Phase 1)
+6. ⬜ GitHub Actions auto-merge
+7. ⬜ Netlify DNS migration
+8. ⬜ Backend API server
+
+### Active Decisions
+- Netlify for static hosting, Kamatera for VPS, MacStadium for Mac
+- Wyoming LLC via Doola (not yet formed)
+- Stripe Billing phase 1, Lago phase 2
+- Single monorepo, projects graduate to separate repos when complex
+
+### Files the Next Agent Needs
+- nexus-dashboard-v4.html (the current dashboard)
+- nexus-masterplan.html (architecture document)
+- nexus-infrastructure-strategy.html (Mac/AWS/corporate/billing doc)
+- This handoff rules document</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     RULE 9 — ✅ VERIFICATION CHECKLIST
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-num">Rule 09</div>
+  <h2>✅ Verification Checklist</h2>
+  <p>Every handoff ends with a checklist the receiving agent runs after deployment to confirm everything works.</p>
+
+  <div class="card">
+    <div class="card-title">🔍 Post-Deploy Verification Template</div>
+    <div class="item"><div class="item-icon">1️⃣</div><div class="item-content"><div class="item-title">Site loads</div><div class="item-desc">Open the Netlify URL. Page renders without errors. Check browser console for JS errors.</div></div></div>
+    <div class="item"><div class="item-icon">2️⃣</div><div class="item-content"><div class="item-title">All views accessible</div><div class="item-desc">Click every tab. Each view renders content, not blank space.</div></div></div>
+    <div class="item"><div class="item-icon">3️⃣</div><div class="item-content"><div class="item-title">Interactive elements work</div><div class="item-desc">Buttons respond, modals open, drag-and-drop functions, chat sends messages.</div></div></div>
+    <div class="item"><div class="item-icon">4️⃣</div><div class="item-content"><div class="item-title">Mobile responsive</div><div class="item-desc">Check on phone or resize browser. Content doesn't overflow or break.</div></div></div>
+    <div class="item"><div class="item-icon">5️⃣</div><div class="item-content"><div class="item-title">No console errors</div><div class="item-desc">Open DevTools → Console. Zero red errors. Warnings are okay.</div></div></div>
+    <div class="item"><div class="item-icon">6️⃣</div><div class="item-content"><div class="item-title">Report back</div><div class="item-desc">Send a summary: "Deployed [project] to [URL]. All checks pass. [Any issues found]."</div></div></div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     RULE 10 — 🔄 CONTINUATION PROMPT
+     ═══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-num">Rule 10</div>
+  <h2>🔄 Continuation Prompt — For New Chat Sessions</h2>
+  <p>When starting a fresh Claude.ai chat to continue work, use this template. Drop in the latest file(s) and paste this prompt structure:</p>
+
+  <div class="code">
+## Continuation prompt template:
+
+"Continuing NEXUS project. Here's the current [dashboard/component/document].
+
+CONTEXT:
+- Project: [name]
+- Version: [v4, v5, etc.]
+- Last session built: [what was added]
+- Repo status: [deployed / not yet deployed]
+
+TASK FOR THIS SESSION:
+- [What you want built next]
+
+The file attached is the latest version. All code comments follow 
+our standard: comments for a 10-year-old, emojis, ASCII art headers, 
+TOC top and bottom.
+
+When done, package as a handoff zip with HANDOFF.md and manifest.json 
+following our standard packaging rules."</div>
+
+  <div class="callout good">
+    <strong>💡 Pro tip:</strong> You don't need to re-explain the whole project. Claude has memories of your project context from past conversations. Just drop the file, state what's next, and go. The continuation prompt is mainly for precision, not for re-teaching.
+  </div>
+</section>
+
+
+<footer>
+  <div style="margin-bottom:16px;text-align:left;max-width:480px;margin-left:auto;margin-right:auto;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:2px;color:var(--accent);margin-bottom:8px;text-align:center;">📋 TABLE OF CONTENTS (BOTTOM)</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:2;color:var(--text-dim);">
+      01 → 📦 Package Structure<br>
+      02 → 📋 manifest.json<br>
+      03 → 🤖 Agent Prompt<br>
+      04 → 🏷️ Naming Convention<br>
+      05 → 📍 Placement Instructions<br>
+      06 → 🔧 Dependency Declaration<br>
+      07 → 🚀 Deploy Instructions<br>
+      08 → 📊 Context Snapshot<br>
+      09 → ✅ Verification Checklist<br>
+      10 → 🔄 Continuation Prompt
+    </div>
+  </div>
+  <p>NEXUS Handoff Packaging Rules v1.0 — March 2026</p>
+</footer>
+
+</div>
+</body>
+</html>

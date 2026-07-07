@@ -1,0 +1,385 @@
+/* Dating Demo Styles */
+:root {
+    --dt-bg: #0f0515;
+    --dt-card: rgba(30, 15, 50, 0.9);
+    --dt-glass: rgba(255, 255, 255, 0.04);
+    --dt-border: rgba(255, 255, 255, 0.08);
+    --dt-text: #f0e6ff;
+    --dt-muted: #8b7a9e;
+    --dt-primary: #c026d3;
+    --dt-secondary: #e879f9;
+    --dt-accent: #f472b6;
+    --dt-glow: rgba(192, 38, 211, 0.3);
+    --dt-font: 'Inter', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--dt-font);
+    background: var(--dt-bg);
+    background-image: radial-gradient(ellipse at 20% 50%, rgba(192, 38, 211, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(244, 114, 182, 0.06) 0%, transparent 50%);
+    color: var(--dt-text);
+    height: 100vh;
+    overflow: hidden;
+}
+
+.dating-app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.dating-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 60px;
+    background: var(--dt-glass);
+    border-bottom: 1px solid var(--dt-border);
+    backdrop-filter: blur(20px);
+}
+
+.dating-logo {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.dating-logo span {
+    background: linear-gradient(135deg, var(--dt-primary), var(--dt-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dating-nav {
+    display: flex;
+    gap: 4px;
+    background: var(--dt-glass);
+    border-radius: 12px;
+    padding: 4px;
+    border: 1px solid var(--dt-border);
+}
+
+.dating-nav-btn {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--dt-muted);
+    font-family: var(--dt-font);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.dating-nav-btn.active {
+    background: var(--dt-primary);
+    color: white;
+}
+
+.dating-progress {
+    font-size: 13px;
+    color: var(--dt-muted);
+    font-weight: 600;
+}
+
+/* Main */
+.dating-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    touch-action: none;
+    user-select: none;
+}
+
+.dating-mode-bar {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    font-size: 11px;
+    color: var(--dt-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dating-z {
+    color: var(--dt-accent);
+}
+
+.dating-hint {
+    position: absolute;
+    text-align: center;
+    color: var(--dt-muted);
+    opacity: 0.5;
+    animation: float 3s ease-in-out infinite;
+}
+
+.dating-hint p {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.hint-sub {
+    font-size: 12px;
+    margin-top: 4px;
+    opacity: 0.6;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Card */
+.dating-stack {
+    position: relative;
+    width: 360px;
+    height: 500px;
+    z-index: 10;
+}
+
+.dating-card {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--dt-card);
+    border: 1px solid var(--dt-border);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 60px var(--dt-glow);
+    cursor: grab;
+    transition: box-shadow 0.2s;
+}
+
+.dating-card:active {
+    cursor: grabbing;
+}
+
+.dating-card-photo {
+    width: 100%;
+    height: 340px;
+    object-fit: cover;
+    display: block;
+}
+
+.dating-card-info {
+    padding: 16px 20px;
+}
+
+.dating-card-name {
+    font-size: 24px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dating-card-age {
+    font-weight: 400;
+    color: var(--dt-muted);
+}
+
+.dating-card-bio {
+    font-size: 14px;
+    color: var(--dt-muted);
+    margin-top: 6px;
+    line-height: 1.5;
+}
+
+.dating-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.dating-tag {
+    padding: 4px 12px;
+    border-radius: 100px;
+    background: var(--dt-glass);
+    border: 1px solid var(--dt-border);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--dt-secondary);
+}
+
+/* Rating overlay on card */
+.dating-rating-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--dt-border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 20;
+}
+
+.dating-rating-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.dating-rating-label {
+    color: var(--dt-muted);
+}
+
+.dating-rating-val {
+    font-weight: 700;
+    color: var(--dt-accent);
+}
+
+/* Depth bar */
+.dating-depth {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 50%;
+    background: var(--dt-glass);
+    border-radius: 2px;
+    overflow: hidden;
+    z-index: 20;
+}
+
+.dating-depth-fill {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to top, var(--dt-primary), var(--dt-accent));
+    border-radius: 2px;
+    transition: height 0.1s;
+}
+
+/* Footer */
+.dating-footer {
+    padding: 12px 24px;
+    background: var(--dt-glass);
+    border-top: 1px solid var(--dt-border);
+    display: flex;
+    justify-content: center;
+}
+
+.zone-legend {
+    display: flex;
+    gap: 12px;
+}
+
+.zone-chip {
+    padding: 4px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--dt-border);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.zone-s {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+.zone-a {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.zone-b {
+    color: #22c55e;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.zone-c {
+    color: #6b7280;
+    border-color: rgba(107, 114, 128, 0.3);
+}
+
+.zone-d {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.2);
+    opacity: 0.6;
+}
+
+/* Sidebar */
+.dating-sidebar {
+    position: fixed;
+    right: 0;
+    top: 60px;
+    bottom: 48px;
+    width: 300px;
+    background: var(--dt-card);
+    border-left: 1px solid var(--dt-border);
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 50;
+}
+
+.dating-sidebar h3 {
+    font-size: 16px;
+    margin-bottom: 16px;
+}
+
+.dating-match-card {
+    background: var(--dt-glass);
+    border: 1px solid var(--dt-border);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.dating-match-card:hover {
+    border-color: var(--dt-primary);
+}
+
+.dating-match-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.dating-match-info h4 {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.dating-match-tier {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--dt-primary);
+    color: white;
+    display: inline-block;
+    margin-top: 4px;
+}

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Autopilot — The Best Wispr Flow Alternative</title>
+    <meta name="description"
+        content="Real-time text display, AI image generation from speech, multi-speaker separation, and Stream Deck integration. Better than Wispr Flow at half the price.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="wispr.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">AI Autopilot</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html#features">Features</a>
+                <a href="index.html#shop">Shop</a>
+                <a href="index.html#pricing">Pricing</a>
+                <a href="#" class="active-link">Voice AI</a>
+            </div>
+            <a href="index.html#pricing" class="nav-cta">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="wispr-hero">
+        <div class="hero-glow"></div>
+        <div class="section-inner">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                Coming Soon — Join the Waitlist
+            </div>
+            <h1 class="hero-title">
+                The Best <span class="gradient-text">Wispr Flow</span><br>Alternative on Earth
+            </h1>
+            <p class="hero-subtitle">
+                Everything Wispr Flow does — plus real-time text display, AI image generation from speech,
+                multi-speaker separation, and full Stream Deck integration.
+                At <strong>$9/mo</strong> instead of <strong>$15/mo</strong>.
+            </p>
+            <div class="hero-actions">
+                <a href="#waitlist" class="btn btn-primary btn-large">
+                    <span>Join the Waitlist</span>
+                    <span class="btn-arrow">→</span>
+                </a>
+                <a href="#comparison" class="btn btn-secondary">See the Comparison</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Demo Visualization -->
+    <section class="voice-demo">
+        <div class="section-inner">
+            <div class="demo-window">
+                <div class="demo-titlebar">
+                    <div class="demo-dots"><span></span><span></span><span></span></div>
+                    <span>AI Voice Autopilot — Live Transcription</span>
+                </div>
+                <div class="demo-body">
+                    <div class="demo-transcript" id="demoTranscript">
+                        <div class="transcript-line speaker-1">
+                            <span class="speaker-tag">👤 You</span>
+                            <span class="transcript-text" id="t1"></span>
+                            <span class="transcript-cursor">|</span>
+                        </div>
+                    </div>
+                    <div class="demo-sidebar">
+                        <div class="sidebar-section">
+                            <h4>🎨 Live Image Gen</h4>
+                            <div class="image-placeholder" id="imageGen">
+                                <span>Images appear here as you speak about visual concepts...</span>
+                            </div>
+                        </div>
+                        <div class="sidebar-section">
+                            <h4>🎙 Speakers</h4>
+                            <div class="speaker-list">
+                                <div class="speaker active-speaker"><span class="speaker-dot"></span> You (speaking)
+                                </div>
+                                <div class="speaker"><span class="speaker-dot inactive"></span> Team Member 2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="comparison" id="comparison">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-tag">Comparison</span>
+                <h2>Feature by <span class="gradient-text">Feature</span></h2>
+            </div>
+
+            <div class="comparison-table">
+                <div class="comp-row comp-header">
+                    <div class="comp-feature">Feature</div>
+                    <div class="comp-them">Wispr Flow</div>
+                    <div class="comp-us">AI Autopilot</div>
+                </div>
+                <div class="comp-row">
+                    <div class="comp-feature">Real-time text display</div>
+                    <div class="comp-them">❌ Hidden while speaking</div>
+                    <div class="comp-us">✅ Live overlay as you talk</div>
+                </div>
+                <div class="comp-row">
+                    <div class="comp-feature">AI image gen from speech</div>
+                    <div class="comp-them">❌</div>
+                    <div class="comp-us">✅ Images appear in real-time</div>
+                </div>
+                <div class="comp-row">
+                    <div class="comp-feature">Multi-speaker identification</div>
+                    <div class="comp-them">❌</div>
+                    <div class="comp-us">✅ Separate & label speakers</div>
+                </div>
+                <div class="comp-row">
+                    <div class="comp-feature">Stream Deck integration</div>
+                    <div class="comp-them">❌</div>
+                    <div class="comp-us">✅ Voice + buttons unified</div>
+                </div>
+                <div class="comp-row">
+                    <div class="comp-feature">AI command mode</div>
+                    <div class="comp-them">✅</div>
+                    <div class="comp-us">✅</div>
+                </div>
+                <div class="comp-row">
+                    <div class="comp-feature">100+ languages</div>
+                    <div class="comp-them">✅</div>
+                    <div class="comp-us">✅</div>
+                </div>
+                <div class="comp-row">
+                    <div class="comp-feature">Context-aware tone</div>
+                    <div class="comp-them">✅</div>
+                    <div class="comp-us">✅ + visual context</div>
+                </div>
+                <div class="comp-row">
+                    <div class="comp-feature">Whisper / quiet mode</div>
+                    <div class="comp-them">✅</div>
+                    <div class="comp-us">✅</div>
+                </div>
+                <div class="comp-row">
+                    <div class="comp-feature">Custom vocabulary</div>
+                    <div class="comp-them">✅ Manual</div>
+                    <div class="comp-us">✅ AI-learned + manual</div>
+                </div>
+                <div class="comp-row">
+                    <div class="comp-feature">Bring your own model</div>
+                    <div class="comp-them">❌</div>
+                    <div class="comp-us">✅ Lifetime plan</div>
+                </div>
+                <div class="comp-row comp-price">
+                    <div class="comp-feature">Price</div>
+                    <div class="comp-them">$15/mo</div>
+                    <div class="comp-us highlight">$9/mo (bundled)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Advantages -->
+    <section class="advantages">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-tag">Why Switch</span>
+                <h2>What Makes Us <span class="gradient-text">Different</span></h2>
+            </div>
+
+            <div class="advantage-grid">
+                <div class="advantage-card">
+                    <div class="advantage-icon">👁</div>
+                    <h3>See Your Words Appear</h3>
+                    <p>Unlike Wispr Flow where text is hidden while you speak, our live overlay shows every word
+                        appearing in real-time at the top of your screen. Know exactly what's being captured.</p>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">🎨</div>
+                    <h3>Imagination → Images</h3>
+                    <p>As you describe visual concepts, AI generates images in real-time. Describe a "blue gradient
+                        dashboard with cards" and watch it materialize. The ultimate brainstorming companion.</p>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">👥</div>
+                    <h3>Who Said What</h3>
+                    <p>Multi-speaker identification separates voices in the room. Perfect for meetings, interviews,
+                        and brainstorming sessions where multiple people contribute ideas.</p>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">🎛</div>
+                    <h3>Voice + Buttons = Unified</h3>
+                    <p>Your Stream Deck and voice work together. Speak to control buttons, use buttons to control
+                        voice mode. One platform, every input device.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Waitlist -->
+    <section class="waitlist" id="waitlist">
+        <div class="section-inner">
+            <div class="cta-glow"></div>
+            <h2>Be First to Try Voice Autopilot</h2>
+            <p>Join the waitlist for early access. Current AI Autopilot subscribers get priority.</p>
+            <div class="waitlist-form">
+                <input type="email" placeholder="your@email.com" class="waitlist-input" id="waitlistEmail" />
+                <button class="btn btn-primary" id="waitlistBtn">
+                    <span>Join Waitlist</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+            </div>
+            <span class="waitlist-note">No spam. We'll only email you when Voice Autopilot launches.</span>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">AI Autopilot</span>
+                <p>by AntiGravity</p>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#pricing">Pricing</a>
+                <a href="index.html#shop">Shop</a>
+                <a href="#">Docs</a>
+                <a href="#">Privacy</a>
+            </div>
+            <div class="footer-copy">© 2026 AntiGravity. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script src="wispr.js"></script>
+</body>
+
+</html>

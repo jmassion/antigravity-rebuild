@@ -1,0 +1,128 @@
+[
+    {
+        "id": "tab",
+        "docPage": "tab",
+        "title": "Tab (Autocomplete)",
+        "imageFileName": "tab.png",
+        "prompt": "Generate a banner image for 'Tab (Autocomplete)' feature. Show Lumi (the cute 3D navigator character) and her frog companion Ribbit in the holographic 3D holodeck world interacting with floating glowing cyan code snippets that are auto-completing. Use the exact 'nano banana pro' 3D animated character style, matching the reference images perfectly."
+    },
+    {
+        "id": "command",
+        "docPage": "command",
+        "title": "Command (Inline Edits)",
+        "imageFileName": "command.png",
+        "prompt": "Generate a banner image for 'Command (Inline Edits)'. Show Lumi (the 3D navigator girl) pointing at a holographic interface where natural language transforms into glowing purple code. Ribbit the frog is watching. In the exact 'nano banana pro' 3D aesthetic, highly stylized, vibrant, matching the reference images."
+    },
+    {
+        "id": "agent-side-panel",
+        "docPage": "agent-side-panel",
+        "title": "Agent Side Panel",
+        "imageFileName": "agent-side-panel.png",
+        "prompt": "Generate a banner image for 'Agent Side Panel'. Show Ribbit (the plush frog AI agent) sitting inside a high-tech glowing side panel in Lumi's 3D holodeck, actively helping her with a complex coding task. 'nano banana pro' 3D animation style, matching the provided references flawlessly with neon cyan/purple."
+    },
+    {
+        "id": "review-changes-editor",
+        "docPage": "review-changes-editor",
+        "title": "Review Changes (Editor)",
+        "imageFileName": "review-changes-editor.png",
+        "prompt": "Generate a banner image for 'Review Changes' in the editor. Lumi the 3D navigator is carefully inspecting a split screen of holographic code showing red deletions and green additions. Cute, highly polished 'nano banana pro' 3D render style matching the reference holodeck aesthetic."
+    },
+    {
+        "id": "agent-manager",
+        "docPage": "agent-manager",
+        "title": "Agent Manager",
+        "imageFileName": "agent-manager.png",
+        "prompt": "Generate a banner image for 'Agent Manager'. Lumi and Ribbit standing at a massive central command console in the holodeck, managing multiple glowing holographic screens and agents. 'nano banana pro' 3D art style, matching the reference characters and lighting beautifully."
+    },
+    {
+        "id": "workspaces",
+        "docPage": "workspaces",
+        "title": "Workspaces",
+        "imageFileName": "workspaces.png",
+        "prompt": "Generate a banner image for 'Workspaces'. Show Lumi the 3D character organizing floating, glowing holographic folders in the holodeck space. Each folder represents a different project. 'nano banana pro' style, extremely cute and high quality matching the references."
+    },
+    {
+        "id": "playground",
+        "docPage": "playground",
+        "title": "Playground",
+        "imageFileName": "playground.png",
+        "prompt": "Generate a banner image for 'Playground'. Show Lumi and Ribbit playing with floating glowing blocks and experimental holographic code bubbles in a bright, colorful area of the holodeck. Cute, highly polished 'nano banana pro' 3D aesthetic matching the reference images perfectly."
+    },
+    {
+        "id": "inbox",
+        "docPage": "inbox",
+        "title": "Inbox",
+        "imageFileName": "inbox.png",
+        "prompt": "Generate a banner image for 'Inbox'. Show Lumi receiving a glowing holographic letter or message notification from Ribbit the plush frog in the holodeck. Pink and cyan neon accents. Highly detailed 'nano banana pro' 3D character animation aesthetic."
+    },
+    {
+        "id": "conversation-view",
+        "docPage": "conversation-view",
+        "title": "Conversation View",
+        "imageFileName": "conversation-view.png",
+        "prompt": "Generate a banner image for 'Conversation View'. Lumi and Ribbit are looking at a giant floating chat log made of holographic glass in the holodeck. Elegant neon aesthetics, cute 3D characters in 'nano banana pro' render quality. Match reference style."
+    },
+    {
+        "id": "browser-subagent-view",
+        "docPage": "browser-subagent-view",
+        "title": "Browser Subagent View",
+        "imageFileName": "browser-subagent-view.png",
+        "prompt": "Generate a banner image for 'Browser Subagent View'. Show a miniature glowing browser window floating in the holodeck with a tiny Ribbit the frog actively clicking around inside it. Lumi is watching and smiling. Cute, polished 'nano banana pro' 3D style."
+    },
+    {
+        "id": "panes",
+        "docPage": "panes",
+        "title": "Panes",
+        "imageFileName": "panes.png",
+        "prompt": "Generate a banner image for 'Panes'. Lumi is organizing rearranging multiple floating glass screens (panes) in the holodeck. Some show code, some show charts. Very advanced sci-fi but cute 'nano banana pro' 3D aesthetic matching characters."
+    },
+    {
+        "id": "review-changes-manager",
+        "docPage": "review-changes-manager",
+        "title": "Review Changes (Manager)",
+        "imageFileName": "review-changes-manager.png",
+        "prompt": "Generate a banner image for 'Review Changes (Manager)'. Lumi and Ribbit are looking at a glowing command dashboard reviewing source code diffs (green and red text) before hitting a giant holographic 'Approve' button. 'nano banana pro' 3D aesthetic."
+    },
+    {
+        "id": "changes-sidebar",
+        "docPage": "changes-sidebar",
+        "title": "Changes Sidebar",
+        "imageFileName": "changes-sidebar.png",
+        "prompt": "Generate a banner image for 'Changes Sidebar'. Lumi is pointing out a large glowing holographic sidebar in the holodeck showing a list of modified files with green and red diff highlights. Beautiful glowing cyan/purple 'nano banana pro' 3D aesthetic matching the reference images."
+    },
+    {
+        "id": "terminal",
+        "docPage": "terminal",
+        "title": "Terminal",
+        "imageFileName": "terminal.png",
+        "prompt": "Generate a banner image for 'Terminal'. Lumi pushing holographic glowing buttons on a giant terminal interface with neon green text scrolling playfully in the holodeck. Ribbit the frog plush is watching. Cute, highly polished 'nano banana pro' 3D aesthetic."
+    },
+    {
+        "id": "files",
+        "docPage": "files",
+        "title": "Files",
+        "imageFileName": "files.png",
+        "prompt": "Generate a banner image for 'Files'. Lumi grabbing a glowing document icon from a beautiful floating file browser in the holodeck. Pink and cyan highlights. Cute, highly polished 'nano banana pro' 3D aesthetic."
+    },
+    {
+        "id": "browser",
+        "docPage": "browser",
+        "title": "Browser",
+        "imageFileName": "browser.png",
+        "prompt": "Generate a banner image for 'Browser'. Detail a massive floating web browser inside Lumi's holodeck room, glowing with cyan energy. Lumi is touching the glass screen. Cute and extremely polished 'nano banana pro' 3D aesthetic."
+    },
+    {
+        "id": "chrome-extension",
+        "docPage": "chrome-extension",
+        "title": "Chrome Extension",
+        "imageFileName": "chrome-extension.png",
+        "prompt": "Generate a banner image for 'Chrome Extension'. Show Lumi holding a glowing puzzle piece icon that fits into the top corner of a holographic web browser in the holodeck. Advanced sci-fi but cute 'nano banana pro' 3D art style."
+    },
+    {
+        "id": "allowlist-denylist",
+        "docPage": "allowlist-denylist",
+        "title": "Allowlist / Denylist",
+        "imageFileName": "allowlist-denylist.png",
+        "prompt": "Generate a banner image for 'Allowlist / Denylist'. Lumi sorting holographic web addresses into a glowing green glowing portal and a red flashing portal. Ribbit is helping. 'nano banana pro' 3D style matching the original highly stylized references."
+    }
+]

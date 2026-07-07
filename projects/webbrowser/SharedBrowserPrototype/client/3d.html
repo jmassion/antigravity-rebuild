@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TabSpace — 3D Browser Sphere</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        :root {
+            --bg: #020408;
+            --accent: #6C5CE7;
+            --accent-light: #a29bfe;
+            --cyan: #00CEC9;
+            --green: #00B894;
+            --red: #FF6B6B;
+            --yellow: #FECA57;
+            --text: #e2ecff;
+            --text-sec: rgba(207, 220, 240, 0.65);
+            --text-muted: rgba(207, 220, 240, 0.35);
+            --card-bg: rgba(10, 14, 24, 0.92);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            cursor: grab;
+        }
+
+        body:active {
+            cursor: grabbing;
+        }
+
+        #renderer {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+        }
+
+        /* ═══ HUD ═══ */
+        #hud {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            background: rgba(2, 4, 8, 0.75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hud-left,
+        .hud-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hud-center {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #6C5CE7, #00CEC9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-badge {
+            font-size: 0.48rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            color: #fff;
+        }
+
+        .conn-pill {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .conn-pill.offline {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--red);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+
+        .conn-pill.online {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--green);
+            border: 1px solid rgba(0, 184, 148, 0.2);
+        }
+
+        .conn-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+        }
+
+        .conn-pill.offline .conn-dot {
+            background: var(--red);
+        }
+
+        .conn-pill.online .conn-dot {
+            background: var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.3
+            }
+        }
+
+        .hud-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 12px;
+            border-radius: 7px;
+            font-family: inherit;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-sec);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .hud-btn:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: var(--text);
+        }
+
+        /* ═══ View Switcher ═══ */
+        .view-switcher {
+            display: flex;
+            gap: 2px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2px;
+        }
+
+        .view-btn {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.62rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .view-btn:hover {
+            color: var(--text-sec);
+        }
+
+        .view-btn.active {
+            background: rgba(108, 92, 231, 0.2);
+            color: var(--accent-light);
+            box-shadow: 0 0 12px rgba(108, 92, 231, 0.15);
+        }
+
+        .room-info {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+
+        .room-info .rn {
+            color: var(--accent-light);
+            font-weight: 600;
+        }
+
+        /* ═══ Bottom hint ═══ */
+        #hint {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            padding: 7px 18px;
+            border-radius: 20px;
+            background: rgba(10, 14, 24, 0.7);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+
+        #hint.faded {
+            opacity: 0;
+        }
+
+        /* ═══ 3D Browser Card ═══ */
+        .browser-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 80px rgba(108, 92, 231, 0.04);
+            transition: box-shadow 0.3s, border-color 0.3s;
+        }
+
+        .browser-card:hover {
+            border-color: rgba(108, 92, 231, 0.3);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 60px rgba(108, 92, 231, 0.12);
+        }
+
+        .bc-titlebar {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 11px;
+            background: rgba(6, 10, 18, 0.85);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .bc-dots {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .bc-dots span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        .bc-dots span:nth-child(1) {
+            background: #FF5F56;
+        }
+
+        .bc-dots span:nth-child(2) {
+            background: #FFBD2E;
+        }
+
+        .bc-dots span:nth-child(3) {
+            background: #27C93F;
+        }
+
+        .bc-favicon {
+            width: 13px;
+            height: 13px;
+            border-radius: 3px;
+            object-fit: contain;
+        }
+
+        .bc-title {
+            flex: 1;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--text-sec);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bc-urlbar {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 11px 4px;
+            background: rgba(6, 10, 18, 0.5);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .bc-url {
+            flex: 1;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.58rem;
+            color: var(--text-muted);
+            background: rgba(10, 14, 24, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 7px;
+            outline: none;
+        }
+
+        .bc-viewport {
+            width: 100%;
+            background: #0a0e1c;
+            overflow: hidden;
+        }
+
+        .bc-viewport iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .bc-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 11px;
+            border-top: 1px solid var(--border);
+        }
+
+        .bc-tags {
+            display: flex;
+            gap: 4px;
+        }
+
+        .bc-tag {
+            font-size: 0.48rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 1px 5px;
+            border-radius: 3px;
+        }
+
+        .bc-tag-pub {
+            background: rgba(0, 206, 201, 0.1);
+            color: var(--cyan);
+        }
+
+        .bc-tag-ctrl {
+            background: rgba(0, 184, 148, 0.08);
+            color: var(--green);
+        }
+
+        .bc-desc {
+            font-size: 0.5rem;
+            color: var(--text-muted);
+            font-style: italic;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ═══ Loading ═══ */
+        #loading {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            gap: 14px;
+            transition: opacity 0.5s;
+        }
+
+        #loading.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .load-spinner {
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(255, 255, 255, 0.06);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .load-text {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        /* ═══ Toasts ═══ */
+        #toasts {
+            position: fixed;
+            bottom: 50px;
+            right: 16px;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 6px;
+            z-index: 500;
+            pointer-events: none;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            pointer-events: auto;
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 3s forwards;
+        }
+
+        .toast-info {
+            background: rgba(108, 92, 231, 0.15);
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            color: var(--accent-light);
+        }
+
+        .toast-success {
+            background: rgba(0, 184, 148, 0.15);
+            border: 1px solid rgba(0, 184, 148, 0.3);
+            color: var(--green);
+        }
+
+        .toast-error {
+            background: rgba(255, 107, 107, 0.15);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: var(--red);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                opacity: 1
+            }
+
+            to {
+                opacity: 0
+            }
+        }
+
+        /* Star canvas */
+        #stars {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading">
+        <div class="load-spinner"></div>
+        <div class="load-text">Entering the sphere…</div>
+    </div>
+
+    <canvas id="stars"></canvas>
+
+    <div id="hud">
+        <div class="hud-left">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                    <rect x="2" y="2" width="24" height="24" rx="6" stroke="url(#lg)" stroke-width="2.5" />
+                    <rect x="7" y="7" width="6" height="6" rx="1.5" fill="#6C5CE7" />
+                    <rect x="15" y="7" width="6" height="6" rx="1.5" fill="#00CEC9" />
+                    <rect x="7" y="15" width="6" height="6" rx="1.5" fill="#00CEC9" />
+                    <rect x="15" y="15" width="6" height="6" rx="1.5" fill="#6C5CE7" opacity="0.5" />
+                    <defs>
+                        <linearGradient id="lg" x1="2" y1="2" x2="26" y2="26">
+                            <stop stop-color="#6C5CE7" />
+                            <stop offset="1" stop-color="#00CEC9" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="logo-text">TabSpace</span>
+                <span class="logo-badge">3D</span>
+            </div>
+            <div id="conn-pill" class="conn-pill offline">
+                <span class="conn-dot"></span>
+                <span id="conn-label">…</span>
+            </div>
+            <div class="room-info">Room: <span class="rn">roomA</span></div>
+        </div>
+        <div class="hud-center">
+            <div class="view-switcher" id="view-switcher">
+                <button class="view-btn active" data-view="sphere">🌐 Sphere</button>
+                <button class="view-btn" data-view="carousel">🎠 Carousel</button>
+                <button class="view-btn" data-view="tower">🏗 Tower</button>
+                <button class="view-btn" data-view="helix">🧬 Helix</button>
+                <button class="view-btn" data-view="wall">🧱 Wall</button>
+            </div>
+        </div>
+        <div class="hud-right">
+            <a href="/" class="hud-btn">📐 Flat</a>
+            <a href="/notes.html" class="hud-btn">📋 Notes</a>
+        </div>
+    </div>
+
+    <div id="hint">🖱 Drag to orbit · Scroll to zoom · Switch views above</div>
+    <div id="toasts"></div>
+    <div id="renderer"></div>
+
+    <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+    }
+  }
+  </script>
+
+    <script type="module">
+    import * as THREE from 'three';
+    import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { TWEEN } from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@23.1.3/dist/tween.esm.js';
+
+    // ─── Config ───
+    const WS_URL = "ws://localhost:8787";
+    const ROOM_ID = "roomA";
+    const USER_ID = "user-justin";
+
+    // Card sizes per view mode
+    const CARD_PROFILES = {
+      sphere:   { w: 480, vh: 320, radius: 950 },
+      carousel: { w: 520, vh: 560, radius: 800 },
+      tower:    { w: 440, vh: 640, radius: 0 },
+      helix:    { w: 460, vh: 480, radius: 700 },
+      wall:     { w: 500, vh: 600, radius: 0 },
+    };
+
+    let ws = null, surfaces = [], css3dObjects = [];
+    let scene, camera, renderer, controls;
+    let currentView = 'sphere';
+
+    // ─── Stars ───
+    function initStars() {
+      const c = document.getElementById('stars');
+      const ctx = c.getContext('2d');
+      c.width = innerWidth; c.height = innerHeight;
+      const stars = Array.from({length: 280}, () => ({
+        x: Math.random()*c.width, y: Math.random()*c.height,
+        r: Math.random()*1.1+0.2, a: Math.random()*0.5+0.1, s: Math.random()*0.002+0.001
+      }));
+      (function draw() {
+        ctx.clearRect(0,0,c.width,c.height);
+        const t = Date.now();
+        for (const s of stars) {
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(200,210,255,${s.a*(0.5+0.5*Math.sin(t*s.s))})`;
+          ctx.fill();
+        }
+        requestAnimationFrame(draw);
+      })();
+      addEventListener('resize', () => { c.width = innerWidth; c.height = innerHeight; });
+    }
+
+    // ─── Three.js ───
+    function initThree() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, 1, 6000);
+      camera.position.set(0, 150, 2000);
+      renderer = new CSS3DRenderer();
+      renderer.setSize(innerWidth, innerHeight);
+      document.getElementById('renderer').appendChild(renderer.domElement);
+
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.rotateSpeed = 0.5;
+      controls.minDistance = 600;
+      controls.maxDistance = 4000;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.4;
+      controls.enablePan = false;
+
+      controls.addEventListener('start', () => {
+        controls.autoRotate = false;
+        clearTimeout(controls._rt);
+        controls._rt = setTimeout(() => { controls.autoRotate = true; }, 8000);
+      });
+
+      addEventListener('resize', () => {
+        camera.aspect = innerWidth/innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight);
+      });
+
+      (function loop() { requestAnimationFrame(loop); TWEEN.update(); controls.update(); renderer.render(scene, camera); })();
+    }
+
+    // ─── Escape HTML ───
+    const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
+
+    // ─── Create browser card ───
+    function createCard(surface, profile) {
+      const d = document.createElement('div');
+      d.className = 'browser-card';
+      d.style.width = profile.w + 'px';
+
+      d.innerHTML = `
+        <div class="bc-titlebar">
+          <div class="bc-dots"><span></span><span></span><span></span></div>
+          ${surface.favicon ? `<img class="bc-favicon" src="${esc(surface.favicon)}" alt="" onerror="this.style.display='none'" />` : ''}
+          <div class="bc-title">${esc(surface.title || surface.surfaceId)}</div>
+        </div>
+        <div class="bc-urlbar">
+          <input class="bc-url" type="text" value="${esc(surface.url || '')}" readonly />
+        </div>
+        <div class="bc-viewport" style="height:${profile.vh}px">
+          ${surface.url
+            ? `<iframe src="${esc(surface.url)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+            : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:rgba(207,220,240,0.3);">No URL</div>'
+          }
+        </div>
+        <div class="bc-footer">
+          <div class="bc-tags">
+            <span class="bc-tag bc-tag-pub">PUBLIC</span>
+            <span class="bc-tag bc-tag-ctrl">⚡ OPEN</span>
+          </div>
+          <div class="bc-desc">${esc(surface.description || '')}</div>
+        </div>
+      `;
+      return d;
+    }
+
+    // ═══════════════════════════════
+    //  LAYOUT ENGINES
+    // ═══════════════════════════════
+
+    function layoutSphere(objects, p) {
+      const n = objects.length;
+      const targets = [];
+      for (let i = 0; i < n; i++) {
+        const row = i < Math.ceil(n/2) ? 0 : 1;
+        const perRow = Math.ceil(n/2);
+        const idx = i % perRow;
+        const angle = (idx / perRow) * Math.PI * 2;
+        const elevAngle = row === 0 ? 0.38 : -0.38;
+
+        const x = p.radius * Math.sin(angle) * Math.cos(elevAngle);
+        const y = p.radius * Math.sin(elevAngle) * 0.55;
+        const z = p.radius * Math.cos(angle) * Math.cos(elevAngle);
+
+        targets.push({ pos: new THREE.Vector3(x, y, z), lookAt: new THREE.Vector3(x*2, y*2, z*2) });
+      }
+      return targets;
+    }
+
+    function layoutCarousel(objects, p) {
+      const n = objects.length;
+      const targets = [];
+      for (let i = 0; i < n; i++) {
+        const angle = (i / n) * Math.PI * 2;
+        const x = p.radius * Math.sin(angle);
+        const z = p.radius * Math.cos(angle);
+        targets.push({ pos: new THREE.Vector3(x, 0, z), lookAt: new THREE.Vector3(x*2, 0, z*2) });
+      }
+      return targets;
+    }
+
+    function layoutTower(objects, p) {
+      const n = objects.length;
+      const targets = [];
+      const cols = 2;
+      const gapX = p.w + 40;
+      const gapY = p.vh + 60;
+      for (let i = 0; i < n; i++) {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const x = (col - (cols-1)/2) * gapX;
+        const y = -row * gapY + ((Math.ceil(n/cols)-1)/2) * gapY;
+        targets.push({ pos: new THREE.Vector3(x, y, 0), lookAt: new THREE.Vector3(x, y, -1) });
+      }
+      return targets;
+    }
+
+    function layoutHelix(objects, p) {
+      const n = objects.length;
+      const targets = [];
+      const turns = 1.2;
+      const height = 1200;
+      for (let i = 0; i < n; i++) {
+        const t = i / (n - 1 || 1);
+        const angle = t * Math.PI * 2 * turns;
+        const x = p.radius * Math.sin(angle);
+        const z = p.radius * Math.cos(angle);
+        const y = (t - 0.5) * height;
+        targets.push({ pos: new THREE.Vector3(x, y, z), lookAt: new THREE.Vector3(x*2, y, z*2) });
+      }
+      return targets;
+    }
+
+    function layoutWall(objects, p) {
+      const n = objects.length;
+      const targets = [];
+      const cols = 3;
+      const gapX = p.w + 30;
+      const gapY = p.vh + 50;
+      for (let i = 0; i < n; i++) {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const x = (col - (cols-1)/2) * gapX;
+        const y = -row * gapY + ((Math.ceil(n/cols)-1)/2) * gapY;
+        // Slight curve for depth
+        const z = -Math.abs(col - (cols-1)/2) * 80;
+        targets.push({ pos: new THREE.Vector3(x, y, z), lookAt: new THREE.Vector3(x, y, z - 1) });
+      }
+      return targets;
+    }
+
+    const LAYOUTS = { sphere: layoutSphere, carousel: layoutCarousel, tower: layoutTower, helix: layoutHelix, wall: layoutWall };
+
+    // ─── Camera presets per view ───
+    const CAMERA_TARGETS = {
+      sphere:   { pos: [0, 150, 2000], look: [0, 0, 0] },
+      carousel: { pos: [0, 50, 1600], look: [0, 0, 0] },
+      tower:    { pos: [0, 0, 1800], look: [0, 0, 0] },
+      helix:    { pos: [200, 300, 1800], look: [0, 0, 0] },
+      wall:     { pos: [0, 0, 1500], look: [0, 0, 0] },
+    };
+
+    // ─── Build & animate to a layout ───
+    function buildView(viewName) {
+      currentView = viewName;
+      const profile = CARD_PROFILES[viewName];
+
+      // Clear old objects
+      for (const obj of css3dObjects) scene.remove(obj);
+      css3dObjects = [];
+
+      if (surfaces.length === 0) return;
+
+      // Create cards with the right size
+      for (const s of surfaces) {
+        const card = createCard(s, profile);
+        const obj = new CSS3DObject(card);
+        // Start at origin, will animate
+        obj.position.set(0, 0, 0);
+        scene.add(obj);
+        css3dObjects.push(obj);
+      }
+
+      // Compute targets
+      const layoutFn = LAYOUTS[viewName];
+      const targets = layoutFn(css3dObjects, profile);
+
+      // Animate each card to its target
+      for (let i = 0; i < css3dObjects.length; i++) {
+        const obj = css3dObjects[i];
+        const target = targets[i];
+
+        // Position tween
+        new TWEEN.Tween(obj.position)
+          .to({ x: target.pos.x, y: target.pos.y, z: target.pos.z }, 900)
+          .easing(TWEEN.Easing.Cubic.Out)
+          .delay(i * 60)
+          .start();
+
+        // Rotation — make it face outward
+        const dummy = new THREE.Object3D();
+        dummy.position.copy(target.pos);
+        dummy.lookAt(target.lookAt);
+
+        new TWEEN.Tween(obj.rotation)
+          .to({ x: dummy.rotation.x, y: dummy.rotation.y, z: dummy.rotation.z }, 900)
+          .easing(TWEEN.Easing.Cubic.Out)
+          .delay(i * 60)
+          .start();
+      }
+
+      // Animate camera
+      const camTarget = CAMERA_TARGETS[viewName];
+      new TWEEN.Tween(camera.position)
+        .to({ x: camTarget.pos[0], y: camTarget.pos[1], z: camTarget.pos[2] }, 1000)
+        .easing(TWEEN.Easing.Cubic.InOut)
+        .start();
+
+      controls.target.set(camTarget.look[0], camTarget.look[1], camTarget.look[2]);
+
+      // Auto-rotate only for circular layouts
+      controls.autoRotate = ['sphere', 'carousel', 'helix'].includes(viewName);
+
+      // Update hint
+      const hints = {
+        sphere: '🌐 Sphere — surfaces orbit around you',
+        carousel: '🎠 Carousel — tall cards in a ring at eye level',
+        tower: '🏗 Tower — stacked tall cards, scroll to see all',
+        helix: '🧬 Helix — spiral arrangement, auto-rotates',
+        wall: '🧱 Wall — curved gallery wall, like a cinema',
+      };
+      document.getElementById('hint').textContent = hints[viewName] || '';
+      document.getElementById('hint').classList.remove('faded');
+      clearTimeout(window._hintTimer);
+      window._hintTimer = setTimeout(() => document.getElementById('hint').classList.add('faded'), 5000);
+
+      // Hide loading
+      setTimeout(() => document.getElementById('loading').classList.add('hide'), 500);
+    }
+
+    // ─── View switch buttons ───
+    document.getElementById('view-switcher').addEventListener('click', (e) => {
+      const btn = e.target.closest('.view-btn');
+      if (!btn) return;
+      const view = btn.dataset.view;
+      if (view === currentView) return;
+
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      buildView(view);
+      toast(`Switched to ${btn.textContent.trim()}`, 'info');
+    });
+
+    // ─── Toast ───
+    function toast(msg, type = 'info') {
+      const d = document.createElement('div');
+      d.className = `toast toast-${type}`;
+      d.textContent = msg;
+      document.getElementById('toasts').appendChild(d);
+      setTimeout(() => d.remove(), 3500);
+    }
+
+    // ─── WebSocket ───
+    function setConn(on) {
+      document.getElementById('conn-pill').className = 'conn-pill ' + (on ? 'online' : 'offline');
+      document.getElementById('conn-label').textContent = on ? 'Connected' : 'Offline';
+    }
+
+    function connect() {
+      ws = new WebSocket(WS_URL);
+      ws.onopen = () => {
+        setConn(true);
+        ws.send(JSON.stringify({ type: 'HELLO', role: 'client', userId: USER_ID, displayName: USER_ID }));
+        ws.send(JSON.stringify({ type: 'JOIN_ROOM', roomId: ROOM_ID }));
+        toast('Connected', 'success');
+      };
+      ws.onclose = () => { setConn(false); setTimeout(connect, 3000); };
+      ws.onerror = () => toast('Connection failed — retrying…', 'error');
+      ws.onmessage = (ev) => {
+        try {
+          const msg = JSON.parse(ev.data);
+          if (msg.type === 'ROOM_STATE') {
+            const ns = msg.state?.surfaces || [];
+            const newIds = ns.map(s=>s.surfaceId).join(',');
+            const oldIds = surfaces.map(s=>s.surfaceId).join(',');
+            if (newIds !== oldIds) {
+              surfaces = ns;
+              buildView(currentView);
+            }
+            for (const s of ns) {
+              ws.send(JSON.stringify({ type: 'REQUEST_CONTROL', roomId: ROOM_ID, surfaceId: s.surfaceId }));
+            }
+          }
+          if (msg.type === 'ERROR' && msg.message !== 'no_lock') toast(`Error: ${msg.message}`, 'error');
+        } catch (e) { console.error('WS:', e); }
+      };
+    }
+
+    // ─── Init ───
+    initStars();
+    initThree();
+    connect();
+
+    </script>
+</body>
+
+</html>

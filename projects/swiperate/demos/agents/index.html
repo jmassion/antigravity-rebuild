@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwipeRate Demo — Agent Creator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="agent-app">
+        <header class="agent-header">
+            <div class="agent-logo">🤖 <span>AgentForge</span></div>
+            <div class="agent-nav">
+                <button class="agent-nav-btn active" data-tab="evaluate">Evaluate</button>
+                <button class="agent-nav-btn" data-tab="team">Build Team</button>
+            </div>
+            <div class="agent-stats">
+                <span id="agent-evaluated">0</span> evaluated · <span id="agent-team-size">0</span> on team
+            </div>
+        </header>
+
+        <main class="agent-main" id="agent-arena">
+            <div class="agent-axes-hint">
+                <span>← Low Technical Skill ──── High Technical Skill →</span>
+                <span>↑ High Creativity ──── Low Creativity ↓</span>
+                <span class="agent-z-hint">🔍 Scroll: Reliability</span>
+            </div>
+
+            <div class="agent-stack" id="agent-stack"></div>
+
+            <div class="agent-hint" id="agent-hint">
+                <p>Drag agents to rate them on Technical Skill × Creativity</p>
+                <p class="hint-sub">Scroll to evaluate reliability • Build your dream team</p>
+            </div>
+        </main>
+
+        <!-- Team Panel -->
+        <aside class="agent-sidebar" id="agent-team-panel">
+            <h3>Your Dream Team</h3>
+            <div class="agent-team-list" id="agent-team-list">
+                <div class="agent-team-empty">Rate agents to build your team</div>
+            </div>
+            <div class="agent-team-summary" id="agent-team-summary"></div>
+        </aside>
+
+        <footer class="agent-footer">
+            <div class="agent-tier-legend">
+                <span class="tier-chip tier-s">💎 Elite</span>
+                <span class="tier-chip tier-a">⭐ Expert</span>
+                <span class="tier-chip tier-b">✅ Solid</span>
+                <span class="tier-chip tier-c">🔄 Trainable</span>
+                <span class="tier-chip tier-d">⚠️ Skip</span>
+            </div>
+        </footer>
+    </div>
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>

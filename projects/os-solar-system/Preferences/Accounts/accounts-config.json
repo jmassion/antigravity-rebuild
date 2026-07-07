@@ -1,0 +1,6 @@
+{
+  "defaultAccount": "",
+  "syncEnabled": true,
+  "autoLogin": false,
+  "biometricUnlock": false
+}

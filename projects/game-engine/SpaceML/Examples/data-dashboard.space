@@ -1,0 +1,27 @@
+// A data dashboard with Things driven by spreadsheet data.
+
+space "Data Dashboard"
+  sky: void
+  gravity: zero
+
+  light "Ambient"
+    kind: ambient
+    brightness: 0.5
+
+  thing "Sales Chart"
+    shape: box
+    position: -2, 1, 0
+    surface: glass
+    tags: data, chart
+
+  thing "Revenue Metric"
+    shape: sphere
+    position: 0, 2, 0
+    surface: glass
+    tags: data, metric
+
+  thing "Users Counter"
+    shape: cylinder
+    position: 2, 1.5, 0
+    surface: glass
+    tags: data, counter

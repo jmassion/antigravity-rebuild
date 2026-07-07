@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Lovart + Higgsfield Air Organizer</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0f;--sf:#12121a;--sf2:#1a1a26;--bd:#2a2a3a;--tx:#e4e4f0;--tx2:#8888a0;--ac:#7b6cf6;--cy:#22d3ee;--gn:#34d399;--pk:#f472b6;--am:#fbbf24;--rd:#f87171}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.header{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);padding:12px 20px}
+.header h1{font-size:18px;background:linear-gradient(135deg,var(--ac),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tabs{display:flex;gap:4px;margin:10px 0 0}
+.tab{padding:8px 20px;background:var(--sf);border:1px solid var(--bd);border-radius:8px 8px 0 0;color:var(--tx2);cursor:pointer;font-size:13px;border-bottom:none}
+.tab.active{background:var(--bg);color:var(--tx);border-color:var(--ac)}
+.view{display:none;padding:20px}
+.view.active{display:block}
+.step-card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:16px;position:relative}
+.step-card h3{font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--ac);color:#fff;font-size:12px;font-weight:700}
+.check{color:var(--gn);font-size:18px;margin-left:auto}
+input[type=text],textarea{width:100%;padding:8px 12px;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;color:var(--tx);font-size:13px;outline:none;font-family:inherit}
+input[type=text]:focus,textarea:focus{border-color:var(--ac)}
+textarea{min-height:80px;resize:vertical}
+label{font-size:12px;color:var(--tx2);margin-bottom:4px;display:block}
+.field{margin-bottom:10px}
+.btn{padding:8px 16px;background:var(--ac);border:none;border-radius:6px;color:#fff;font-size:13px;cursor:pointer;font-weight:500}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.4;cursor:default}
+.btn-outline{background:transparent;border:1px solid var(--bd);color:var(--tx)}
+.btn-outline:hover{border-color:var(--ac)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-danger{background:var(--rd)}
+.btn-green{background:var(--gn);color:#000}
+.log-box{background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:8px;font-size:11px;font-family:monospace;max-height:200px;overflow-y:auto;margin-top:8px;color:var(--tx2);white-space:pre-wrap}
+.progress-bar{height:6px;background:var(--sf2);border-radius:3px;overflow:hidden;margin:8px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--cy));transition:width .3s;border-radius:3px}
+.import-section{background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:12px;margin-top:10px}
+.import-section h4{font-size:13px;margin-bottom:8px;color:var(--cy)}
+.stats-bar{display:flex;gap:16px;font-size:13px;flex-wrap:wrap;margin-bottom:10px}
+.stat{display:flex;align-items:center;gap:4px;color:var(--tx2)}
+.stat b{color:var(--tx)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.search-box{flex:1;min-width:200px;padding:8px 12px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;color:var(--tx);font-size:14px;outline:none}
+.search-box:focus{border-color:var(--ac)}
+.search-box::placeholder{color:var(--tx2)}
+select{padding:8px 12px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13px;cursor:pointer;outline:none}
+.filter-group{display:flex;gap:4px;flex-wrap:wrap}
+.fbtn{padding:5px 10px;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;color:var(--tx2);font-size:12px;cursor:pointer}
+.fbtn:hover{color:var(--tx);border-color:var(--ac)}
+.fbtn.active{background:var(--ac);color:#fff;border-color:var(--ac)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-2px);border-color:var(--ac)}
+.card-thumb{width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--sf2);display:block}
+.card-body{padding:10px}
+.card-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.card-meta{display:flex;flex-wrap:wrap;gap:4px}
+.badge{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:500}
+.b-lovart{background:rgba(123,108,246,.2);color:var(--ac)}
+.b-higgsfield{background:rgba(34,211,238,.2);color:var(--cy)}
+.b-image{background:rgba(244,114,182,.15);color:var(--pk)}
+.b-video{background:rgba(34,211,238,.15);color:var(--cy)}
+.b-audio{background:rgba(251,191,36,.15);color:var(--am)}
+.b-3d-model{background:rgba(52,211,153,.15);color:var(--gn)}
+.b-generated{background:rgba(52,211,153,.15);color:var(--gn)}
+.b-researched{background:rgba(96,165,250,.15);color:#60a5fa}
+.b-reference{background:rgba(251,191,36,.15);color:var(--am)}
+.card-prompt{margin-top:4px;font-size:11px;color:var(--tx2);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.pagination{display:flex;justify-content:center;align-items:center;gap:8px;padding:16px}
+.pagination button{padding:6px 14px;background:var(--sf);border:1px solid var(--bd);border-radius:6px;color:var(--tx);cursor:pointer}
+.pagination button:disabled{opacity:.4;cursor:default}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;overflow-y:auto;padding:40px;justify-content:center;align-items:flex-start}
+.modal-overlay.open{display:flex}
+.modal{background:var(--sf);border:1px solid var(--bd);border-radius:14px;max-width:780px;width:100%;overflow:hidden}
+.modal-close{position:fixed;top:12px;right:12px;background:var(--sf2);border:1px solid var(--bd);border-radius:8px;color:var(--tx);width:32px;height:32px;font-size:16px;cursor:pointer;z-index:101}
+.modal-preview{width:100%;max-height:450px;object-fit:contain;background:var(--bg)}
+.modal-body{padding:20px}
+.modal-body h2{font-size:16px;margin-bottom:10px}
+.detail-grid{display:grid;grid-template-columns:130px 1fr;gap:6px 14px;font-size:12px}
+.detail-label{color:var(--tx2);font-weight:500}
+.detail-value{color:var(--tx);word-break:break-word}
+.detail-value a{color:var(--ac);text-decoration:none}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.list-mode .grid{grid-template-columns:1fr}
+.list-mode .card{display:flex}
+.list-mode .card-thumb{width:150px;aspect-ratio:auto;height:95px;flex-shrink:0}
+</style>
+</head>
+<body><div class="header">
+<div class="row" style="justify-content:space-between"><h1>Lovart + Higgsfield Air Organizer</h1></div>
+<div class="tabs">
+<div class="tab active" onclick="switchTab('pipeline')">Pipeline</div>
+<div class="tab" onclick="switchTab('browse')">Browse</div>
+</div>
+</div>
+
+<div id="pipelineView" class="view active">
+<!-- Step 1: Config -->
+<div class="step-card" id="step1">
+<h3><span class="step-num">1</span> Configuration <span class="check" id="check1" style="display:none">&#10003;</span></h3>
+<div class="field"><label>Air.inc API Key</label><input type="text" id="cfgApiKey" placeholder="Your Air.inc API key"/></div>
+<div class="field"><label>Air.inc Workspace ID</label><input type="text" id="cfgWorkspace" placeholder="Your workspace ID"/></div>
+<div class="field"><label>Lovart Token (optional) <span style="font-size:11px;color:var(--tx2)">Get from lovart.ai DevTools &gt; Network &gt; copy "token" header</span></label><input type="text" id="cfgLovart" placeholder="Bearer token from lovart.ai session"/></div>
+<button class="btn" onclick="saveConfig()">Save Config</button>
+<div id="tokenStatus" style="margin-top:8px;font-size:12px"></div>
+<p style="font-size:11px;color:var(--tx2);margin-top:4px">Higgsfield data is pre-loaded from parsed_data.json (3,184 assets). No Higgsfield credentials needed.</p>
+</div>
+
+<!-- Step 2: Setup -->
+<div class="step-card" id="step2">
+<h3><span class="step-num">2</span> Setup Workspace <span class="check" id="check2" style="display:none">&#10003;</span></h3>
+<p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Creates custom fields and board hierarchy in Air.inc. Skips existing ones.</p>
+<button class="btn" id="btnSetup" onclick="setupWorkspace()">Setup Custom Fields &amp; Boards</button>
+<div class="progress-bar" id="setupProgress" style="display:none"><div class="progress-fill" id="setupFill" style="width:0%"></div></div>
+<div class="log-box" id="setupLog" style="display:none"></div>
+</div>
+
+<!-- Step 3: Import -->
+<div class="step-card" id="step3">
+<h3><span class="step-num">3</span> Import Assets <span class="check" id="check3" style="display:none">&#10003;</span></h3>
+
+<div class="import-section">
+<h4>Import Higgsfield (3,184 assets)</h4>
+<div class="field"><label>Load parsed_data.json from GitHub repo, paste, or upload</label>
+<div style="display:flex;gap:6px;margin-bottom:6px">
+<button class="btn btn-sm btn-green" onclick="loadHiggsFromGithub()">Load from GitHub</button>
+<input type="file" id="higgsFile" accept=".json" style="font-size:12px" onchange="loadHiggsFile(this)"/>
+</div>
+<textarea id="higgsJson" placeholder='Click "Load from GitHub" to auto-fetch, or paste parsed_data.json here' rows="3"></textarea>
+</div>
+<div class="row">
+<button class="btn" id="btnHiggs" onclick="importHiggsfield()">Start Import</button>
+<button class="btn btn-outline btn-sm" id="btnHiggsPause" onclick="togglePause('higgs')" style="display:none">Pause</button>
+<span id="higgsStats" style="font-size:12px;color:var(--tx2)"></span>
+</div>
+<div class="progress-bar" id="higgsProgress" style="display:none"><div class="progress-fill" id="higgsFill" style="width:0%"></div></div>
+<div class="log-box" id="higgsLog" style="display:none"></div>
+</div>
+
+<div class="import-section" style="margin-top:12px">
+<h4 style="color:var(--ac)">Import Lovart</h4>
+<p style="font-size:11px;color:var(--tx2);margin-bottom:8px">Fetches projects, threads, and chat messages to extract media.</p>
+<div class="row">
+<button class="btn" id="btnLovart" onclick="importLovart()">Fetch &amp; Import Lovart</button>
+<button class="btn btn-outline btn-sm" id="btnLovartPause" onclick="togglePause('lovart')" style="display:none">Pause</button>
+<span id="lovartStats" style="font-size:12px;color:var(--tx2)"></span>
+</div>
+<div class="progress-bar" id="lovartProgress" style="display:none"><div class="progress-fill" id="lovartFill" style="width:0%"></div></div>
+<div class="log-box" id="lovartLog" style="display:none"></div>
+</div>
+</div>
+
+<!-- Step 4: Export -->
+<div class="step-card" id="step4">
+<h3><span class="step-num">4</span> Export &amp; Browse <span class="check" id="check4" style="display:none">&#10003;</span></h3>
+<p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Fetches all assets from Air, enriches with custom field names, stores locally for browsing.</p>
+<div class="row">
+<button class="btn" onclick="exportAssets()">Export from Air</button>
+<button class="btn btn-outline btn-sm" onclick="downloadExport()">Download JSON</button>
+</div>
+<div class="progress-bar" id="exportProgress" style="display:none"><div class="progress-fill" id="exportFill" style="width:0%"></div></div>
+<span id="exportStats" style="font-size:12px;color:var(--tx2)"></span>
+<div class="log-box" id="exportLog" style="display:none"></div>
+</div>
+</div>
+
+<div id="browseView" class="view">
+<div class="stats-bar" id="browseStats"></div>
+<div class="controls">
+<input type="text" class="search-box" id="search" placeholder="Search titles, prompts, projects..."/>
+<select id="sortBy"><option value="createdDate">Newest</option><option value="title">Title</option><option value="source">Source</option><option value="mediaType">Media Type</option></select>
+<button class="btn btn-outline btn-sm" id="sortDir" onclick="toggleSortDir()">DESC</button>
+<button class="btn btn-outline btn-sm" id="viewToggle" onclick="toggleView()">List</button>
+</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+<div class="filter-group" id="sourceFilters"></div>
+<div class="filter-group" id="typeFilters"></div>
+<div class="filter-group" id="catFilters"></div>
+</div>
+<div id="assetGrid" class="grid"></div>
+<div class="pagination" id="pagination" style="display:none">
+<button onclick="browseState.page--;renderBrowse()">Prev</button>
+<span id="pageInfo" style="font-size:12px;color:var(--tx2)"></span>
+<button onclick="browseState.page++;renderBrowse()">Next</button>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)this.classList.remove('open')">
+<button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">&times;</button>
+<div class="modal" id="modalContent"></div>
+</div><script>
+// --- Globals ---
+const LS=localStorage;
+let paused={higgs:false,lovart:false};
+
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>{el.classList.toggle('active',i===(t==='pipeline'?0:1))});
+  document.getElementById('pipelineView').classList.toggle('active',t==='pipeline');
+  document.getElementById('browseView').classList.toggle('active',t==='browse');
+  if(t==='browse')initBrowse();
+}
+
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+function log(id,msg){const el=document.getElementById(id);el.style.display='block';el.textContent+=msg+'\n';el.scrollTop=el.scrollHeight}
+
+// --- Step 1: Config ---
+function saveConfig(){
+  const key=document.getElementById('cfgApiKey').value.trim();
+  const wid=document.getElementById('cfgWorkspace').value.trim();
+  const tok=document.getElementById('cfgLovart').value.trim();
+  if(key)LS.setItem('airApiKey',key);
+  if(wid)LS.setItem('workspaceId',wid);
+  if(tok)LS.setItem('lovartToken',tok);
+  document.getElementById('check1').style.display=(wid&&key)?'inline':'none';
+  checkTokenStatus();
+}
+function loadConfig(){
+  const k=LS.getItem('airApiKey')||'mRLstb1FhkQPFhIzA0hfgcVqIu6SmCwAeT1COqro';
+  const w=LS.getItem('workspaceId')||'75f31619-015b-446a-965c-cf0dd6ea8b77';
+  const t=LS.getItem('lovartToken')||'eyJhbGciOiJIUzI1NiJ9.eyJtb2JpbGUiOiIiLCJuaWNrbmFtZSI6Ikp1c3RpbiBNYXNzaW9uIiwiYXZhdGFyIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTGpURmNGWDRDa21MQ2NYckZjXzhteVYtZnIzVUk4ak5lQW1oOGRiTm1wcXJ4Z2ZyclM5QT1zOTYtYyIsInVzZXJJZCI6MTI4MDQxOTksInV1aWQiOiI2OGVlOTg4MzlkMmE0N2Y5OTExYzljNzdlOWM3NTg4MSIsImVtYWlsIjoiam1hc3Npb25AZ21haWwuY29tIiwiY3JlYXRlQXQiOjE3NzAyMjcyNTEwMDAsImp0aSI6Im04aGsyQ1JMWDIiLCJzdWIiOiJKdXN0aW4gTWFzc2lvbiIsImlhdCI6MTc3NTUwMzA0MCwiaXNzIjoibG92YXJ0LWF1dGgiLCJleHAiOjE3NzYxMDc4NDB9.tfN8a8lYuqXte63E-afgMCl4NDNcvO28c3QwJvwqJuI';
+  document.getElementById('cfgApiKey').value=k;
+  document.getElementById('cfgWorkspace').value=w;
+  document.getElementById('cfgLovart').value=t;
+  if(k)LS.setItem('airApiKey',k);
+  if(w&&k)document.getElementById('check1').style.display='inline';
+  checkTokenStatus();
+}
+
+// --- Token status indicator ---
+function checkTokenStatus(){
+  const el=document.getElementById('tokenStatus');
+  const parts=[];
+  // Check Air key
+  const ak=LS.getItem('airApiKey');
+  if(ak)parts.push('<span style="color:var(--gn)">Air Key: set</span>');
+  else parts.push('<span style="color:var(--rd)">Air Key: missing</span>');
+  // Check Lovart token expiry
+  const lt=document.getElementById('cfgLovart').value||LS.getItem('lovartToken')||'';
+  if(lt){
+    try{
+      const payload=JSON.parse(atob(lt.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+      const exp=payload.exp*1000;const now=Date.now();
+      const hoursLeft=Math.round((exp-now)/3600000);
+      if(hoursLeft<=0)parts.push('<span style="color:var(--rd)">Lovart Token: EXPIRED</span>');
+      else if(hoursLeft<=6)parts.push('<span style="color:var(--am)">Lovart Token: '+hoursLeft+'h left</span>');
+      else parts.push('<span style="color:var(--gn)">Lovart Token: '+hoursLeft+'h left</span>');
+    }catch(e){parts.push('<span style="color:var(--am)">Lovart Token: set (can\'t read expiry)</span>');}
+  }else parts.push('<span style="color:var(--tx2)">Lovart Token: not set (optional)</span>');
+  // Workspace ID
+  const wid=LS.getItem('workspaceId');
+  if(wid)parts.push('<span style="color:var(--gn)">Workspace: '+wid.slice(0,8)+'...</span>');
+  else parts.push('<span style="color:var(--am)">Workspace ID: not set</span>');
+  el.innerHTML=parts.join(' &nbsp; ');
+}
+
+// --- API helpers (direct calls, no server proxy) ---
+function wid(){return LS.getItem('workspaceId')}
+function airKey(){return LS.getItem('airApiKey')||'mRLstb1FhkQPFhIzA0hfgcVqIu6SmCwAeT1COqro'}
+const AIR='https://api.air.inc';
+const LOVART_API='https://api.lovart.ai';
+const LOVART_WEB='https://www.lovart.ai';
+
+async function airFetch(path,opts={}){
+  const hdrs={'x-api-key':airKey(),'x-air-workspace-id':wid(),'Content-Type':'application/json',...(opts.headers||{})};
+  const r=await fetch(AIR+path,{...opts,headers:hdrs});
+  if(r.status===204)return{ok:true};
+  const d=await r.json();
+  if(!r.ok)throw new Error(`Air ${r.status}: ${JSON.stringify(d).slice(0,200)}`);
+  return d;
+}
+
+async function airApi(action,params={},body=null){
+  // Map action names to Air API endpoints
+  switch(action){
+    case 'listFields':return airFetch('/v1/customfields');
+    case 'createField':return airFetch('/v1/customfields',{method:'POST',body:JSON.stringify({name:body.name,type:body.type==='singleSelect'?'single-select':body.type==='plainText'?'plain-text':body.type,values:body.options})});
+    case 'listBoards':{const p=new URLSearchParams();if(params.limit)p.set('limit',params.limit);return airFetch('/v1/boards?'+p);}
+    case 'createBoard':return airFetch('/v1/boards',{method:'POST',body:JSON.stringify({title:body.title,parentBoardId:body.parentId||body.parentBoardId})});
+    case 'importUrl':{const b={...body};if(b.url){b.sourceUrl=b.url;delete b.url;}return airFetch('/v1/imports',{method:'POST',body:JSON.stringify(b)});}
+    case 'importStatus':return airFetch('/v1/imports/'+params.importId+'/status');
+    case 'setCustomField':return airFetch('/v1/assets/'+params.assetId+'/customfields/'+body.fieldId,{method:'PUT',body:JSON.stringify(body.selectValues?{values:body.selectValues}:{value:body.value})});
+    case 'listAssets':{const p=new URLSearchParams();if(params.limit)p.set('limit',params.limit);if(params.cursor)p.set('cursor',params.cursor);return airFetch('/v1/assets?'+p);}
+    default:throw new Error('Unknown action: '+action);
+  }
+}
+
+async function lovartApi(action,params={}){
+  const tok=LS.getItem('lovartToken')||'';
+  const hdrs={'Content-Type':'application/json','token':tok};
+  switch(action){
+    case 'projects':{
+      const r=await fetch(LOVART_API+'/api/canva/project/lovartProjectList?timestamp='+Date.now(),{method:'POST',headers:hdrs,body:JSON.stringify({page:parseInt(params.page)||1,pageSize:30})});
+      const j=await r.json();if(j.code!==0)throw new Error(j.msg||'Failed');return j.data;}
+    case 'threads':{
+      const r=await fetch(LOVART_API+'/api/canva/agent/agentThreadList',{method:'POST',headers:hdrs,body:JSON.stringify({projectId:params.projectId,page:1,pageSize:10000,cid:Date.now()+'xfylwgho'})});
+      const j=await r.json();if(j.code!==0)throw new Error(j.msg||'Failed');return j.data;}
+    case 'chat':{
+      const r=await fetch(LOVART_WEB+'/api/canva/agent/chatHistoryV2?threadId='+params.threadId,{method:'POST',headers:hdrs});
+      const j=await r.json();return j.data;}
+    default:throw new Error('Unknown lovart action: '+action);
+  }
+}
+
+// --- Rate limiter: max 10 req/s ---
+let rateQueue=[];let rateTimer=null;
+function rateLimited(fn){
+  return new Promise((resolve,reject)=>{
+    rateQueue.push(()=>fn().then(resolve,reject));
+    if(!rateTimer)drainRate();
+  });
+}
+function drainRate(){
+  if(!rateQueue.length){rateTimer=null;return;}
+  const batch=rateQueue.splice(0,10);
+  batch.forEach(fn=>fn());
+  rateTimer=setTimeout(drainRate,1000);
+}
+
+// --- Step 2: Setup ---
+const FIELDS=[
+  {name:'Source',type:'singleSelect',options:['Lovart','Higgsfield']},
+  {name:'Media Type',type:'singleSelect',options:['image','video','audio','3d-model','pdf','other']},
+  {name:'Project Name',type:'plainText'},
+  {name:'Thread Title',type:'plainText'},
+  {name:'Prompt',type:'plainText'},
+  {name:'Generation Method',type:'singleSelect',options:['generate_image','generate_video','generate_3d','search_image','analyze','user_upload','unknown']},
+  {name:'Category',type:'singleSelect',options:['generated','researched','reference']},
+  {name:'Job Set Type',type:'plainText'},
+  {name:'Original ID',type:'plainText'},
+  {name:'Created Date',type:'date'},
+  {name:'Is Favourite',type:'singleSelect',options:['Yes','No']}
+];
+const BOARDS={root:'Lovart Higgsfield Library',children:{
+  'Lovart Assets':['Images','Videos','3D','Audio'],
+  'Higgsfield Assets':['Images','Videos','3D','Audio']
+}};
+
+async function setupWorkspace(){
+  if(!wid())return alert('Set workspace ID first');
+  const logId='setupLog',progId='setupProgress',fillId='setupFill';
+  document.getElementById(progId).style.display='block';
+  document.getElementById(logId).style.display='block';
+  document.getElementById(logId).textContent='';
+  const ws=JSON.parse(LS.getItem('workspaceState')||'{}');
+  const total=FIELDS.length+7;let done=0;
+  const tick=()=>{done++;document.getElementById(fillId).style.width=Math.round(done/total*100)+'%'};
+
+  // List existing fields
+  log(logId,'Listing existing custom fields...');
+  let existing=[];
+  try{const r=await airApi('listFields');existing=r.fields||r.data||[];}catch(e){log(logId,'Warning: '+e.message)}
+
+  // Create fields
+  for(const f of FIELDS){
+    const ex=existing.find(e=>e.name===f.name);
+    if(ex){ws['field_'+f.name]=ex.id;log(logId,`Field "${f.name}" exists: ${ex.id}`);tick();continue;}
+    try{
+      const body={name:f.name,type:f.type};
+      if(f.options)body.options=f.options;
+      const r=await rateLimited(()=>airApi('createField',{},body));
+      ws['field_'+f.name]=r.id||r.field?.id;
+      log(logId,`Created field "${f.name}": ${ws['field_'+f.name]}`);
+    }catch(e){log(logId,`ERROR creating "${f.name}": ${e.message}`)}
+    tick();
+  }
+
+  // List existing boards
+  log(logId,'Listing existing boards...');
+  let existingBoards=[];
+  try{const r=await airApi('listBoards');existingBoards=r.boards||r.data||[];}catch(e){log(logId,'Warning: '+e.message)}
+
+  // Create boards
+  const findBoard=(name,parent)=>existingBoards.find(b=>b.title===name&&(!parent||b.parentId===parent));
+  let rootBoard=findBoard(BOARDS.root);
+  if(!rootBoard){
+    try{const r=await rateLimited(()=>airApi('createBoard',{},{title:BOARDS.root}));rootBoard={id:r.id||r.board?.id,title:BOARDS.root};log(logId,`Created root board: ${rootBoard.id}`)}catch(e){log(logId,'ERROR: '+e.message)}
+  }else{log(logId,`Root board exists: ${rootBoard.id}`)}
+  ws.rootBoardId=rootBoard?.id;tick();
+
+  for(const[catName,subs]of Object.entries(BOARDS.children)){
+    let catBoard=findBoard(catName,rootBoard?.id);
+    if(!catBoard){
+      try{const r=await rateLimited(()=>airApi('createBoard',{},{title:catName,parentId:rootBoard?.id}));catBoard={id:r.id||r.board?.id};log(logId,`Created "${catName}": ${catBoard.id}`)}catch(e){log(logId,'ERROR: '+e.message)}
+    }else{log(logId,`"${catName}" exists: ${catBoard.id}`)}
+    ws['board_'+catName]=catBoard?.id;tick();
+    for(const sub of subs){
+      let subBoard=findBoard(sub,catBoard?.id);
+      if(!subBoard){
+        try{const r=await rateLimited(()=>airApi('createBoard',{},{title:sub,parentId:catBoard?.id}));subBoard={id:r.id||r.board?.id};log(logId,`Created "${catName}/${sub}": ${subBoard.id}`)}catch(e){log(logId,'ERROR: '+e.message)}
+      }else{log(logId,`"${catName}/${sub}" exists: ${subBoard.id}`)}
+      ws['board_'+catName+'_'+sub]=subBoard?.id;
+    }
+    tick();
+  }
+
+  LS.setItem('workspaceState',JSON.stringify(ws));
+  document.getElementById('check2').style.display='inline';
+  log(logId,'Setup complete!');
+}
+
+// --- Step 3: Import helpers ---
+function getImported(){return JSON.parse(LS.getItem('importedUrls')||'[]')}
+function markImported(url){const a=getImported();if(!a.includes(url)){a.push(url);LS.setItem('importedUrls',JSON.stringify(a))}}
+function togglePause(key){paused[key]=!paused[key];document.getElementById('btn'+key.charAt(0).toUpperCase()+key.slice(1)+'Pause').textContent=paused[key]?'Resume':'Pause'}
+
+function classifyType(item){
+  const url=(item.raw_url||item.min_url||item.url||'').toLowerCase();
+  const jst=(item.job_set_type||'').toLowerCase();
+  if(jst.includes('video')||/\.(mp4|webm|mov)/.test(url))return'video';
+  if(jst.includes('audio')||/\.(mp3|wav|ogg)/.test(url))return'audio';
+  if(jst.includes('3d')||/\.(glb|gltf|obj|fbx)/.test(url))return'3d-model';
+  if(/\.(png|jpg|jpeg|gif|webp|svg)/.test(url)||jst.includes('image'))return'image';
+  return'other';
+}
+
+function boardForType(source,mediaType){
+  const ws=JSON.parse(LS.getItem('workspaceState')||'{}');
+  const prefix=source==='Lovart'?'board_Lovart Assets':'board_Higgsfield Assets';
+  const map={image:'_Images',video:'_Videos','3d-model':'_3D',audio:'_Audio'};
+  return ws[prefix+(map[mediaType]||'_Images')]||ws[prefix.replace('_'+source+' Assets','')+'_'+source+' Assets'];
+}
+
+async function waitImport(importId){
+  for(let i=0;i<60;i++){
+    await new Promise(r=>setTimeout(r,2000));
+    try{
+      const r=await airApi('importStatus',{importId});
+      if(r.status==='succeeded'||r.succeeded)return r;
+      if(r.status==='failed')throw new Error('Import failed');
+    }catch(e){if(e.message.includes('failed'))throw e;}
+  }
+  throw new Error('Import timeout');
+}
+
+async function setTextField(assetId,fieldName,value){
+  if(!value)return;
+  const ws=JSON.parse(LS.getItem('workspaceState')||'{}');
+  const fid=ws['field_'+fieldName];
+  if(!fid)return;
+  await rateLimited(()=>airFetch('/v1/assets/'+assetId+'/customfields/'+fid,{method:'PUT',body:JSON.stringify({value:String(value)})}));
+}
+
+function loadHiggsFile(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{document.getElementById('higgsJson').value=e.target.result};
+  reader.readAsText(file);
+}
+
+async function loadHiggsFromGithub(){
+  const el=document.getElementById('higgsJson');
+  el.value='Loading from GitHub...';
+  try{
+    const r=await fetch('https://raw.githubusercontent.com/jmassion/AntiGravity/main/Scraper/Higgsfield/parsed_data.json');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    // Extract just the items array for import
+    const items=data.items||data;
+    el.value=JSON.stringify(items);
+    log('higgsLog','Loaded '+items.length+' items from GitHub ('+data.stats?.total+' total, '+data.stats?.images+' images, '+data.stats?.videos+' videos, '+data.stats?.audio+' audio)');
+    document.getElementById('higgsLog').style.display='block';
+  }catch(e){el.value='';alert('Failed to load from GitHub: '+e.message);}
+}
+
+// --- Import Higgsfield ---
+async function importHiggsfield(){
+  const raw=document.getElementById('higgsJson').value.trim();
+  if(!raw)return alert('Paste or upload parsed_data.json');
+  let parsed;try{parsed=JSON.parse(raw)}catch{return alert('Invalid JSON')}
+  const items=Array.isArray(parsed)?parsed:(parsed.items||[]);
+  if(!items.length)return alert('No items found in data');
+  const ws=JSON.parse(LS.getItem('workspaceState')||'{}');
+  const imported=getImported();
+  const logId='higgsLog';
+  document.getElementById('higgsProgress').style.display='block';
+  document.getElementById(logId).style.display='block';
+  document.getElementById(logId).textContent='';
+  document.getElementById('btnHiggsPause').style.display='inline';
+  let done=0,fail=0,skip=0;const total=items.length;const start=Date.now();
+
+  for(const item of items){
+    while(paused.higgs)await new Promise(r=>setTimeout(r,500));
+    const url=item.raw_url||item.min_url;
+    if(!url||imported.includes(url)){skip++;done++;updateHiggsStats();continue;}
+    const mediaType=classifyType(item);
+    const parentBoardId=boardForType('Higgsfield',mediaType);
+    const cf=[];
+    if(ws['field_Source'])cf.push({fieldId:ws['field_Source'],value:'Higgsfield'});
+    if(ws['field_Media Type'])cf.push({fieldId:ws['field_Media Type'],value:mediaType});
+    if(ws['field_Is Favourite'])cf.push({fieldId:ws['field_Is Favourite'],value:item.is_favourite?'Yes':'No'});
+    try{
+      const r=await rateLimited(()=>airApi('importUrl',{},{url,title:item.title||'Higgsfield Asset',parentBoardId,customFields:cf}));
+      const importId=r.id||r.importId;
+      if(importId)await waitImport(importId);
+      const assetId=r.assetId||r.asset?.id;
+      if(assetId){
+        await rateLimited(()=>setTextField(assetId,'Job Set Type',item.job_set_type));
+        await rateLimited(()=>setTextField(assetId,'Original ID',item.id||item.original_id));
+        await rateLimited(()=>setTextField(assetId,'Created Date',item.created_at||item.createdDate));
+      }
+      markImported(url);
+      log(logId,`OK: ${item.title||url.slice(-40)}`);
+    }catch(e){fail++;log(logId,`FAIL: ${item.title||''} - ${e.message}`)}
+    done++;updateHiggsStats();
+  }
+  function updateHiggsStats(){
+    const pct=Math.round(done/total*100);
+    document.getElementById('higgsFill').style.width=pct+'%';
+    const elapsed=(Date.now()-start)/1000;const rate=done/elapsed;const eta=rate>0?Math.round((total-done)/rate):0;
+    document.getElementById('higgsStats').textContent=`${done}/${total} (${fail} failed, ${skip} skipped) ETA: ${eta}s`;
+  }
+  document.getElementById('check3').style.display='inline';
+  log(logId,'Higgsfield import complete!');
+}// --- Import Lovart ---
+function extractMedia(messages,projectName,threadTitle){
+  const media=[];
+  function walk(blocks){
+    if(!blocks)return;
+    for(const b of(Array.isArray(blocks)?blocks:[])){
+      if(b.image_url)media.push({url:b.image_url,type:'image',prompt:b.prompt||'',method:b.generation_method||'unknown',category:b.category||'generated'});
+      if(b.video_url)media.push({url:b.video_url,type:'video',prompt:b.prompt||'',method:b.generation_method||'unknown',category:b.category||'generated'});
+      if(b.audio_url)media.push({url:b.audio_url,type:'audio',prompt:b.prompt||'',method:b.generation_method||'unknown',category:b.category||'generated'});
+      if(b.artifacts){
+        for(const a of b.artifacts){
+          if(a.image_url)media.push({url:a.image_url,type:'image',prompt:a.prompt||b.prompt||'',method:a.generation_method||'unknown',category:'generated'});
+          if(a.video_url)media.push({url:a.video_url,type:'video',prompt:a.prompt||b.prompt||'',method:a.generation_method||'unknown',category:'generated'});
+        }
+      }
+      if(b.content)walk(b.content);
+      if(b.sub_agent_info?.history)walk(b.sub_agent_info.history);
+    }
+  }
+  for(const msg of(messages||[])){
+    if(msg.content)walk(Array.isArray(msg.content)?msg.content:[msg.content]);
+  }
+  return media.map(m=>({...m,projectName,threadTitle}));
+}
+
+async function importLovart(){
+  const ws=JSON.parse(LS.getItem('workspaceState')||'{}');
+  const imported=getImported();const logId='lovartLog';
+  document.getElementById('lovartProgress').style.display='block';
+  document.getElementById(logId).style.display='block';
+  document.getElementById(logId).textContent='';
+  document.getElementById('btnLovartPause').style.display='inline';
+
+  log(logId,'Fetching projects...');
+  let projects;
+  try{const r=await lovartApi('projects');projects=r.projects||r.data||r||[]}catch(e){return log(logId,'ERROR: '+e.message)}
+  log(logId,`Found ${projects.length} projects`);
+
+  // Gather all media first
+  const allMedia=[];
+  for(const proj of projects){
+    while(paused.lovart)await new Promise(r=>setTimeout(r,500));
+    log(logId,`Fetching threads for "${proj.name||proj.title||proj.id}"...`);
+    let threads;
+    try{const r=await rateLimited(()=>lovartApi('threads',{projectId:proj.id}));threads=r.threads||r.data||r||[]}catch(e){log(logId,'WARN: '+e.message);continue}
+    for(const th of threads){
+      while(paused.lovart)await new Promise(r=>setTimeout(r,500));
+      try{
+        const r=await rateLimited(()=>lovartApi('chat',{threadId:th.id}));
+        const msgs=r.messages||r.data||r||[];
+        const media=extractMedia(msgs,proj.name||proj.title||'',th.title||th.name||'');
+        allMedia.push(...media);
+        log(logId,`Thread "${th.title||th.id}": ${media.length} media`);
+      }catch(e){log(logId,'WARN thread: '+e.message)}
+    }
+  }
+
+  log(logId,`Total media found: ${allMedia.length}. Starting import...`);
+  let done=0,fail=0,skip=0;const total=allMedia.length;const start=Date.now();
+
+  for(const m of allMedia){
+    while(paused.lovart)await new Promise(r=>setTimeout(r,500));
+    if(!m.url||imported.includes(m.url)){skip++;done++;updateLovartStats();continue;}
+    const parentBoardId=boardForType('Lovart',m.type);
+    const cf=[];
+    if(ws['field_Source'])cf.push({fieldId:ws['field_Source'],value:'Lovart'});
+    if(ws['field_Media Type'])cf.push({fieldId:ws['field_Media Type'],value:m.type});
+    if(ws['field_Category'])cf.push({fieldId:ws['field_Category'],value:m.category});
+    if(ws['field_Generation Method'])cf.push({fieldId:ws['field_Generation Method'],value:m.method});
+    try{
+      const r=await rateLimited(()=>airApi('importUrl',{},{url:m.url,title:m.prompt?.slice(0,80)||'Lovart Asset',parentBoardId,customFields:cf}));
+      const importId=r.id||r.importId;
+      if(importId)await waitImport(importId);
+      const assetId=r.assetId||r.asset?.id;
+      if(assetId){
+        await rateLimited(()=>setTextField(assetId,'Project Name',m.projectName));
+        await rateLimited(()=>setTextField(assetId,'Thread Title',m.threadTitle));
+        await rateLimited(()=>setTextField(assetId,'Prompt',m.prompt));
+      }
+      markImported(m.url);
+      log(logId,`OK: ${(m.prompt||m.url).slice(0,60)}`);
+    }catch(e){fail++;log(logId,`FAIL: ${e.message}`)}
+    done++;updateLovartStats();
+  }
+  function updateLovartStats(){
+    const pct=Math.round(done/total*100)||0;
+    document.getElementById('lovartFill').style.width=pct+'%';
+    const elapsed=(Date.now()-start)/1000;const rate=done/elapsed;const eta=rate>0?Math.round((total-done)/rate):0;
+    document.getElementById('lovartStats').textContent=`${done}/${total} (${fail} failed, ${skip} skipped) ETA: ${eta}s`;
+  }
+  document.getElementById('check3').style.display='inline';
+  log(logId,'Lovart import complete!');
+}
+
+// --- Step 4: Export ---
+async function exportAssets(){
+  const logId='exportLog';
+  document.getElementById('exportProgress').style.display='block';
+  document.getElementById(logId).style.display='block';
+  document.getElementById(logId).textContent='';
+  const ws=JSON.parse(LS.getItem('workspaceState')||'{}');
+  const fieldMap={};
+  for(const[k,v]of Object.entries(ws)){if(k.startsWith('field_'))fieldMap[v]=k.replace('field_','');}
+
+  let allAssets=[],cursor=null,page=0;
+  do{
+    log(logId,`Fetching page ${++page}...`);
+    const params={limit:'500'};if(cursor)params.cursor=cursor;
+    try{
+      const r=await rateLimited(()=>airApi('listAssets',params));
+      const assets=r.assets||r.data||[];
+      cursor=r.cursor||r.nextCursor||null;
+      for(const a of assets){
+        const enriched={id:a.id,title:a.title||a.name||'',cdnUrl:a.cdnUrl||'',thumbnailUrl:a.thumbnailUrl||'',boards:(a.boards||[]).map(b=>b.title||b.name||b),latestVersion:a.latestVersion||null,description:a.description||''};
+        // Resolve custom fields
+        for(const cf of(a.customFields||a.fields||[])){
+          const name=fieldMap[cf.fieldId]||cf.name||cf.fieldId;
+          enriched[name.replace(/\s+/g,'').replace(/^./,c=>c.toLowerCase())]=cf.value||cf.textValue||'';
+        }
+        allAssets.push(enriched);
+      }
+      document.getElementById('exportFill').style.width=cursor?'50%':'100%';
+      document.getElementById('exportStats').textContent=`${allAssets.length} assets fetched`;
+    }catch(e){log(logId,'ERROR: '+e.message);break;}
+  }while(cursor);
+
+  LS.setItem('enrichedAssets',JSON.stringify(allAssets));
+  document.getElementById('check4').style.display='inline';
+  log(logId,`Export complete! ${allAssets.length} assets stored.`);
+  switchTab('browse');
+}
+
+function downloadExport(){
+  const data=LS.getItem('enrichedAssets');
+  if(!data)return alert('No exported data yet');
+  const blob=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='enriched_assets.json';a.click();
+}
+
+// --- Browse Tab ---
+const browseState={search:'',source:'',mediaType:'',category:'',sortBy:'createdDate',sortDir:'desc',page:1,perPage:50,view:'grid'};
+let allBrowse=[];
+
+function initBrowse(){
+  allBrowse=JSON.parse(LS.getItem('enrichedAssets')||'[]');
+  renderStats();renderFilters();renderBrowse();
+}
+
+function renderStats(){
+  const s={total:allBrowse.length,lovart:0,higgsfield:0,image:0,video:0,audio:0};
+  allBrowse.forEach(a=>{
+    if(a.source==='Lovart')s.lovart++;if(a.source==='Higgsfield')s.higgsfield++;
+    if(a.mediaType==='image')s.image++;if(a.mediaType==='video')s.video++;if(a.mediaType==='audio')s.audio++;
+  });
+  document.getElementById('browseStats').innerHTML=
+    `<div class="stat">Total: <b>${s.total}</b></div><div class="stat">Lovart: <b style="color:var(--ac)">${s.lovart}</b></div><div class="stat">Higgsfield: <b style="color:var(--cy)">${s.higgsfield}</b></div><div class="stat">Images: <b style="color:var(--pk)">${s.image}</b></div><div class="stat">Videos: <b style="color:var(--cy)">${s.video}</b></div><div class="stat">Audio: <b style="color:var(--am)">${s.audio}</b></div>`;
+}
+
+function renderFilters(){
+  const mk=(id,key,opts)=>{
+    document.getElementById(id).innerHTML=['All',...opts].map(o=>
+      `<button class="fbtn${(o==='All'?'':o)===browseState[key]?' active':''}" onclick="browseState.${key}='${o==='All'?'':o}';browseState.page=1;renderFilters();renderBrowse()">${o}</button>`
+    ).join('');
+  };
+  mk('sourceFilters','source',['Lovart','Higgsfield']);
+  mk('typeFilters','mediaType',['image','video','audio','3d-model']);
+  mk('catFilters','category',['generated','researched','reference']);
+}
+
+function toggleSortDir(){browseState.sortDir=browseState.sortDir==='desc'?'asc':'desc';document.getElementById('sortDir').textContent=browseState.sortDir.toUpperCase();renderBrowse();}
+function toggleView(){browseState.view=browseState.view==='grid'?'list':'grid';document.getElementById('viewToggle').textContent=browseState.view==='grid'?'List':'Grid';document.getElementById('assetGrid').parentElement.classList.toggle('list-mode',browseState.view==='list');renderBrowse();}
+
+function getFiltered(){
+  const s=browseState;
+  let items=allBrowse.filter(a=>{
+    if(s.source&&a.source!==s.source)return false;
+    if(s.mediaType&&a.mediaType!==s.mediaType)return false;
+    if(s.category&&a.category!==s.category)return false;
+    if(s.search){const q=s.search.toLowerCase();if(!([a.title,a.prompt,a.projectName,a.threadTitle,a.jobSetType].filter(Boolean).join(' ').toLowerCase().includes(q)))return false;}
+    return true;
+  });
+  const dir=s.sortDir==='asc'?1:-1;
+  items.sort((a,b)=>{const va=a[s.sortBy]||'',vb=b[s.sortBy]||'';return va<vb?-dir:va>vb?dir:0;});
+  return items;
+}
+
+function renderBrowse(){
+  const items=getFiltered();const s=browseState;
+  const totalPages=Math.max(1,Math.ceil(items.length/s.perPage));
+  s.page=Math.max(1,Math.min(s.page,totalPages));
+  const start=(s.page-1)*s.perPage;const page=items.slice(start,start+s.perPage);
+  const grid=document.getElementById('assetGrid');
+
+  if(!page.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--tx2)">No assets found</div>';document.getElementById('pagination').style.display='none';return;}
+
+  grid.innerHTML=page.map(a=>{
+    const thumb=a.thumbnailUrl||a.cdnUrl||'';
+    const thumbHtml=thumb?`<img class="card-thumb" src="${esc(thumb)}" loading="lazy" onerror="this.style.display='none'"/>`
+      :`<div class="card-thumb" style="display:flex;align-items:center;justify-content:center;color:var(--tx2);font-size:28px">${a.mediaType==='video'?'&#9654;':a.mediaType==='audio'?'&#9835;':'&#128444;'}</div>`;
+    return`<div class="card" onclick="openModal('${a.id}')">${thumbHtml}<div class="card-body"><div class="card-title">${esc(a.title||'Untitled')}</div><div class="card-meta"><span class="badge b-${(a.source||'').toLowerCase()}">${a.source||'?'}</span><span class="badge b-${a.mediaType||'other'}">${a.mediaType||'?'}</span>${a.category?`<span class="badge b-${a.category}">${a.category}</span>`:''}</div>${a.prompt?`<div class="card-prompt">${esc(a.prompt)}</div>`:''}</div></div>`;
+  }).join('');
+
+  const pag=document.getElementById('pagination');
+  pag.style.display=totalPages>1?'flex':'none';
+  pag.children[0].disabled=s.page<=1;
+  pag.children[2].disabled=s.page>=totalPages;
+  document.getElementById('pageInfo').textContent=`Page ${s.page} of ${totalPages} (${items.length} assets)`;
+}
+
+function openModal(id){
+  const a=allBrowse.find(x=>x.id===id);if(!a)return;
+  const thumb=a.thumbnailUrl||a.cdnUrl;
+  const dr=(l,v)=>v?`<div class="detail-label">${l}</div><div class="detail-value">${v}</div>`:'';
+  document.getElementById('modalContent').innerHTML=`
+    ${thumb?`<img class="modal-preview" src="${esc(thumb)}" onerror="this.style.display='none'"/>`:''}
+    <div class="modal-body"><h2>${esc(a.title||'Untitled')}</h2>
+    <div style="display:flex;gap:4px;margin-bottom:12px"><span class="badge b-${(a.source||'').toLowerCase()}">${a.source||'?'}</span><span class="badge b-${a.mediaType||'other'}">${a.mediaType||'?'}</span>${a.category?`<span class="badge b-${a.category}">${a.category}</span>`:''}</div>
+    <div class="detail-grid">
+    ${dr('Source',a.source)}${dr('Media Type',a.mediaType)}${dr('Category',a.category)}${dr('Project',a.projectName)}${dr('Thread',a.threadTitle)}${dr('Prompt',a.prompt)}${dr('Generation',a.generationMethod)}${dr('Job Set Type',a.jobSetType)}${dr('Original ID',a.originalId)}${dr('Created',a.createdDate)}${dr('Favourite',a.isFavourite)}${dr('Boards',(a.boards||[]).join(', '))}${a.cdnUrl?dr('CDN',`<a href="${esc(a.cdnUrl)}" target="_blank">${esc(a.cdnUrl.slice(0,60))}...</a>`):''}</div></div>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+// Search debounce
+let searchT;
+document.getElementById('search').addEventListener('input',e=>{clearTimeout(searchT);searchT=setTimeout(()=>{browseState.search=e.target.value;browseState.page=1;renderBrowse()},300)});
+document.getElementById('sortBy').addEventListener('change',e=>{browseState.sortBy=e.target.value;browseState.page=1;renderBrowse()});
+
+// Init
+loadConfig();
+if(LS.getItem('workspaceState'))document.getElementById('check2').style.display='inline';
+</script>
+</body>
+</html>

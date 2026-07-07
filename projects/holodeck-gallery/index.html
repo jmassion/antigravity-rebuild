@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+      // Subdomain routing — redirect to correct subfolder
+      if (location.hostname === 'higgsfield.holodeckos.com') {
+        location.replace('/Scraper/Higgsfield/' + location.search + location.hash);
+      }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AG HolodeckOS Gallery</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="ag-assets/gallery.css">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js + OrbitControls -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div id="particle-bg"></div>
+    <div class="glass-overlay"></div>
+
+    <nav class="top-nav">
+        <div class="brand">
+            <div class="logo-icon"><i class="fa-solid fa-layer-group"></i></div>
+            <div class="brand-text">
+                <h1>AntiGravity Dashboard</h1>
+                <span class="subdomain">ag.holodeckos.com</span>
+            </div>
+        </div>
+
+        <div class="view-controls">
+            <button class="view-btn active" data-view="grid" title="Grid View"><i
+                    class="fa-solid fa-border-all"></i></button>
+            <button class="view-btn" data-view="list" title="List View"><i class="fa-solid fa-list"></i></button>
+            <button class="view-btn spark-btn" data-view="3d" title="3D Spatial View"><i
+                    class="fa-brands fa-space-awesome"></i> 3D Mode</button>
+        </div>
+    </nav>
+
+    <main class="content-area">
+        <header class="page-header">
+            <h2>Project Holodeck</h2>
+            <p>Welcome to the central command for AntiGravity projects. Select a realm to explore the deployed assets
+                and project breakdowns.</p>
+
+            <div class="stats-bar" id="stats-container">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="filters">
+                <div class="search-box">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Search projects...">
+                </div>
+                <div class="category-filters" id="category-filters">
+                    <button class="filter-btn active" data-cat="all">All</button>
+                    <!-- other filters injected via JS -->
+                </div>
+            </div>
+        </header>
+
+        <!-- 2D Container -->
+        <h3 class="section-title" id="title-main"
+            style="margin-bottom: 2rem; color: var(--text-muted); font-size: 1.25rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">
+            Core Solutions</h3>
+        <div id="gallery-container" class="gallery-grid">
+            <!-- Project Cards Injected via JS -->
+        </div>
+
+        <h3 class="section-title" id="title-demos"
+            style="margin-top: 4rem; margin-bottom: 2rem; color: var(--text-muted); font-size: 1.25rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">
+            Showcases & Prototypes</h3>
+        <div id="demos-container" class="gallery-grid">
+            <!-- Demo Cards Injected via JS -->
+        </div>
+
+        <!-- 3D Container -->
+        <div id="three-container" class="hidden">
+            <div id="three-canvas-target"></div>
+            <button id="exit-3d-btn" class="exit-3d"><i class="fa-solid fa-xmark"></i> Exit 3D</button>
+            <div id="three-loader" class="glass-panel">Initializing Holographic Matrix...</div>
+            <div id="three-project-info" class="floating-panel hidden">
+                <!-- Info popup when hovering 3D nodes -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>AntiGravity Research Lab &copy; <span id="year"></span> | Designed with intention.</p>
+    </footer>
+
+    <!-- App Data -->
+    <script src="ag-assets/data.js"></script>
+    <!-- App Logic -->
+    <script src="ag-assets/gallery.js" type="module"></script>
+    <script src="ag-assets/three-view.js" type="module"></script>
+</body>
+
+</html>

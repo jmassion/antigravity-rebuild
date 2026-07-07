@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AG Lessons — Knowledge Base</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #05050a;
+            --bg-card: rgba(20, 20, 35, 0.6);
+            --text-main: #f0f0f5;
+            --text-muted: #a0a0b0;
+            --glass-bg: rgba(20, 20, 30, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent: #5e6ad2;
+            --accent-glow: rgba(94, 106, 210, 0.4);
+            --success: #38ef7d;
+            --warning: #f7b733;
+            --danger: #f5576c;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ─── Animated Background ─── */
+        .bg-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(94, 106, 210, 0.12), transparent 50%),
+                radial-gradient(circle at 80% 60%, rgba(17, 153, 142, 0.10), transparent 50%),
+                radial-gradient(circle at 50% 90%, rgba(245, 87, 108, 0.08), transparent 40%);
+        }
+        .grid-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridPulse 8s ease-in-out infinite;
+        }
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        /* ─── Top Nav ─── */
+        .top-nav {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 20, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .logo-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(135deg, #5e6ad2, #764ba2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; color: white;
+        }
+        .brand-text h1 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700; }
+        .brand-text span { font-size: 0.75rem; color: var(--text-muted); }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-links a, .nav-links button {
+            color: var(--text-muted); text-decoration: none; font-size: 0.85rem;
+            padding: 6px 14px; border-radius: 8px; transition: var(--transition);
+            background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif;
+        }
+        .nav-links a:hover, .nav-links button:hover { background: rgba(255,255,255,0.06); color: var(--text-main); }
+
+        /* ─── Progress Pill (top nav) ─── */
+        .progress-pill {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 16px; border-radius: 20px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.8rem; color: var(--text-muted);
+        }
+        .progress-pill .mini-bar {
+            width: 60px; height: 4px; background: rgba(255,255,255,0.08);
+            border-radius: 2px; overflow: hidden;
+        }
+        .progress-pill .mini-fill {
+            height: 100%; border-radius: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            transition: width 0.6s ease;
+        }
+
+        /* ─── Layout ─── */
+        .page-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* ─── Sidebar / Table of Contents ─── */
+        .sidebar {
+            border-right: 1px solid var(--glass-border);
+            padding: 1.5rem 1rem;
+            background: rgba(10, 10, 20, 0.4);
+            position: sticky; top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+        .sidebar-section-title {
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--text-muted); margin-bottom: 8px; padding: 0 8px;
+            font-weight: 600;
+        }
+
+        .toc-lesson {
+            margin-bottom: 2px;
+        }
+        .toc-lesson-btn {
+            width: 100%;
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 10px; border-radius: 10px;
+            color: var(--text-main); text-decoration: none;
+            font-size: 0.82rem; font-weight: 500;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            background: none; cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            text-align: left;
+        }
+        .toc-lesson-btn:hover { background: rgba(255,255,255,0.04); }
+        .toc-lesson-btn.active {
+            background: rgba(94,106,210,0.1); border-color: rgba(94,106,210,0.25);
+            color: var(--accent);
+        }
+        .toc-lesson-btn .toc-icon {
+            width: 28px; height: 28px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; color: white; flex-shrink: 0;
+        }
+        .toc-lesson-btn .toc-label { flex: 1; line-height: 1.3; }
+        .toc-lesson-btn .toc-check {
+            width: 18px; height: 18px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.55rem; flex-shrink: 0;
+            border: 2px solid rgba(255,255,255,0.12);
+            transition: var(--transition);
+        }
+        .toc-lesson-btn .toc-check.done {
+            background: var(--success); border-color: var(--success); color: #000;
+        }
+
+        .toc-sections {
+            padding-left: 48px;
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .toc-sections.expanded {
+            max-height: 500px; opacity: 1;
+        }
+        .toc-section-link {
+            display: flex; align-items: center; gap: 8px;
+            padding: 5px 8px; border-radius: 6px;
+            color: var(--text-muted); text-decoration: none;
+            font-size: 0.75rem; transition: var(--transition);
+            cursor: pointer; background: none; border: none;
+            font-family: 'Inter', sans-serif; width: 100%; text-align: left;
+        }
+        .toc-section-link:hover { color: var(--text-main); background: rgba(255,255,255,0.03); }
+        .toc-section-link.viewing { color: var(--accent); }
+        .toc-section-link .sec-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: rgba(255,255,255,0.15); flex-shrink: 0;
+            transition: var(--transition);
+        }
+        .toc-section-link .sec-dot.done { background: var(--success); }
+
+        /* ─── Main Content ─── */
+        .main-content {
+            padding: 2rem 2.5rem 4rem;
+            max-width: 900px;
+        }
+
+        /* ─── Lesson Block ─── */
+        .lesson-block {
+            margin-bottom: 4rem;
+            scroll-margin-top: 80px;
+        }
+        .lesson-block-header {
+            display: flex; align-items: flex-start; gap: 18px;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .lesson-block-icon {
+            width: 56px; height: 56px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; color: white; flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .lesson-block-info { flex: 1; }
+        .lesson-block-info h2 {
+            font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #f0f0f5, #c0c0d0);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .lesson-block-info .subtitle {
+            color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;
+        }
+        .lesson-block-meta {
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        }
+        .lesson-block-meta .badge {
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.8px;
+            padding: 3px 10px; border-radius: 6px; font-weight: 600;
+        }
+        .badge-cat { background: rgba(94, 106, 210, 0.2); color: var(--accent); }
+        .badge-beginner { background: rgba(56, 239, 125, 0.15); color: var(--success); }
+        .badge-intermediate { background: rgba(247, 183, 51, 0.15); color: var(--warning); }
+        .badge-advanced { background: rgba(245, 87, 108, 0.15); color: var(--danger); }
+        .badge-time {
+            background: rgba(255,255,255,0.04); color: var(--text-muted);
+            border: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        /* ─── Section Card ─── */
+        .section-card {
+            margin-bottom: 2.5rem;
+            scroll-margin-top: 80px;
+            opacity: 0; transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        .section-card:nth-child(2) { animation-delay: 0.08s; }
+        .section-card:nth-child(3) { animation-delay: 0.16s; }
+        .section-card:nth-child(4) { animation-delay: 0.24s; }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 1rem;
+        }
+        .section-header .section-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: rgba(94,106,210,0.15);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; color: var(--accent);
+            border: 1px solid rgba(94,106,210,0.2);
+        }
+        .section-header h3 {
+            font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700;
+        }
+
+        .section-content {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            margin-bottom: 1.25rem;
+            line-height: 1.8;
+            font-size: 0.95rem;
+            white-space: pre-line;
+            color: rgba(240,240,245,0.9);
+        }
+
+        /* ─── Key Points ─── */
+        .key-points {
+            background: rgba(94,106,210,0.06);
+            border: 1px solid rgba(94,106,210,0.15);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+        .key-points h4 {
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--accent); margin-bottom: 0.75rem;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .key-points ul { list-style: none; }
+        .key-points li {
+            padding: 6px 0; font-size: 0.85rem; color: var(--text-main);
+            display: flex; align-items: flex-start; gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .key-points li:last-child { border-bottom: none; }
+        .key-points li::before {
+            content: '\2192'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px;
+        }
+
+        /* ─── Complete Button ─── */
+        .complete-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 20px; border-radius: 10px;
+            background: rgba(56,239,125,0.08); border: 1px solid rgba(56,239,125,0.2);
+            color: var(--success); cursor: pointer;
+            font-size: 0.85rem; font-family: 'Inter', sans-serif; font-weight: 600;
+            transition: var(--transition);
+        }
+        .complete-btn:hover { background: rgba(56,239,125,0.18); }
+        .complete-btn.done {
+            background: var(--success); color: #000; border-color: var(--success);
+        }
+
+        /* ─── Lesson Divider ─── */
+        .lesson-divider {
+            display: flex; align-items: center; gap: 16px;
+            margin: 3rem 0;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .lesson-divider::before, .lesson-divider::after {
+            content: ''; flex: 1; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+        }
+
+        /* ─── Visual Diagrams ─── */
+        .visual-diagram {
+            background: rgba(10, 10, 20, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            margin-bottom: 1.25rem;
+            text-align: center;
+            min-height: 180px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .visual-diagram::before {
+            content: ''; position: absolute; inset: 0; opacity: 0.04;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .visual-diagram .diagram-title {
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px;
+            color: var(--text-muted); margin-bottom: 0.25rem;
+        }
+
+        /* Flow Diagram */
+        .flow-row {
+            display: flex; align-items: center; gap: 0.75rem;
+            flex-wrap: wrap; justify-content: center;
+            z-index: 1;
+        }
+        .flow-box {
+            padding: 12px 20px; border-radius: 12px;
+            font-size: 0.85rem; font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: var(--transition);
+            min-width: 100px;
+        }
+        .flow-box:hover { transform: scale(1.05); }
+        .flow-box.app-a { background: rgba(94,106,210,0.2); color: var(--accent); }
+        .flow-box.api { background: rgba(247,183,51,0.15); color: var(--warning); }
+        .flow-box.mcp { background: rgba(245,87,108,0.15); color: var(--danger); }
+        .flow-box.app-b { background: rgba(56,239,125,0.15); color: var(--success); }
+        .flow-box.soul { background: rgba(240,98,146,0.15); color: #f06292; }
+        .flow-box.tools { background: rgba(94,106,210,0.15); color: var(--accent); }
+        .flow-box.skills { background: rgba(56,239,125,0.15); color: var(--success); }
+        .flow-box.rules { background: rgba(247,183,51,0.15); color: var(--warning); }
+        .flow-box.memory { background: rgba(171,71,188,0.15); color: #ab47bc; }
+        .flow-box.tasks { background: rgba(255,112,67,0.15); color: #ff7043; }
+        .flow-box.team { background: rgba(38,166,154,0.15); color: #26a69a; }
+        .flow-arrow {
+            font-size: 1.3rem; color: var(--text-muted); animation: pulse 2s ease infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Comparison diagram */
+        .compare-cols {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+            width: 100%; z-index: 1;
+        }
+        .compare-col {
+            padding: 1.25rem; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            text-align: left;
+        }
+        .compare-col h5 {
+            font-family: 'Outfit', sans-serif; font-size: 0.95rem;
+            margin-bottom: 0.75rem; padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .compare-col ul { list-style: none; }
+        .compare-col li {
+            padding: 5px 0; font-size: 0.8rem;
+            display: flex; gap: 8px; align-items: flex-start;
+        }
+        .compare-col li .icon { flex-shrink: 0; }
+        .col-api { background: rgba(247,183,51,0.05); }
+        .col-api h5 { color: var(--warning); }
+        .col-mcp { background: rgba(245,87,108,0.05); }
+        .col-mcp h5 { color: var(--danger); }
+
+        /* Agent Anatomy */
+        .anatomy-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 0.75rem; width: 100%; z-index: 1;
+        }
+        .anatomy-part {
+            padding: 1rem; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            text-align: center; transition: var(--transition);
+        }
+        .anatomy-part:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.15); }
+        .anatomy-part .part-icon { font-size: 1.5rem; margin-bottom: 6px; }
+        .anatomy-part .part-label { font-size: 0.75rem; font-weight: 600; }
+
+        /* Skill Tree */
+        .skill-tree-visual {
+            display: flex; flex-direction: column; gap: 0.75rem;
+            align-items: center; z-index: 1; width: 100%;
+        }
+        .skill-level {
+            display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;
+        }
+        .skill-node {
+            padding: 8px 14px; border-radius: 10px;
+            font-size: 0.75rem; font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: var(--transition);
+        }
+        .skill-node:hover { transform: scale(1.08); }
+        .skill-node.basic { background: rgba(56,239,125,0.1); color: var(--success); }
+        .skill-node.mid { background: rgba(94,106,210,0.1); color: var(--accent); }
+        .skill-node.adv { background: rgba(245,87,108,0.1); color: var(--danger); }
+        .tree-connector {
+            width: 2px; height: 16px; background: rgba(255,255,255,0.1);
+        }
+
+        /* Workspace Diagram */
+        .workspace-visual {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+            width: 100%; z-index: 1;
+        }
+        .workspace-box {
+            padding: 1.25rem; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .workspace-box h5 {
+            font-family: 'Outfit', sans-serif; font-size: 0.85rem;
+            margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;
+        }
+        .workspace-box.chaos { background: rgba(245,87,108,0.05); }
+        .workspace-box.chaos h5 { color: var(--danger); }
+        .workspace-box.order { background: rgba(56,239,125,0.05); }
+        .workspace-box.order h5 { color: var(--success); }
+        .mini-agents { display: flex; gap: 6px; flex-wrap: wrap; }
+        .mini-agent {
+            width: 28px; height: 28px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem;
+        }
+        .mini-agent.red { background: rgba(245,87,108,0.2); color: var(--danger); }
+        .mini-agent.blue { background: rgba(94,106,210,0.2); color: var(--accent); }
+        .mini-agent.green { background: rgba(56,239,125,0.2); color: var(--success); }
+        .mini-agent.yellow { background: rgba(247,183,51,0.2); color: var(--warning); }
+        .conflict-lines {
+            margin-top: 8px; font-size: 0.7rem; color: var(--text-muted);
+            padding: 8px; background: rgba(245,87,108,0.05); border-radius: 6px;
+        }
+        .harmony-lines {
+            margin-top: 8px; font-size: 0.7rem; color: var(--text-muted);
+            padding: 8px; background: rgba(56,239,125,0.05); border-radius: 6px;
+        }
+
+        /* ─── Floating Particles ─── */
+        .particle {
+            position: fixed; border-radius: 50%;
+            background: var(--accent); opacity: 0.15;
+            pointer-events: none; z-index: -1;
+            animation: floatUp linear infinite;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 0.15; }
+            80% { opacity: 0.15; }
+            100% { transform: translateY(-100px) scale(1); opacity: 0; }
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 900px) {
+            .page-layout { grid-template-columns: 1fr; }
+            .sidebar {
+                position: relative; top: 0; height: auto;
+                border-right: none; border-bottom: 1px solid var(--glass-border);
+                padding: 1rem;
+                max-height: 50vh; overflow-y: auto;
+            }
+            .main-content { padding: 1.5rem 1.25rem 3rem; }
+            .top-nav { padding: 0.75rem 1rem; }
+            .compare-cols, .workspace-visual { grid-template-columns: 1fr; }
+            .lesson-block-header { flex-direction: column; gap: 12px; }
+            .lesson-block-info h2 { font-size: 1.3rem; }
+        }
+        @media (max-width: 600px) {
+            .main-content { padding: 1rem; }
+            .progress-pill { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-canvas"></div>
+    <div class="grid-overlay"></div>
+
+    <nav class="top-nav">
+        <div class="brand">
+            <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="brand-text">
+                <h1>AG Lessons</h1>
+                <span>Knowledge Base</span>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="progress-pill">
+                <span id="nav-progress-text">0 / 0</span>
+                <div class="mini-bar">
+                    <div class="mini-fill" id="nav-progress-fill" style="width:0%"></div>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="../index.html"><i class="fa-solid fa-arrow-left"></i> Projects</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-layout">
+        <aside class="sidebar" id="sidebar"></aside>
+        <main class="main-content" id="main-content"></main>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // ─── Particles ───
+        (function spawnParticles() {
+            const colors = ['#5e6ad2', '#38ef7d', '#f5576c', '#f7b733', '#764ba2'];
+            for (let i = 0; i < 15; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 4 + 2;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                document.body.appendChild(p);
+            }
+        })();
+
+        // ─── Visual Diagrams ───
+        function getVisualDiagram(visual) {
+            const diagrams = {
+                'messenger': `
+                    <div class="visual-diagram">
+                        <div class="diagram-title">How an API Works</div>
+                        <div class="flow-row">
+                            <div class="flow-box app-a"><i class="fa-solid fa-mobile-screen"></i><br>Your App</div>
+                            <div class="flow-arrow">\u2192</div>
+                            <div class="flow-box api"><i class="fa-solid fa-envelope"></i><br>API<br><small>carries data</small></div>
+                            <div class="flow-arrow">\u2192</div>
+                            <div class="flow-box app-b"><i class="fa-solid fa-server"></i><br>Other App</div>
+                        </div>
+                        <div class="flow-row" style="margin-top:0.5rem">
+                            <div class="flow-box app-b" style="opacity:0.6"><i class="fa-solid fa-server"></i></div>
+                            <div class="flow-arrow">\u2190</div>
+                            <div class="flow-box api" style="opacity:0.8"><i class="fa-solid fa-envelope-open"></i><br>Response</div>
+                            <div class="flow-arrow">\u2190</div>
+                            <div class="flow-box app-a" style="opacity:0.6"><i class="fa-solid fa-mobile-screen"></i></div>
+                        </div>
+                    </div>`,
+                'remote-control': `
+                    <div class="visual-diagram">
+                        <div class="diagram-title">How MCP Works</div>
+                        <div class="flow-row">
+                            <div class="flow-box app-a"><i class="fa-solid fa-robot"></i><br>AI Agent</div>
+                            <div class="flow-arrow">\u26A1</div>
+                            <div class="flow-box mcp"><i class="fa-solid fa-gamepad"></i><br>MCP<br><small>controls features</small></div>
+                            <div class="flow-arrow">\u26A1</div>
+                            <div class="flow-box app-b"><i class="fa-solid fa-desktop"></i><br>Target App<br><small>buttons pressed!</small></div>
+                        </div>
+                        <div style="margin-top:0.75rem;font-size:0.8rem;color:var(--text-muted);z-index:1">
+                            <i class="fa-solid fa-info-circle"></i>
+                            MCP doesn't just read \u2014 it <strong style="color:var(--danger)">controls</strong> the app
+                        </div>
+                    </div>`,
+                'comparison': `
+                    <div class="visual-diagram">
+                        <div class="diagram-title">API vs MCP \u2014 Side by Side</div>
+                        <div class="compare-cols">
+                            <div class="compare-col col-api">
+                                <h5><i class="fa-solid fa-envelope"></i> API</h5>
+                                <ul>
+                                    <li><span class="icon">\uD83D\uDCCB</span> "What song is playing?"</li>
+                                    <li><span class="icon">\uD83D\uDCE6</span> Read the menu</li>
+                                    <li><span class="icon">\uD83D\uDD0D</span> Get information</li>
+                                    <li><span class="icon">\uD83D\uDCCA</span> Transfer data</li>
+                                </ul>
+                            </div>
+                            <div class="compare-col col-mcp">
+                                <h5><i class="fa-solid fa-gamepad"></i> MCP</h5>
+                                <ul>
+                                    <li><span class="icon">\uD83C\uDFB5</span> "Skip this track, volume up!"</li>
+                                    <li><span class="icon">\uD83D\uDC68\u200D\uD83C\uDF73</span> Walk into the kitchen & cook</li>
+                                    <li><span class="icon">\uD83C\uDFAE</span> Control features</li>
+                                    <li><span class="icon">\u26A1</span> Execute actions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>`,
+                'skill-tree': `
+                    <div class="visual-diagram">
+                        <div class="diagram-title">Skills = SOPs for Agents</div>
+                        <div class="flow-row">
+                            <div class="flow-box skills"><i class="fa-solid fa-clipboard-list"></i><br>SOP Manual</div>
+                            <div class="flow-arrow">\u2192</div>
+                            <div class="flow-box tools"><i class="fa-solid fa-robot"></i><br>Agent Learns</div>
+                            <div class="flow-arrow">\u2192</div>
+                            <div class="flow-box app-b"><i class="fa-solid fa-rocket"></i><br>Executes Tasks</div>
+                        </div>
+                    </div>`,
+                'tree': `
+                    <div class="visual-diagram">
+                        <div class="diagram-title">Agent Skill Tree</div>
+                        <div class="skill-tree-visual">
+                            <div class="skill-level">
+                                <div class="skill-node adv">\uD83C\uDFAF Design Marketing Campaign</div>
+                                <div class="skill-node adv">\uD83C\uDFAF Orchestrate Workflows</div>
+                            </div>
+                            <div class="tree-connector"></div>
+                            <div class="skill-level">
+                                <div class="skill-node mid">\uD83D\uDCCA Pull Data (API)</div>
+                                <div class="skill-node mid">\uD83C\uDFA8 Generate Images (MCP)</div>
+                                <div class="skill-node mid">\u270D\uFE0F Write Copy</div>
+                            </div>
+                            <div class="tree-connector"></div>
+                            <div class="skill-level">
+                                <div class="skill-node basic">\uD83D\uDCC1 Read Files</div>
+                                <div class="skill-node basic">\uD83D\uDD0D Search Web</div>
+                                <div class="skill-node basic">\uD83D\uDCAC Send Messages</div>
+                                <div class="skill-node basic">\uD83D\uDCDD Edit Text</div>
+                            </div>
+                        </div>
+                    </div>`,
+                'anatomy': `
+                    <div class="visual-diagram">
+                        <div class="diagram-title">The Anatomy of an AI Agent</div>
+                        <div class="anatomy-grid">
+                            <div class="anatomy-part" style="background:rgba(240,98,146,0.06)">
+                                <div class="part-icon">\uD83E\uDDE0</div>
+                                <div class="part-label" style="color:#f06292">Soul</div>
+                            </div>
+                            <div class="anatomy-part" style="background:rgba(94,106,210,0.06)">
+                                <div class="part-icon">\uD83D\uDEE0\uFE0F</div>
+                                <div class="part-label" style="color:var(--accent)">Tools</div>
+                            </div>
+                            <div class="anatomy-part" style="background:rgba(56,239,125,0.06)">
+                                <div class="part-icon">\uD83D\uDCDA</div>
+                                <div class="part-label" style="color:var(--success)">Skills</div>
+                            </div>
+                            <div class="anatomy-part" style="background:rgba(247,183,51,0.06)">
+                                <div class="part-icon">\uD83D\uDCCB</div>
+                                <div class="part-label" style="color:var(--warning)">Rules</div>
+                            </div>
+                            <div class="anatomy-part" style="background:rgba(171,71,188,0.06)">
+                                <div class="part-icon">\uD83D\uDDC2\uFE0F</div>
+                                <div class="part-label" style="color:#ab47bc">Memory</div>
+                            </div>
+                            <div class="anatomy-part" style="background:rgba(255,112,67,0.06)">
+                                <div class="part-icon">\uD83D\uDD04</div>
+                                <div class="part-label" style="color:#ff7043">Tasks</div>
+                            </div>
+                            <div class="anatomy-part" style="background:rgba(38,166,154,0.06)">
+                                <div class="part-icon">\uD83D\uDC65</div>
+                                <div class="part-label" style="color:#26a69a">Team</div>
+                            </div>
+                        </div>
+                    </div>`,
+                'components': `
+                    <div class="visual-diagram">
+                        <div class="diagram-title">Agent Component Map</div>
+                        <div class="flow-row" style="flex-wrap: wrap; gap: 0.5rem;">
+                            <div class="flow-box soul"><i class="fa-solid fa-ghost"></i> Soul</div>
+                            <div class="flow-box tools"><i class="fa-solid fa-wrench"></i> Tools</div>
+                            <div class="flow-box skills"><i class="fa-solid fa-book"></i> Skills</div>
+                            <div class="flow-box rules"><i class="fa-solid fa-shield-halved"></i> Rules</div>
+                            <div class="flow-box memory"><i class="fa-solid fa-brain"></i> Memory</div>
+                            <div class="flow-box tasks"><i class="fa-solid fa-rotate"></i> Tasks</div>
+                            <div class="flow-box team"><i class="fa-solid fa-users"></i> Team</div>
+                        </div>
+                    </div>`,
+                'handbook': `
+                    <div class="visual-diagram">
+                        <div class="diagram-title">The Agent's Reference Library</div>
+                        <div class="flow-row">
+                            <div class="flow-box rules"><i class="fa-solid fa-map"></i><br>Company Plans</div>
+                            <div class="flow-box tools"><i class="fa-solid fa-book-open"></i><br>Product Instructions</div>
+                            <div class="flow-box skills"><i class="fa-solid fa-scroll"></i><br>Handbook</div>
+                        </div>
+                        <div class="flow-arrow" style="transform:rotate(90deg);margin:0.25rem 0">\u2193</div>
+                        <div class="flow-row">
+                            <div class="flow-box app-a"><i class="fa-solid fa-robot"></i><br>Aligned Agent<br><small>Checks docs regularly</small></div>
+                        </div>
+                    </div>`,
+                'chaos': `
+                    <div class="visual-diagram">
+                        <div class="diagram-title">The Messy Room Problem</div>
+                        <div class="workspace-visual">
+                            <div class="workspace-box chaos">
+                                <h5><i class="fa-solid fa-triangle-exclamation"></i> Without Management</h5>
+                                <div class="mini-agents">
+                                    <div class="mini-agent red"><i class="fa-solid fa-robot"></i></div>
+                                    <div class="mini-agent blue"><i class="fa-solid fa-robot"></i></div>
+                                    <div class="mini-agent green"><i class="fa-solid fa-robot"></i></div>
+                                    <div class="mini-agent yellow"><i class="fa-solid fa-robot"></i></div>
+                                </div>
+                                <div class="conflict-lines">
+                                    \u274C Agent A moves file left<br>
+                                    \u274C Agent B moves file right<br>
+                                    \u274C Agent C overwrites both<br>
+                                    \uD83D\uDCA5 Total chaos
+                                </div>
+                            </div>
+                            <div class="workspace-box order">
+                                <h5><i class="fa-solid fa-check-circle"></i> With Management</h5>
+                                <div class="mini-agents">
+                                    <div class="mini-agent blue"><i class="fa-solid fa-robot"></i></div>
+                                    <div class="mini-agent green"><i class="fa-solid fa-robot"></i></div>
+                                </div>
+                                <div class="harmony-lines">
+                                    \u2705 Agent A \u2192 Zone 1<br>
+                                    \u2705 Agent B \u2192 Zone 2<br>
+                                    \u2705 Merge when ready<br>
+                                    \uD83C\uDFAF Smooth operation
+                                </div>
+                            </div>
+                        </div>
+                    </div>`,
+                'organized': `
+                    <div class="visual-diagram">
+                        <div class="diagram-title">Smart Workspace Strategy</div>
+                        <div class="flow-row">
+                            <div class="flow-box rules"><i class="fa-solid fa-clipboard-check"></i><br>Rules<br><small>Who edits what</small></div>
+                            <div class="flow-arrow">+</div>
+                            <div class="flow-box tools"><i class="fa-solid fa-code-branch"></i><br>Methods<br><small>Branches & locks</small></div>
+                            <div class="flow-arrow">+</div>
+                            <div class="flow-box skills"><i class="fa-solid fa-code-merge"></i><br>Merge<br><small>Combine work</small></div>
+                        </div>
+                        <div class="flow-arrow" style="transform:rotate(90deg);margin:0.5rem 0">\u2193</div>
+                        <div class="flow-row">
+                            <div class="flow-box app-b" style="min-width:180px"><i class="fa-solid fa-helmet-safety"></i><br>Like a Construction Site<br><small>Everyone has their zone</small></div>
+                        </div>
+                    </div>`
+            };
+            return diagrams[visual] || '';
+        }
+
+        // ─── Render Sidebar TOC ───
+        function renderSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            let html = '<div class="sidebar-section"><div class="sidebar-section-title">Lessons</div>';
+
+            window.AG_LESSONS.forEach((lesson, li) => {
+                const progress = window.AG_LESSON_PROGRESS.getForLesson(lesson.id);
+                const allDone = progress.percent === 100;
+
+                html += `<div class="toc-lesson">
+                    <button class="toc-lesson-btn" data-lesson="${lesson.id}" onclick="scrollToLesson('${lesson.id}')">
+                        <div class="toc-icon" style="background:${lesson.color}">
+                            <i class="fa-solid ${lesson.icon}"></i>
+                        </div>
+                        <span class="toc-label">${lesson.title}</span>
+                        <div class="toc-check ${allDone ? 'done' : ''}">${allDone ? '<i class="fa-solid fa-check"></i>' : ''}</div>
+                    </button>
+                    <div class="toc-sections" id="toc-sections-${lesson.id}">
+                        ${lesson.sections.map(s => {
+                            const done = progress.completed.includes(s.id);
+                            return `<button class="toc-section-link" data-section="${s.id}" onclick="scrollToSection('${lesson.id}','${s.id}')">
+                                <span class="sec-dot ${done ? 'done' : ''}"></span>
+                                <span>${s.title}</span>
+                            </button>`;
+                        }).join('')}
+                    </div>
+                </div>`;
+            });
+
+            html += '</div>';
+            sidebar.innerHTML = html;
+        }
+
+        // ─── Render All Lessons ───
+        function renderAllLessons() {
+            const main = document.getElementById('main-content');
+            let html = '';
+
+            window.AG_LESSONS.forEach((lesson, li) => {
+                const progress = window.AG_LESSON_PROGRESS.getForLesson(lesson.id);
+
+                if (li > 0) {
+                    html += `<div class="lesson-divider">Next Lesson</div>`;
+                }
+
+                html += `<div class="lesson-block" id="lesson-${lesson.id}">
+                    <div class="lesson-block-header">
+                        <div class="lesson-block-icon" style="background:${lesson.color}">
+                            <i class="fa-solid ${lesson.icon}"></i>
+                        </div>
+                        <div class="lesson-block-info">
+                            <h2>${lesson.title}</h2>
+                            <p class="subtitle">${lesson.subtitle}</p>
+                            <div class="lesson-block-meta">
+                                <span class="badge badge-cat">${lesson.category}</span>
+                                <span class="badge badge-${lesson.difficulty}">${lesson.difficulty}</span>
+                                <span class="badge badge-time"><i class="fa-regular fa-clock"></i> ${lesson.estimatedMinutes} min</span>
+                            </div>
+                        </div>
+                    </div>`;
+
+                lesson.sections.forEach(s => {
+                    const done = progress.completed.includes(s.id);
+                    html += `<div class="section-card" id="section-${lesson.id}-${s.id}">
+                        <div class="section-header">
+                            <div class="section-icon"><i class="fa-solid ${s.icon}"></i></div>
+                            <h3>${s.title}</h3>
+                        </div>
+                        <div class="section-content">${s.content}</div>
+                        ${getVisualDiagram(s.visual)}
+                        <div class="key-points">
+                            <h4><i class="fa-solid fa-key"></i> Key Takeaways</h4>
+                            <ul>${s.keyPoints.map(p => `<li>${p}</li>`).join('')}</ul>
+                        </div>
+                        <button class="complete-btn ${done ? 'done' : ''}" data-lesson="${lesson.id}" data-section="${s.id}" onclick="toggleComplete(this)">
+                            <i class="fa-solid ${done ? 'fa-check-circle' : 'fa-circle'}"></i>
+                            ${done ? 'Completed' : 'Mark as Complete'}
+                        </button>
+                    </div>`;
+                });
+
+                html += '</div>';
+            });
+
+            main.innerHTML = html;
+        }
+
+        // ─── Navigation ───
+        function scrollToLesson(lessonId) {
+            const el = document.getElementById('lesson-' + lessonId);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function scrollToSection(lessonId, sectionId) {
+            const el = document.getElementById('section-' + lessonId + '-' + sectionId);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ─── Toggle Complete ───
+        function toggleComplete(btn) {
+            const lessonId = btn.dataset.lesson;
+            const sectionId = btn.dataset.section;
+            window.AG_LESSON_PROGRESS.markSectionComplete(lessonId, sectionId);
+            btn.classList.add('done');
+            btn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Completed';
+            updateProgress();
+            renderSidebar();
+            highlightActiveTOC();
+        }
+
+        // ─── Update Progress ───
+        function updateProgress() {
+            const stats = window.AG_LESSON_PROGRESS.getOverallStats();
+            const pct = stats.totalSections > 0
+                ? Math.round((stats.completedSections / stats.totalSections) * 100) : 0;
+            document.getElementById('nav-progress-text').textContent =
+                stats.completedSections + ' / ' + stats.totalSections + ' sections';
+            document.getElementById('nav-progress-fill').style.width = pct + '%';
+        }
+
+        // ─── Scroll Spy ───
+        let activeLesson = null;
+
+        function highlightActiveTOC() {
+            // Expand the active lesson's sections in sidebar
+            document.querySelectorAll('.toc-sections').forEach(el => {
+                el.classList.remove('expanded');
+            });
+            document.querySelectorAll('.toc-lesson-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            if (activeLesson) {
+                const tocSections = document.getElementById('toc-sections-' + activeLesson);
+                const tocBtn = document.querySelector(`.toc-lesson-btn[data-lesson="${activeLesson}"]`);
+                if (tocSections) tocSections.classList.add('expanded');
+                if (tocBtn) tocBtn.classList.add('active');
+            }
+        }
+
+        // Observe lesson blocks for scroll spy
+        const lessonObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id.replace('lesson-', '');
+                    if (id !== activeLesson) {
+                        activeLesson = id;
+                        highlightActiveTOC();
+                    }
+                }
+            });
+        }, { rootMargin: '-10% 0px -70% 0px' });
+
+        // Observe sections for finer scroll spy
+        const sectionObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const fullId = entry.target.id; // section-lessonId-sectionId
+                    const parts = fullId.replace('section-', '').split('-');
+                    // section id might have dashes, lesson id is first segment that matches
+                    const lesson = window.AG_LESSONS.find(l => fullId.startsWith('section-' + l.id + '-'));
+                    if (lesson) {
+                        const sectionId = fullId.replace('section-' + lesson.id + '-', '');
+                        document.querySelectorAll('.toc-section-link').forEach(a => {
+                            a.classList.toggle('viewing', a.dataset.section === sectionId);
+                        });
+                    }
+                }
+            });
+        }, { rootMargin: '-15% 0px -65% 0px' });
+
+        // ─── Init ───
+        renderSidebar();
+        renderAllLessons();
+        updateProgress();
+
+        // Setup observers
+        document.querySelectorAll('.lesson-block').forEach(el => lessonObserver.observe(el));
+        document.querySelectorAll('.section-card').forEach(el => sectionObserver.observe(el));
+
+        // Expand first lesson TOC by default
+        if (window.AG_LESSONS.length > 0) {
+            activeLesson = window.AG_LESSONS[0].id;
+            highlightActiveTOC();
+        }
+
+        // Handle direct link via hash
+        if (window.location.hash) {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+            }
+        }
+
+        // Handle legacy lesson.html?id= links
+        const params = new URLSearchParams(window.location.search);
+        const legacyId = params.get('id');
+        if (legacyId) {
+            setTimeout(() => scrollToLesson(legacyId), 300);
+        }
+    </script>
+</body>
+</html>

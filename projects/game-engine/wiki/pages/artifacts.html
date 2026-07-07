@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artifacts — AntiGravity Engine Wiki</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a14;
+            --accent: #5078ff;
+            --dim: rgba(255, 255, 255, 0.4);
+            --green: #00ffa3;
+        }
+
+        body {
+            background: var(--bg);
+            color: #e0e0e0;
+            font-family: 'Inter', system-ui, sans-serif;
+            line-height: 1.7;
+            padding: 40px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .back {
+            font-size: 13px;
+            color: var(--dim);
+            margin-bottom: 32px;
+            display: block;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        .subtitle {
+            color: var(--dim);
+            font-size: 13px;
+            margin-bottom: 32px;
+        }
+
+        .artifact {
+            background: rgba(20, 20, 40, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .artifact .name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .artifact .type {
+            font-size: 11px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .artifact .desc {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 8px;
+        }
+
+        .artifact .time {
+            font-size: 11px;
+            color: var(--dim);
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../index.html" class="back">← Back to Wiki</a>
+    <h1>Arti<span>facts</span></h1>
+    <p class="subtitle">Planning documents, prompts, and design artifacts created during development.</p>
+
+    <div class="artifact">
+        <div class="type">Implementation Plan</div>
+        <div class="name">implementation_plan.md</div>
+        <div class="desc">Full architecture blueprint — 7 system layers, 100+ modules, SpaceML specification,
+            multi-device adaptation, naming philosophy.</div>
+        <div class="time">Created: 2026-03-01 10:15</div>
+    </div>
+
+    <div class="artifact">
+        <div class="type">Walkthrough</div>
+        <div class="name">walkthrough.md</div>
+        <div class="desc">Summary of what was built — scaffold, demo, wiki, visualization styles.</div>
+        <div class="time">Created: 2026-03-01 10:20</div>
+    </div>
+
+    <div class="artifact">
+        <div class="type">Style Options</div>
+        <div class="name">style_options.md</div>
+        <div class="desc">4 GPU-rendered visualization style options: Celestial Observatory, Floating Islands, Space
+            Station Blueprint, Tree of Light.</div>
+        <div class="time">Created: 2026-03-01 14:00</div>
+    </div>
+
+    <div class="artifact">
+        <div class="type">Task Tracking</div>
+        <div class="name">task.md</div>
+        <div class="desc">Master task checklist for the engine build.</div>
+        <div class="time">Updated: 2026-03-01 14:01</div>
+    </div>
+
+    <div class="artifact">
+        <div class="type">Prompt Log</div>
+        <div class="name">Session: f0d8b13f</div>
+        <div class="desc">User requested comprehensive game engine architecture with holodeck-like capabilities,
+            multi-device input, 3D canvas, wish system, SpaceML, time management, and clean naming. Approved
+            architecture plan, then requested interactive demo, wiki, visualizations, and git pushes.</div>
+        <div class="time">Session started: 2026-03-01 10:15</div>
+    </div>
+</body>
+
+</html>

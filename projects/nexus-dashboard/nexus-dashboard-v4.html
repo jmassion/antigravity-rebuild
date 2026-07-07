@@ -1,0 +1,2296 @@
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   🎮🌐🤖  NEXUS MISSION CONTROL v2  🤖🌐🎮                                 ║
+║                                                                              ║
+║   Now with KANBAN board + 3D GRAPH visualization!                            ║
+║   + all previous features: chat, preview, deploys, links, queue             ║
+║                                                                              ║
+║   Built for: Justin — March 5, 2026                                          ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                       📋 TABLE OF CONTENTS (TOP) 📋                         ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║   SECTION 1   🎨  CSS VARIABLES & RESET ............ Colors & cleanup        ║
+║   SECTION 2   🏗️  LAYOUT GRID ...................... 3-column app shell      ║
+║   SECTION 3   🔝  TOP BAR .......................... Logo, breadcrumb, acts  ║
+║   SECTION 4   🧭  LEFT SIDEBAR ..................... Project tree + search   ║
+║   SECTION 5   📊  CENTER TABS ...................... Tab switching system    ║
+║   SECTION 6   🃏  OVERVIEW VIEW ..................... Project cards grid     ║
+║   SECTION 7   📋  KANBAN VIEW ...................... Drag-drop task board ★  ║
+║   SECTION 8   🌐  3D GRAPH VIEW .................... Three.js node graph ★  ║
+║   SECTION 9   👁️  PREVIEW VIEW ...................... Live iframe viewer     ║
+║   SECTION 10  📜  DEPLOY VIEW ....................... Version timeline       ║
+║   SECTION 11  🤖  QUEUE VIEW ........................ Agent task manager     ║
+║   SECTION 12  🔗  LINKS VIEW ........................ Share URLs panel      ║
+║   SECTION 13  💬  RIGHT CHAT PANEL .................. Agent conversation    ║
+║   SECTION 14  ⚙️  MODALS ............................ Settings & forms      ║
+║   SECTION 15  🎬  ANIMATIONS ........................ Keyframes & motion    ║
+║   SECTION 16  🧠  JAVASCRIPT ........................ All interactivity     ║
+║   SECTION 17  🌐  THREE.JS 3D GRAPH ................. 3D scene code ★      ║
+║   SECTION 18  📋  TABLE OF CONTENTS (BOTTOM) ........ Quick reference      ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS — Mission Control v2</title>
+
+<!-- 🎨 Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- 🌐 Three.js for the 3D Graph view! -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 1 — 🎨 CSS VARIABLES & RESET                          ║
+║                                                                  ║
+║  🖍️ ALL our colors, sizes, and spacing in ONE place!             ║
+║  Change a color here → it changes EVERYWHERE. Smart! 🧠         ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+:root {
+  --void: #06060b;
+  --bg: #0a0a14;
+  --bg2: #0f0f1e;
+  --bg3: #161628;
+  --surface: #1c1c34;
+  --surface-hover: #24243e;
+  --border: #1e1e38;
+  --border-active: #3a3a6a;
+  --border-glow: #5b4fc4;
+  --text: #c8c8e0;
+  --text-dim: #6a6a8e;
+  --text-bright: #f0f0ff;
+  --text-muted: #4a4a6a;
+  --accent: #6c5ce7;
+  --accent-light: #a29bfe;
+  --accent-glow: #6c5ce733;
+  --green: #00e676;
+  --green-dim: #00e67620;
+  --orange: #ff9100;
+  --orange-dim: #ff910020;
+  --red: #ff5252;
+  --red-dim: #ff525220;
+  --cyan: #18ffff;
+  --cyan-dim: #18ffff15;
+  --pink: #ff6b9d;
+  --yellow: #ffd740;
+  --sidebar-w: 250px;
+  --chat-w: 360px;
+  --topbar-h: 48px;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+/* ─── 🧹 RESET ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--void);color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{border:none;background:none;color:inherit;font:inherit;cursor:pointer}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 2 — 🏗️ LAYOUT GRID                                    ║
+║  The 3-column skeleton: Sidebar | Main | Chat 🏠                ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.app{display:grid;grid-template-columns:var(--sidebar-w) 1fr var(--chat-w);grid-template-rows:var(--topbar-h) 1fr;grid-template-areas:"topbar topbar topbar" "sidebar main chat";height:100vh;width:100vw}
+.app.chat-collapsed{grid-template-columns:var(--sidebar-w) 1fr 0}
+.app.chat-collapsed .chat-panel{display:none}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 3 — 🔝 TOP BAR                                        ║
+║  Logo + breadcrumb + action buttons across the top ✈️           ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.topbar{grid-area:topbar;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:10px;z-index:50}
+.topbar-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;letter-spacing:2px;color:var(--accent-light);user-select:none}
+.topbar-divider{width:1px;height:22px;background:var(--border)}
+.topbar-breadcrumb{display:flex;align-items:center;gap:5px;font-size:0.78rem;color:var(--text-dim)}
+.topbar-breadcrumb .crumb-active{color:var(--text-bright);font-weight:500}
+.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:4px}
+.tb{padding:5px 10px;border-radius:var(--radius-sm);font-size:0.75rem;font-weight:500;display:flex;align-items:center;gap:4px;transition:all .12s;color:var(--text-dim)}
+.tb:hover{background:var(--surface);color:var(--text)}
+.tb.primary{background:var(--accent);color:#fff}
+.tb.primary:hover{background:var(--accent-light)}
+.status-dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.status-dot.live{background:var(--green);box-shadow:0 0 6px var(--green)}
+.status-dot.building{background:var(--orange);box-shadow:0 0 6px var(--orange);animation:pulse-dot 1.5s infinite}
+.status-dot.error{background:var(--red)}
+.status-dot.idle{background:var(--text-muted)}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 4 — 🧭 LEFT SIDEBAR                                   ║
+║  Project tree, search, user — like a file browser 📂            ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.sidebar{grid-area:sidebar;background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sb-header{padding:12px 14px 8px;display:flex;align-items:center;justify-content:space-between}
+.sb-title{font-family:'Syne',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim)}
+.sb-add{width:22px;height:22px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:var(--text-dim);transition:all .12s}
+.sb-add:hover{background:var(--accent);color:#fff}
+.sb-search{padding:0 10px 8px}
+.sb-search input{width:100%;padding:6px 10px 6px 28px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.78rem;outline:none;transition:border-color .15s}
+.sb-search input:focus{border-color:var(--accent)}
+.sb-search-w{position:relative}
+.sb-search-w::before{content:'🔍';position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:0.65rem;pointer-events:none}
+.sb-list{flex:1;overflow-y:auto;padding:0 6px}
+.sb-label{font-size:0.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);padding:10px 8px 3px}
+.pi{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--radius-sm);cursor:pointer;transition:all .1s;margin:1px 0}
+.pi:hover{background:var(--surface)}
+.pi.active{background:var(--accent-glow);border:1px solid var(--border-glow)}
+.pi-icon{width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0}
+.pi-info{flex:1;min-width:0}
+.pi-name{font-size:0.78rem;font-weight:500;color:var(--text-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pi-meta{font-size:0.62rem;color:var(--text-muted);display:flex;align-items:center;gap:5px}
+.pi.sub{padding-left:30px}
+.pi.sub .pi-icon{width:20px;height:20px;font-size:0.65rem}
+.sb-footer{padding:8px 10px;border-top:1px solid var(--border);display:flex;align-items:center;gap:7px}
+.sb-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--pink));display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#fff}
+.sb-user{font-size:0.78rem;font-weight:500;color:var(--text);flex:1}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 5 — 📊 CENTER TABS + MAIN AREA                        ║
+║  The big middle workspace with tab switching! 🎬                 ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.main{grid-area:main;background:var(--void);overflow-y:auto;position:relative}
+.main-tabs{display:flex;align-items:center;gap:1px;padding:6px 14px 0;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:10;overflow-x:auto}
+.mt{padding:7px 11px;font-size:0.72rem;font-weight:500;color:var(--text-dim);border-bottom:2px solid transparent;transition:all .12s;margin-bottom:-1px;white-space:nowrap}
+.mt:hover{color:var(--text)}
+.mt.active{color:var(--accent-light);border-bottom-color:var(--accent)}
+.mc{padding:16px}
+.view{display:none}
+.view.active{display:block}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 6 — 🃏 OVERVIEW — Project cards grid                   ║
+║  Pokemon cards but for your websites! 🃏                         ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.stats-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.stat-card{flex:1;min-width:120px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius)}
+.stat-label{font-size:0.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.stat-val{font-size:1.3rem;font-weight:700;color:var(--text-bright)}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.pc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .2s}
+.pc:hover{border-color:var(--border-active);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.pc-prev{height:120px;position:relative;overflow:hidden;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.3}
+.pc-status{position:absolute;top:6px;right:6px;padding:2px 7px;border-radius:20px;font-size:0.6rem;font-weight:600;display:flex;align-items:center;gap:3px;backdrop-filter:blur(8px);background:rgba(0,0,0,.6)}
+.pc-body{padding:12px}
+.pc-title{font-weight:600;font-size:0.88rem;color:var(--text-bright);margin-bottom:3px;display:flex;align-items:center;gap:5px}
+.pc-desc{font-size:0.7rem;color:var(--text-dim);margin-bottom:8px;line-height:1.4}
+.pc-agents{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.ac{display:flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;font-size:0.6rem;font-weight:500;background:var(--surface);color:var(--text-dim)}
+.ac.on{background:var(--accent-glow);color:var(--accent-light);border:1px solid var(--border-glow)}
+.ac-dot{width:4px;height:4px;border-radius:50%;background:var(--green);animation:pulse-dot 1.5s infinite}
+.pc-foot{display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border)}
+.pc-time{font-size:0.62rem;color:var(--text-muted)}
+.pc-acts{display:flex;gap:2px}
+.pa{width:26px;height:26px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:var(--text-dim);transition:all .1s}
+.pa:hover{background:var(--surface);color:var(--text)}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 7 — 📋 KANBAN VIEW ★ NEW ★                             ║
+║                                                                  ║
+║  🗂️ A drag-and-drop board with columns like Trello!              ║
+║  Backlog → In Progress → Review → Done                           ║
+║  Each card shows the project, agent, and priority. 🏷️            ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.kanban{display:flex;gap:14px;overflow-x:auto;padding-bottom:16px;min-height:calc(100vh - 140px)}
+
+/* 📦 Each column (Backlog, In Progress, etc.) */
+.kb-col{min-width:260px;max-width:300px;flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden}
+
+/* 🏷️ Column header with count badge */
+.kb-header{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.kb-header-dot{width:8px;height:8px;border-radius:50%}
+.kb-header-title{font-size:0.8rem;font-weight:600;color:var(--text-bright);flex:1}
+.kb-count{font-size:0.65rem;padding:1px 6px;border-radius:10px;background:var(--surface);color:var(--text-dim)}
+
+/* 📜 Scrollable card list inside column */
+.kb-cards{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:8px;min-height:60px}
+
+/* 🃏 Individual kanban card */
+.kb-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:grab;transition:all .15s;user-select:none;position:relative}
+.kb-card:hover{border-color:var(--border-active);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.kb-card:active{cursor:grabbing;transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:10;border-color:var(--accent)}
+.kb-card-title{font-size:0.8rem;font-weight:500;color:var(--text-bright);margin-bottom:5px;line-height:1.3}
+.kb-card-meta{display:flex;align-items:center;gap:6px;font-size:0.62rem;color:var(--text-muted);flex-wrap:wrap}
+
+/* 🏷️ Priority tags on kanban cards */
+.kb-tag{padding:1px 6px;border-radius:3px;font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.kb-tag.high{background:var(--red-dim);color:var(--red)}
+.kb-tag.med{background:var(--orange-dim);color:var(--orange)}
+.kb-tag.low{background:var(--cyan-dim);color:var(--cyan)}
+
+/* 🤖 Agent avatar on kanban card */
+.kb-agent{display:flex;align-items:center;gap:3px;margin-left:auto}
+.kb-agent-dot{width:14px;height:14px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:0.55rem}
+
+/* ➕ Add card button at bottom of column */
+.kb-add{padding:8px;text-align:center;font-size:0.72rem;color:var(--text-muted);border-top:1px solid var(--border);transition:all .12s}
+.kb-add:hover{background:var(--surface);color:var(--text)}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 8 — 🌐 3D GRAPH VIEW ★ NEW ★                           ║
+║                                                                  ║
+║  🌍 A Three.js 3D scene where projects are SPHERES               ║
+║  floating in space, connected by glowing lines!                  ║
+║  Drag to orbit, scroll to zoom. Click a node to select. 🎯      ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.graph-container{position:relative;height:calc(100vh - 120px);background:var(--void);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+#graph-canvas{width:100%;height:100%;display:block}
+
+/* 🏷️ Floating labels on the 3D nodes */
+.graph-label{position:absolute;pointer-events:none;font-size:0.68rem;font-weight:600;color:var(--text-bright);text-shadow:0 0 8px rgba(0,0,0,.8);white-space:nowrap;transform:translate(-50%,-100%);padding:3px 8px;background:rgba(10,10,20,.75);border:1px solid var(--border);border-radius:4px;backdrop-filter:blur(4px);transition:opacity .2s}
+
+/* 📊 Legend panel overlaying the 3D view */
+.graph-legend{position:absolute;bottom:12px;left:12px;background:rgba(10,10,20,.85);border:1px solid var(--border);border-radius:8px;padding:10px 14px;backdrop-filter:blur(8px)}
+.graph-legend-title{font-size:0.65rem;font-weight:600;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.graph-legend-item{display:flex;align-items:center;gap:6px;font-size:0.68rem;color:var(--text);padding:2px 0}
+.graph-legend-dot{width:8px;height:8px;border-radius:50%}
+
+/* 🎛️ Controls overlay */
+.graph-controls{position:absolute;top:12px;right:12px;display:flex;gap:4px}
+.graph-ctrl-btn{padding:5px 10px;border-radius:var(--radius-sm);font-size:0.7rem;background:rgba(10,10,20,.85);border:1px solid var(--border);color:var(--text-dim);backdrop-filter:blur(8px);transition:all .12s}
+.graph-ctrl-btn:hover{color:var(--text-bright);border-color:var(--accent)}
+.graph-ctrl-btn.active{color:var(--accent-light);border-color:var(--accent)}
+
+/* ℹ️ Info card when hovering a node */
+.graph-info{position:absolute;top:12px;left:12px;background:rgba(10,10,20,.9);border:1px solid var(--border-active);border-radius:10px;padding:14px;backdrop-filter:blur(8px);min-width:200px;display:none}
+.graph-info.show{display:block}
+.graph-info-title{font-size:0.9rem;font-weight:600;color:var(--text-bright);margin-bottom:4px}
+.graph-info-url{font-size:0.68rem;color:var(--cyan);margin-bottom:6px;font-family:monospace}
+.graph-info-row{font-size:0.7rem;color:var(--text-dim);padding:2px 0}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTIONS 9-12 — Previous views (Preview, Deploys, Queue, Links)║
+║  Same as v1 but compressed for space. See v1 for full comments. ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+
+/* 👁️ Preview */
+.prev-container{height:calc(100vh - 120px);background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.prev-toolbar{display:flex;align-items:center;gap:7px;padding:7px 10px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.prev-url{flex:1;padding:4px 9px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:0.72rem;color:var(--cyan);font-family:monospace;display:flex;align-items:center;gap:5px;cursor:pointer;transition:border-color .15s}
+.prev-url:hover{border-color:var(--cyan)}
+.prev-body{flex:1;background:linear-gradient(180deg,#0d0d1a,#1a1a3a,#0d0d1a);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8888aa;gap:10px;font-size:.82rem}
+.prev-icon{font-size:2.5rem;opacity:.3}
+.pdb{padding:4px 7px;border-radius:var(--radius-sm);font-size:0.75rem;color:var(--text-dim);transition:all .1s}
+.pdb:hover,.pdb.active{background:var(--surface);color:var(--text-bright)}
+
+/* 📜 Deploy history */
+.dl-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.dl-dot-col{display:flex;flex-direction:column;align-items:center;width:18px;flex-shrink:0}
+.dl-dot{width:9px;height:9px;border-radius:50%;background:var(--border-active);border:2px solid var(--bg2);z-index:1;flex-shrink:0}
+.dl-dot.current{background:var(--green);box-shadow:0 0 8px var(--green)}
+.dl-line{width:2px;flex:1;background:var(--border);margin-top:3px}
+.dl-info{flex:1}
+.dl-msg{font-size:0.82rem;font-weight:500;color:var(--text-bright);margin-bottom:3px}
+.dl-meta{font-size:0.68rem;color:var(--text-muted);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.dl-tag{padding:1px 5px;border-radius:3px;background:var(--surface);font-size:0.6rem}
+.dl-acts{display:flex;gap:3px;flex-shrink:0;margin-top:2px}
+.dl-btn{padding:3px 9px;border-radius:var(--radius-sm);font-size:0.67rem;font-weight:500;background:var(--surface);color:var(--text-dim);transition:all .1s}
+.dl-btn:hover{background:var(--surface-hover);color:var(--text)}
+.dl-btn.revert:hover{background:var(--orange-dim);color:var(--orange)}
+
+/* 🤖 Queue */
+.qi{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:5px;transition:all .12s;cursor:grab}
+.qi:hover{border-color:var(--border-active)}
+.qi.running{border-color:var(--green);background:var(--green-dim)}
+.qi-info{flex:1}
+.qi-title{font-size:0.78rem;font-weight:500;color:var(--text-bright)}
+.qi-proj{font-size:0.62rem;color:var(--text-muted)}
+.qi-status{font-size:0.62rem;padding:2px 7px;border-radius:20px;font-weight:600}
+.qi-status.running{background:var(--green-dim);color:var(--green)}
+.qi-status.queued{background:var(--surface);color:var(--text-dim)}
+.qi-status.done{background:var(--accent-glow);color:var(--accent-light)}
+
+/* 🔗 Links */
+.share-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.share-title{font-size:0.7rem;font-weight:600;color:var(--text-dim);margin-bottom:10px;letter-spacing:1px;text-transform:uppercase}
+.sr{display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid var(--border)}
+.sr:last-child{border-bottom:none}
+.sr-label{font-size:0.68rem;color:var(--text-dim);width:65px;flex-shrink:0}
+.sr-url{flex:1;padding:4px 7px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:monospace;font-size:0.68rem;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.sr-btn{padding:4px 9px;border-radius:var(--radius-sm);font-size:0.64rem;font-weight:600;background:var(--surface);color:var(--text-dim);transition:all .1s;white-space:nowrap}
+.sr-btn:hover{background:var(--accent);color:#fff}
+.sr-btn.copied{background:var(--green-dim);color:var(--green)}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 13 — 💬 RIGHT CHAT PANEL                               ║
+║  Talk to AI agents about the selected project! 🤖💬             ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.chat-panel{grid-area:chat;background:var(--bg);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.ch-header{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px}
+.ch-title{font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;color:var(--text-bright);flex:1}
+.ch-status{font-size:0.64rem;color:var(--green);display:flex;align-items:center;gap:3px}
+.ch-close{width:24px;height:24px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:.85rem;transition:all .1s}
+.ch-close:hover{background:var(--surface);color:var(--text)}
+.ch-agents{display:flex;padding:5px 8px;gap:3px;border-bottom:1px solid var(--border);overflow-x:auto}
+.ch-at{padding:3px 9px;border-radius:20px;font-size:0.66rem;font-weight:500;color:var(--text-dim);white-space:nowrap;transition:all .1s;display:flex;align-items:center;gap:3px}
+.ch-at:hover{background:var(--surface);color:var(--text)}
+.ch-at.active{background:var(--accent-glow);color:var(--accent-light);border:1px solid var(--border-glow)}
+.ch-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.ch-msg{max-width:92%;animation:msg-in .25s ease}
+.ch-msg.user{align-self:flex-end}
+.ch-msg.agent{align-self:flex-start}
+.ch-bubble{padding:9px 12px;border-radius:11px;font-size:0.78rem;line-height:1.5}
+.ch-msg.user .ch-bubble{background:var(--accent);color:#fff;border-bottom-right-radius:3px}
+.ch-msg.agent .ch-bubble{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:3px}
+.ch-meta{font-size:0.58rem;color:var(--text-muted);margin-top:3px;padding:0 3px}
+.ch-msg.user .ch-meta{text-align:right}
+.ch-chip{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;background:var(--surface);color:var(--cyan);font-size:0.66rem;font-weight:500;margin:3px 3px 3px 0;cursor:pointer;transition:all .1s;border:1px solid var(--border)}
+.ch-chip:hover{background:var(--cyan-dim);border-color:var(--cyan)}
+.typing-ind{display:flex;gap:3px;padding:9px 12px;align-items:center}
+.td{width:5px;height:5px;border-radius:50%;background:var(--text-dim);animation:typing-bounce 1.2s infinite}
+.td:nth-child(2){animation-delay:.15s}
+.td:nth-child(3){animation-delay:.3s}
+.ch-input-area{padding:8px 10px;border-top:1px solid var(--border);background:var(--bg2)}
+.ch-input-wrap{display:flex;align-items:flex-end;gap:7px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:7px 9px;transition:border-color .15s}
+.ch-input-wrap:focus-within{border-color:var(--accent)}
+.ch-input{flex:1;background:none;border:none;color:var(--text);font-size:0.78rem;font-family:inherit;resize:none;outline:none;min-height:18px;max-height:100px;line-height:1.4}
+.ch-input::placeholder{color:var(--text-muted)}
+.ch-send{width:30px;height:30px;border-radius:7px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;transition:all .12s}
+.ch-send:hover{background:var(--accent-light);transform:scale(1.05)}
+.ch-quick{display:flex;gap:3px;margin-top:6px;flex-wrap:wrap}
+.ch-qb{padding:2px 8px;border-radius:20px;font-size:0.62rem;color:var(--text-dim);background:var(--surface);transition:all .1s}
+.ch-qb:hover{color:var(--text);background:var(--surface-hover)}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 14 — ⚙️ MODALS                                         ║
+║  Pop-up windows for settings and new project form 🪟            ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;animation:fade-in .2s ease}
+.mo.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:520px;max-height:80vh;overflow-y:auto;animation:modal-in .25s ease}
+.modal-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.modal-t{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--text-bright)}
+.modal-x{width:26px;height:26px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text-dim);transition:all .1s}
+.modal-x:hover{background:var(--surface);color:var(--text)}
+.modal-b{padding:18px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg3);border:1px solid var(--border-active);border-radius:10px;padding:8px 18px;font-size:0.78rem;color:var(--text-bright);z-index:300;display:flex;align-items:center;gap:7px;transition:transform .3s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 15 — 🎬 ANIMATIONS                                     ║
+║  Sparkle and movement! Like magic spells for the screen! 🪄     ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes typing-bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-3px)}}
+@keyframes msg-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@keyframes modal-in{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes slide-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float-node{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.stag-1{animation:slide-up .4s ease .05s both}
+.stag-2{animation:slide-up .4s ease .1s both}
+.stag-3{animation:slide-up .4s ease .15s both}
+.stag-4{animation:slide-up .4s ease .2s both}
+.stag-5{animation:slide-up .4s ease .25s both}
+.stag-6{animation:slide-up .4s ease .3s both}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 7.5 — 📦 IMPORT / DROP ZONE VIEW ★ NEW ★               ║
+║                                                                  ║
+║  🎁 A big drag-and-drop area where you can throw in files        ║
+║  from Claude, ChatGPT, or anywhere! Supports .zip, .html,       ║
+║  .jsx, .css, .js, .json, .md, .tsx, and full project zips.      ║
+║  Like a mailbox slot for your code! 📬                           ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+
+/* 🎯 The big dropzone — the main area you drag files onto */
+.import-zone {
+  position: relative;
+  min-height: calc(100vh - 160px);
+}
+
+/* 📬 The primary drop target area */
+.drop-target {
+  border: 2px dashed var(--border-active);
+  border-radius: 16px;
+  padding: 48px 32px;
+  text-align: center;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg2);
+}
+
+/* ✨ When you're dragging a file OVER the drop zone — it lights up! */
+.drop-target.dragover {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+  box-shadow: 0 0 40px var(--accent-glow), inset 0 0 40px var(--accent-glow);
+  transform: scale(1.005);
+}
+.drop-target.dragover .drop-icon { transform: scale(1.15) translateY(-4px); }
+.drop-target.dragover .drop-ring { opacity: 1; animation: drop-pulse 1.2s infinite; }
+
+.drop-target:hover { border-color: var(--border-glow); background: #0f0f1e; }
+
+/* 📦 The big icon in the center */
+.drop-icon {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+  transition: transform 0.25s ease;
+  display: inline-block;
+}
+
+/* 🔵 Pulsing ring behind the icon when dragging */
+.drop-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.drop-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 6px;
+}
+.drop-sub {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+/* 🏷️ File type badges */
+.drop-types {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.drop-type-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  font-family: monospace;
+  background: var(--surface);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  transition: all 0.15s;
+}
+.drop-type-badge:hover { color: var(--accent-light); border-color: var(--accent); }
+
+/* 📂 "Or browse" button */
+.drop-browse-btn {
+  padding: 8px 24px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: var(--accent);
+  color: white;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.drop-browse-btn:hover { background: var(--accent-light); transform: translateY(-1px); }
+
+/* ─── 📋 File Queue — shows files AFTER they're dropped ─── */
+.import-queue {
+  margin-top: 20px;
+}
+.import-queue-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.import-queue-count {
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: var(--accent-glow);
+  color: var(--accent-light);
+  font-size: 0.62rem;
+}
+
+/* 📄 Individual queued file card */
+.import-file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  animation: slide-up 0.3s ease;
+  transition: border-color 0.15s;
+}
+.import-file:hover { border-color: var(--border-active); }
+
+/* 📁 File type icon */
+.import-file-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.import-file-icon.html { background: #e44d2620; color: #e44d26; }
+.import-file-icon.jsx  { background: #61dafb20; color: #61dafb; }
+.import-file-icon.zip  { background: #ffd74020; color: #ffd740; }
+.import-file-icon.css  { background: #264de420; color: #42a5f5; }
+.import-file-icon.js   { background: #f7df1e20; color: #f7df1e; }
+.import-file-icon.json { background: #69f0ae20; color: #69f0ae; }
+.import-file-icon.md   { background: #ffffff15; color: #ccc; }
+.import-file-icon.other{ background: var(--surface); color: var(--text-dim); }
+
+/* File info */
+.import-file-info { flex: 1; min-width: 0; }
+.import-file-name {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.import-file-meta {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 🎯 Placement selector dropdown on each file */
+.import-file-placement {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.7rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  max-width: 160px;
+}
+.import-file-placement:focus { border-color: var(--accent); }
+
+/* ❌ Remove button */
+.import-file-remove {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  transition: all 0.12s;
+  flex-shrink: 0;
+}
+.import-file-remove:hover { background: var(--red-dim); color: var(--red); }
+
+/* ─── 🚀 Import action bar (bottom of import queue) ─── */
+.import-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.import-action-btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.import-action-btn.primary {
+  background: var(--accent);
+  color: white;
+}
+.import-action-btn.primary:hover { background: var(--accent-light); }
+.import-action-btn.ghost {
+  background: var(--surface);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.import-action-btn.ghost:hover { color: var(--text); border-color: var(--border-active); }
+.import-spacer { flex: 1; }
+.import-summary {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+/* ─── 🎭 Recent imports history ─── */
+.import-history {
+  margin-top: 28px;
+}
+.import-history-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.import-history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.78rem;
+}
+.import-history-item:last-child { border-bottom: none; }
+.ih-icon { font-size: 1rem; width: 24px; text-align: center; }
+.ih-info { flex: 1; }
+.ih-name { color: var(--text-bright); font-weight: 500; }
+.ih-meta { font-size: 0.62rem; color: var(--text-muted); }
+.ih-status {
+  font-size: 0.62rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.ih-status.success { background: var(--green-dim); color: var(--green); }
+.ih-status.processing { background: var(--orange-dim); color: var(--orange); }
+
+/* ─── 🌊 Drop pulse animation ─── */
+@keyframes drop-pulse {
+  0% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
+  100% { transform: translate(-50%,-50%) scale(2.5); opacity: 0; }
+}
+
+/* ─── 🔵 Global drag overlay — covers the WHOLE app when dragging ─── */
+.global-drop-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(108, 92, 231, 0.08);
+  border: 3px dashed var(--accent);
+  z-index: 999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  backdrop-filter: blur(2px);
+}
+.global-drop-overlay.show { display: flex; }
+.global-drop-msg {
+  background: var(--bg2);
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  padding: 32px 48px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.global-drop-msg-icon { font-size: 2.5rem; margin-bottom: 8px; }
+.global-drop-msg-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-bright);
+}
+.global-drop-msg-sub {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.stag-6{animation:slide-up .4s ease .3s both}
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 19 — 💰 BILLING & ACCOUNTING VIEW ★ NEW ★              ║
+║  💳 Credit balance, transactions, usage charts, invoices. 📊    ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.billing-header{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.billing-stat{flex:1;min-width:150px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);position:relative;overflow:hidden}
+.billing-stat-label{font-size:.6rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:4px}
+.billing-stat-val{font-size:1.5rem;font-weight:700}
+.billing-stat-sub{font-size:.65rem;color:var(--text-dim);margin-top:2px}
+.billing-stat-bar{position:absolute;bottom:0;left:0;height:3px;border-radius:0 3px 0 0}
+
+/* 📊 Usage breakdown bars */
+.usage-bar-wrap{margin:6px 0}
+.usage-bar-label{display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:3px}
+.usage-bar-label span:first-child{color:var(--text)}
+.usage-bar-label span:last-child{color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+.usage-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.usage-bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
+
+/* 💳 Transaction rows */
+.tx-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:.8rem}
+.tx-row:last-child{border-bottom:none}
+.tx-icon{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.tx-info{flex:1;min-width:0}
+.tx-name{font-weight:500;color:var(--text-bright)}
+.tx-meta{font-size:.62rem;color:var(--text-muted)}
+.tx-amount{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:600;flex-shrink:0}
+.tx-amount.debit{color:var(--red)}
+.tx-amount.credit{color:var(--green)}
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 20 — 🖥️ COMPUTE PROVISIONING VIEW ★ NEW ★              ║
+║  Spin up Linux/Win/Mac desktops for agents & users. 🌍         ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.compute-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.compute-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .2s}
+.compute-card:hover{border-color:var(--border-active);transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.compute-card-icon{font-size:2rem;margin-bottom:8px}
+.compute-card-title{font-size:.88rem;font-weight:600;color:var(--text-bright);margin-bottom:4px}
+.compute-card-desc{font-size:.72rem;color:var(--text-dim);margin-bottom:10px;line-height:1.4}
+.compute-card-price{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:600}
+.compute-card-btn{display:block;width:100%;padding:7px;border-radius:var(--radius-sm);font-size:.72rem;font-weight:600;text-align:center;margin-top:10px;transition:all .12s}
+.compute-card-btn.launch{background:var(--accent);color:#fff}
+.compute-card-btn.launch:hover{background:var(--accent-light)}
+
+/* 🖥️ Active instances list */
+.instance-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px}
+.instance-os{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.instance-info{flex:1}
+.instance-name{font-size:.8rem;font-weight:500;color:var(--text-bright)}
+.instance-specs{font-size:.62rem;color:var(--text-muted)}
+.instance-status{font-size:.62rem;padding:2px 8px;border-radius:20px;font-weight:600}
+.instance-status.running{background:var(--green-dim);color:var(--green)}
+.instance-status.stopped{background:var(--surface);color:var(--text-muted)}
+.instance-actions{display:flex;gap:3px}
+.instance-act{width:24px;height:24px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:.75rem;color:var(--text-dim);transition:all .1s}
+.instance-act:hover{background:var(--surface);color:var(--text)}
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  SECTION 21 — 🔌 API & MCP ORGANIZATION VIEW ★ NEW ★            ║
+║  Manage all API keys, MCP servers, skills — global & project. 🛠️║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+.mcp-section-title{font-size:.7rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin:20px 0 8px;display:flex;align-items:center;gap:6px}
+.mcp-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;transition:all .12s}
+.mcp-card:hover{border-color:var(--border-active)}
+.mcp-card-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.mcp-card-info{flex:1;min-width:0}
+.mcp-card-name{font-size:.82rem;font-weight:500;color:var(--text-bright)}
+.mcp-card-desc{font-size:.62rem;color:var(--text-muted)}
+.mcp-card-scope{font-size:.58rem;padding:1px 6px;border-radius:3px;font-weight:600;flex-shrink:0}
+.mcp-card-scope.global{background:var(--accent-glow);color:var(--accent-light)}
+.mcp-card-scope.project{background:var(--cyan-dim);color:var(--cyan)}
+.mcp-toggle{width:36px;height:20px;border-radius:10px;background:var(--surface);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:1px solid var(--border)}
+.mcp-toggle.on{background:var(--green-dim);border-color:var(--green)}
+.mcp-toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:var(--text-dim);top:2px;left:2px;transition:all .2s}
+.mcp-toggle.on::after{left:18px;background:var(--green)}
+
+/* 🔑 API key rows */
+.api-key-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.api-key-row:last-child{border-bottom:none}
+.api-key-name{font-size:.78rem;font-weight:500;color:var(--text-bright);width:110px;flex-shrink:0}
+.api-key-val{flex:1;padding:4px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.api-key-btn{padding:3px 8px;border-radius:var(--radius-sm);font-size:.62rem;font-weight:600;background:var(--surface);color:var(--text-dim);transition:all .1s;white-space:nowrap}
+.api-key-btn:hover{background:var(--accent);color:#fff}
+
+/* ─── 🃏 CARD — Generic card container for billing/compute sections ─── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.card-title{font-size:.7rem;font-weight:600;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ═══════════════════════════════════════════
+       🔝 TOP BAR
+       ═══════════════════════════════════════════ -->
+  <header class="topbar">
+    <div class="topbar-logo">NEXUS</div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-breadcrumb" id="breadcrumb"><span class="crumb-active">All Projects</span></div>
+    <div class="topbar-actions">
+      <button class="tb" onclick="showToast('🔄 Syncing...')">🔄 Sync</button>
+      <button class="tb" onclick="switchView('queue')">🤖 Queue <span style="color:var(--orange)">3</span></button>
+      <button class="tb" onclick="openModal('settings')">⚙️</button>
+      <button class="tb" onclick="toggleChat()">💬</button>
+      <button class="tb primary" onclick="openModal('new-project')">+ New</button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       🧭 LEFT SIDEBAR
+       ═══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sb-header"><span class="sb-title">Projects</span><button class="sb-add" onclick="openModal('new-project')">+</button></div>
+    <div class="sb-search"><div class="sb-search-w"><input type="text" placeholder="Search..." oninput="filterProjects(this.value)"></div></div>
+    <div class="sb-list" id="sb-list">
+      <div class="sb-label">📌 Pinned</div>
+      <div class="pi active" data-p="nexus-dashboard" onclick="selProject(this,'nexus-dashboard')"><div class="pi-icon" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)">🎮</div><div class="pi-info"><div class="pi-name">NEXUS Dashboard</div><div class="pi-meta"><span class="status-dot live"></span> Live · 2m</div></div></div>
+      <div class="pi" data-p="holodeck-os" onclick="selProject(this,'holodeck-os')"><div class="pi-icon" style="background:linear-gradient(135deg,#ff6b9d,#c44569)">🏰</div><div class="pi-info"><div class="pi-name">Holodeck OS</div><div class="pi-meta"><span class="status-dot live"></span> Live · 1h</div></div></div>
+      <div class="pi sub" data-p="holodeck-landing" onclick="selProject(this,'holodeck-landing')"><div class="pi-icon" style="background:var(--surface)">📄</div><div class="pi-info"><div class="pi-name">Landing Page</div><div class="pi-meta"><span class="status-dot live"></span> Live</div></div></div>
+      <div class="pi sub" data-p="holodeck-pricing" onclick="selProject(this,'holodeck-pricing')"><div class="pi-icon" style="background:var(--surface)">💰</div><div class="pi-info"><div class="pi-name">Pricing Page</div><div class="pi-meta"><span class="status-dot building"></span> Building</div></div></div>
+      <div class="pi sub" data-p="holodeck-quiz" onclick="selProject(this,'holodeck-quiz')"><div class="pi-icon" style="background:var(--surface)">📋</div><div class="pi-info"><div class="pi-name">Onboarding Quiz</div><div class="pi-meta"><span class="status-dot live"></span> Live</div></div></div>
+      <div class="sb-label">🗂️ All Projects</div>
+      <div class="pi" data-p="tech-gripes" onclick="selProject(this,'tech-gripes')"><div class="pi-icon" style="background:linear-gradient(135deg,#ff9100,#ff5722)">🔥</div><div class="pi-info"><div class="pi-name">TechGripes Forum</div><div class="pi-meta"><span class="status-dot live"></span> Live · 3d</div></div></div>
+      <div class="pi" data-p="3d-mastery" onclick="selProject(this,'3d-mastery')"><div class="pi-icon" style="background:linear-gradient(135deg,#18ffff,#0091ea)">🧊</div><div class="pi-info"><div class="pi-name">3D Mastery</div><div class="pi-meta"><span class="status-dot live"></span> Live · 5d</div></div></div>
+      <div class="pi" data-p="aluzina" onclick="selProject(this,'aluzina')"><div class="pi-icon" style="background:linear-gradient(135deg,#e040fb,#7c4dff)">🎨</div><div class="pi-info"><div class="pi-name">ALUZINA Explorer</div><div class="pi-meta"><span class="status-dot live"></span> Live · 1w</div></div></div>
+      <div class="pi" data-p="virtuos-museum" onclick="selProject(this,'virtuos-museum')"><div class="pi-icon" style="background:linear-gradient(135deg,#ffd740,#ff6d00)">🏛️</div><div class="pi-info"><div class="pi-name">Virtuos Museum</div><div class="pi-meta"><span class="status-dot live"></span> Live · 2w</div></div></div>
+      <div class="pi" data-p="3dml" onclick="selProject(this,'3dml')"><div class="pi-icon" style="background:linear-gradient(135deg,#69f0ae,#00c853)">📐</div><div class="pi-info"><div class="pi-name">3DML Playground</div><div class="pi-meta"><span class="status-dot idle"></span> Idle</div></div></div>
+      <div class="pi" data-p="tabspace" onclick="selProject(this,'tabspace')"><div class="pi-icon" style="background:linear-gradient(135deg,#80deea,#00acc1)">🪟</div><div class="pi-info"><div class="pi-name">TabSpace Extension</div><div class="pi-meta"><span class="status-dot building"></span> Building</div></div></div>
+      <div class="pi" data-p="git-masterclass" onclick="selProject(this,'git-masterclass')"><div class="pi-icon" style="background:linear-gradient(135deg,#b388ff,#651fff)">📚</div><div class="pi-info"><div class="pi-name">Git Masterclass</div><div class="pi-meta"><span class="status-dot idle"></span> Idle</div></div></div>
+    </div>
+    <div class="sb-footer"><div class="sb-avatar">J</div><span class="sb-user">Justin</span><button class="sb-add" onclick="openModal('settings')">⚙️</button></div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════
+       📊 CENTER STAGE
+       ═══════════════════════════════════════════ -->
+  <main class="main" id="main-area">
+    <div class="main-tabs">
+      <button class="mt active" onclick="switchView('overview',this)">📊 Overview</button>
+      <button class="mt" onclick="switchView('kanban',this)">📋 Kanban</button>
+      <button class="mt" onclick="switchView('graph',this)">🌐 3D Graph</button>
+      <button class="mt" onclick="switchView('preview',this)">👁️ Preview</button>
+      <button class="mt" onclick="switchView('deploys',this)">📜 Deploys</button>
+      <button class="mt" onclick="switchView('queue',this)">🤖 Queue</button>
+      <button class="mt" onclick="switchView('links',this)">🔗 Links</button>
+      <button class="mt" onclick="switchView('import',this)">📦 Import</button>
+      <button class="mt" onclick="switchView('billing',this)">💰 Billing</button>
+      <button class="mt" onclick="switchView('compute',this)">🖥️ Compute</button>
+      <button class="mt" onclick="switchView('apimcp',this)">🔌 API/MCP</button>
+    </div>
+
+    <!-- ═══════ VIEW: OVERVIEW ═══════ -->
+    <div class="view active" id="view-overview">
+      <div class="mc">
+        <div class="stats-row">
+          <div class="stat-card stag-1"><div class="stat-label">Projects</div><div class="stat-val">11</div></div>
+          <div class="stat-card stag-2"><div class="stat-label">Live</div><div class="stat-val" style="color:var(--green)">8</div></div>
+          <div class="stat-card stag-3"><div class="stat-label">Agents</div><div class="stat-val" style="color:var(--orange)">3</div></div>
+          <div class="stat-card stag-4"><div class="stat-label">Deploys Today</div><div class="stat-val" style="color:var(--accent-light)">12</div></div>
+        </div>
+        <div class="pg" id="project-grid"></div>
+      </div>
+    </div>
+
+    <!-- ═══════ VIEW: KANBAN ★ NEW ★ ═══════ -->
+    <div class="view" id="view-kanban">
+      <div class="mc">
+        <div class="kanban" id="kanban-board"></div>
+      </div>
+    </div>
+
+    <!-- ═══════ VIEW: 3D GRAPH ★ NEW ★ ═══════ -->
+    <div class="view" id="view-graph">
+      <div class="mc" style="padding:12px">
+        <div class="graph-container" id="graph-container">
+          <canvas id="graph-canvas"></canvas>
+
+          <!-- 📊 Legend -->
+          <div class="graph-legend">
+            <div class="graph-legend-title">Node Types</div>
+            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#6c5ce7"></div> Main Project</div>
+            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#ff6b9d"></div> Sub-project</div>
+            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#00e676"></div> Live</div>
+            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#ff9100"></div> Building</div>
+            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#4a4a6a"></div> Idle</div>
+          </div>
+
+          <!-- 🎛️ Controls -->
+          <div class="graph-controls">
+            <button class="graph-ctrl-btn active" onclick="setGraphLayout('orbital',this)">🌀 Orbital</button>
+            <button class="graph-ctrl-btn" onclick="setGraphLayout('tree',this)">🌳 Tree</button>
+            <button class="graph-ctrl-btn" onclick="setGraphLayout('cluster',this)">🎯 Cluster</button>
+            <button class="graph-ctrl-btn" onclick="resetGraphCamera()">📷 Reset</button>
+          </div>
+
+          <!-- ℹ️ Hover info -->
+          <div class="graph-info" id="graph-info">
+            <div class="graph-info-title" id="gi-title">—</div>
+            <div class="graph-info-url" id="gi-url">—</div>
+            <div class="graph-info-row" id="gi-status">—</div>
+            <div class="graph-info-row" id="gi-agents">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ VIEW: PREVIEW ═══════ -->
+    <div class="view" id="view-preview">
+      <div class="mc">
+        <div class="prev-container">
+          <div class="prev-toolbar">
+            <button class="pdb active">🖥️</button><button class="pdb">📱</button><button class="pdb">📲</button>
+            <div class="prev-url" onclick="copyUrl()" id="prev-url"><span style="color:var(--green);font-size:.68rem">🔒</span><span id="prev-url-text">nexus-dashboard.netlify.app</span><span style="margin-left:auto;font-size:.58rem;color:var(--text-muted)">📋 Copy</span></div>
+            <button class="tb" onclick="showToast('↗️ Opening...')">↗️ Open</button><button class="tb" onclick="showToast('🔄 Refreshing...')">🔄</button>
+          </div>
+          <div class="prev-body"><div class="prev-icon">🌐</div><div>Live preview of <strong id="prev-name" style="color:var(--accent-light)">NEXUS Dashboard</strong></div><div style="font-size:.68rem;color:var(--text-muted)">Select a project to preview it here</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ VIEW: DEPLOYS ═══════ -->
+    <div class="view" id="view-deploys">
+      <div class="mc">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><h3 style="font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text-bright)">📜 Deploys — <span id="dl-name" style="color:var(--accent-light)">NEXUS Dashboard</span></h3><button class="tb" onclick="showToast('🔄 Refreshing...')">🔄</button></div>
+        <div id="deploy-list"></div>
+      </div>
+    </div>
+
+    <!-- ═══════ VIEW: QUEUE ═══════ -->
+    <div class="view" id="view-queue">
+      <div class="mc">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><h3 style="font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text-bright)">🤖 Agent Task Queue</h3><div style="display:flex;gap:5px"><button class="tb" onclick="showToast('⏸️ Paused')">⏸️ Pause</button><button class="tb primary" onclick="showToast('▶️ Running next...')">▶️ Run Next</button></div></div>
+        <div id="queue-list"></div>
+      </div>
+    </div>
+
+    <!-- ═══════ VIEW: LINKS ═══════ -->
+    <div class="view" id="view-links">
+      <div class="mc">
+        <h3 style="font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text-bright);margin-bottom:14px">🔗 All Live Links</h3>
+        <div id="links-panel"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         VIEW: IMPORT ★ NEW ★ — Drag-and-drop file import zone
+         Drop .zip, .html, .jsx, .css, .js, .json, .md, .tsx
+         from Claude, ChatGPT, or anywhere! 📬
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="view" id="view-import">
+      <div class="mc">
+        <div class="import-zone" id="import-zone">
+
+          <!-- 📬 The drop target — the big area you drag files onto -->
+          <div class="drop-target" id="drop-target"
+               ondragover="handleDragOver(event)"
+               ondragleave="handleDragLeave(event)"
+               ondrop="handleDrop(event)"
+               onclick="document.getElementById('file-input').click()">
+
+            <div class="drop-ring"></div>
+            <div class="drop-icon">📦</div>
+            <div class="drop-title">Drop files here to import</div>
+            <div class="drop-sub">
+              Drag artifacts from Claude, ChatGPT, Cursor, or any tool.
+              Drop a <strong>.zip</strong> for full project packages, or individual files like
+              <strong>.html</strong>, <strong>.jsx</strong>, <strong>.tsx</strong> to add to any project.
+            </div>
+
+            <!-- 🏷️ Supported file types -->
+            <div class="drop-types">
+              <span class="drop-type-badge">.zip</span>
+              <span class="drop-type-badge">.html</span>
+              <span class="drop-type-badge">.jsx</span>
+              <span class="drop-type-badge">.tsx</span>
+              <span class="drop-type-badge">.js</span>
+              <span class="drop-type-badge">.css</span>
+              <span class="drop-type-badge">.json</span>
+              <span class="drop-type-badge">.md</span>
+              <span class="drop-type-badge">.py</span>
+              <span class="drop-type-badge">.svg</span>
+              <span class="drop-type-badge">.png</span>
+            </div>
+
+            <button class="drop-browse-btn" onclick="event.stopPropagation();document.getElementById('file-input').click()">
+              📂 Browse Files
+            </button>
+          </div>
+
+          <!-- 🙈 Hidden file input (triggered by the browse button) -->
+          <input type="file" id="file-input" multiple hidden
+                 accept=".zip,.html,.htm,.jsx,.tsx,.js,.ts,.css,.json,.md,.py,.svg,.png,.jpg,.gif,.webp,.txt,.toml,.yml,.yaml,.env"
+                 onchange="handleFileSelect(this.files)">
+
+          <!-- 📋 Queued files list — appears AFTER files are dropped -->
+          <div class="import-queue" id="import-queue" style="display:none">
+            <div class="import-queue-title">
+              📋 Files to import <span class="import-queue-count" id="import-count">0</span>
+            </div>
+            <div id="import-file-list"></div>
+
+            <!-- 🚀 Action bar -->
+            <div class="import-actions">
+              <button class="import-action-btn primary" onclick="processImport()">
+                🚀 Import & Deploy
+              </button>
+              <button class="import-action-btn ghost" onclick="processImportDraft()">
+                📝 Import as Draft
+              </button>
+              <div class="import-spacer"></div>
+              <span class="import-summary" id="import-summary"></span>
+              <button class="import-action-btn ghost" onclick="clearImportQueue()">
+                🗑️ Clear All
+              </button>
+            </div>
+          </div>
+
+          <!-- 🎭 Recent import history -->
+          <div class="import-history">
+            <div class="import-history-title">📜 Recent Imports</div>
+            <div class="import-history-item">
+              <span class="ih-icon">📦</span>
+              <div class="ih-info">
+                <div class="ih-name">holodeck-hero-redesign.zip</div>
+                <div class="ih-meta">3 files · 48 KB · Imported to 🏰 Holodeck OS → Landing Page · 2h ago</div>
+              </div>
+              <span class="ih-status success">✓ Deployed</span>
+            </div>
+            <div class="import-history-item">
+              <span class="ih-icon">📄</span>
+              <div class="ih-info">
+                <div class="ih-name">pricing-component.jsx</div>
+                <div class="ih-meta">1 file · 12 KB · Imported to 🏰 Holodeck OS → Pricing Page · 5h ago</div>
+              </div>
+              <span class="ih-status success">✓ Deployed</span>
+            </div>
+            <div class="import-history-item">
+              <span class="ih-icon">🎨</span>
+              <div class="ih-info">
+                <div class="ih-name">gallery-styles.css</div>
+                <div class="ih-meta">1 file · 8 KB · Imported to 🎨 ALUZINA Explorer · Yesterday</div>
+              </div>
+              <span class="ih-status success">✓ Deployed</span>
+            </div>
+            <div class="import-history-item">
+              <span class="ih-icon">📦</span>
+              <div class="ih-info">
+                <div class="ih-name">new-side-project.zip</div>
+                <div class="ih-meta">14 files · 230 KB · Created as new project ✨ Side Project · 3d ago</div>
+              </div>
+              <span class="ih-status success">✓ Deployed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         VIEW: BILLING & ACCOUNTING ★ NEW ★
+         💰 Credits, transactions, per-project costs, invoices
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="view" id="view-billing">
+      <div class="mc">
+        <!-- 💎 Credit balance + spend overview -->
+        <div class="billing-header">
+          <div class="billing-stat stag-1">
+            <div class="billing-stat-label">Credit Balance</div>
+            <div class="billing-stat-val" style="color:var(--green)">8,420</div>
+            <div class="billing-stat-sub">💎 credits remaining</div>
+            <div class="billing-stat-bar" style="width:72%;background:var(--green)"></div>
+          </div>
+          <div class="billing-stat stag-2">
+            <div class="billing-stat-label">Spent This Month</div>
+            <div class="billing-stat-val" style="color:var(--orange)">1,580</div>
+            <div class="billing-stat-sub">💎 credits · $31.60 equiv</div>
+            <div class="billing-stat-bar" style="width:35%;background:var(--orange)"></div>
+          </div>
+          <div class="billing-stat stag-3">
+            <div class="billing-stat-label">Monthly Budget</div>
+            <div class="billing-stat-val">$50.00</div>
+            <div class="billing-stat-sub">63% used · 18 days left</div>
+            <div class="billing-stat-bar" style="width:63%;background:var(--accent)"></div>
+          </div>
+          <div class="billing-stat stag-4">
+            <div class="billing-stat-label">Active Cards</div>
+            <div class="billing-stat-val" style="color:var(--cyan)">3</div>
+            <div class="billing-stat-sub">💳 agent cards issued</div>
+            <div class="billing-stat-bar" style="width:100%;background:var(--cyan)"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <!-- Left column: Usage breakdown + Per-project costs -->
+          <div style="flex:1.2;min-width:300px">
+            <div class="card">
+              <div class="card-title">📊 Usage Breakdown — This Month</div>
+              <div class="usage-bar-wrap"><div class="usage-bar-label"><span>🤖 Agent Tasks</span><span>680 credits</span></div><div class="usage-bar"><div class="usage-bar-fill" style="width:43%;background:var(--accent)"></div></div></div>
+              <div class="usage-bar-wrap"><div class="usage-bar-label"><span>🖥️ Compute Hours</span><span>420 credits</span></div><div class="usage-bar"><div class="usage-bar-fill" style="width:27%;background:var(--cyan)"></div></div></div>
+              <div class="usage-bar-wrap"><div class="usage-bar-label"><span>🚀 Deploys</span><span>180 credits</span></div><div class="usage-bar"><div class="usage-bar-fill" style="width:11%;background:var(--green)"></div></div></div>
+              <div class="usage-bar-wrap"><div class="usage-bar-label"><span>🖼️ Image Gen</span><span>150 credits</span></div><div class="usage-bar"><div class="usage-bar-fill" style="width:9%;background:var(--pink)"></div></div></div>
+              <div class="usage-bar-wrap"><div class="usage-bar-label"><span>💾 Storage</span><span>90 credits</span></div><div class="usage-bar"><div class="usage-bar-fill" style="width:6%;background:var(--orange)"></div></div></div>
+              <div class="usage-bar-wrap"><div class="usage-bar-label"><span>🔌 API Calls</span><span>60 credits</span></div><div class="usage-bar"><div class="usage-bar-fill" style="width:4%;background:var(--text-dim)"></div></div></div>
+            </div>
+
+            <!-- Per-project accounting -->
+            <div class="card">
+              <div class="card-title">📁 Per-Project Cost — This Month</div>
+              <div class="tx-row"><div class="tx-icon" style="background:#6c5ce720">🎮</div><div class="tx-info"><div class="tx-name">NEXUS Dashboard</div><div class="tx-meta">42 agent tasks · 8 deploys · 3.2 compute hrs</div></div><div class="tx-amount debit">-340 💎</div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:#ff6b9d20">🏰</div><div class="tx-info"><div class="tx-name">Holodeck OS (all sub-projects)</div><div class="tx-meta">38 agent tasks · 12 deploys · 5 images</div></div><div class="tx-amount debit">-520 💎</div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:#18ffff20">🧊</div><div class="tx-info"><div class="tx-name">3D Mastery</div><div class="tx-meta">15 agent tasks · 3 deploys</div></div><div class="tx-amount debit">-180 💎</div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:#80deea20">🪟</div><div class="tx-info"><div class="tx-name">TabSpace Extension</div><div class="tx-meta">28 agent tasks · 6 deploys · 1.8 compute hrs</div></div><div class="tx-amount debit">-310 💎</div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:#ff910020">🔥</div><div class="tx-info"><div class="tx-name">TechGripes Forum</div><div class="tx-meta">5 agent tasks · 1 deploy</div></div><div class="tx-amount debit">-60 💎</div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:#e040fb20">🎨</div><div class="tx-info"><div class="tx-name">ALUZINA + Others</div><div class="tx-meta">12 agent tasks · 4 deploys</div></div><div class="tx-amount debit">-170 💎</div></div>
+            </div>
+          </div>
+
+          <!-- Right column: Agent cards + Recent transactions -->
+          <div style="flex:1;min-width:280px">
+            <!-- 💳 Agent Credit Cards -->
+            <div class="card">
+              <div class="card-title">💳 Agent Credit Cards</div>
+              <div class="tx-row"><div class="tx-icon" style="background:var(--green-dim)">💻</div><div class="tx-info"><div class="tx-name">Code Agent Card</div><div class="tx-meta">Visa ••4821 · Limit: $30/mo · Spent: $18.40</div></div><div style="display:flex;gap:3px"><button class="api-key-btn" onclick="showToast('💳 Card details copied')">View</button><button class="api-key-btn" onclick="showToast('⏸️ Card paused')">Pause</button></div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:var(--accent-glow)">🚀</div><div class="tx-info"><div class="tx-name">Deploy Agent Card</div><div class="tx-meta">Visa ••7103 · Limit: $50/mo · Spent: $12.00</div></div><div style="display:flex;gap:3px"><button class="api-key-btn" onclick="showToast('💳 Card details copied')">View</button><button class="api-key-btn" onclick="showToast('⏸️ Card paused')">Pause</button></div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:var(--cyan-dim)">🎨</div><div class="tx-info"><div class="tx-name">Design Agent Card</div><div class="tx-meta">Visa ••2990 · Limit: $20/mo · Spent: $6.80</div></div><div style="display:flex;gap:3px"><button class="api-key-btn" onclick="showToast('💳 Card details copied')">View</button><button class="api-key-btn" onclick="showToast('⏸️ Card paused')">Pause</button></div></div>
+              <div style="margin-top:8px"><button class="tb primary" style="width:100%;justify-content:center" onclick="showToast('💳 New card created!')">+ Issue New Card</button></div>
+            </div>
+
+            <!-- 📜 Recent transactions -->
+            <div class="card">
+              <div class="card-title">📜 Recent Transactions</div>
+              <div class="tx-row"><div class="tx-icon" style="background:var(--green-dim)">💎</div><div class="tx-info"><div class="tx-name">Credit Pack Purchase</div><div class="tx-meta">10,000 credits · Stripe · 3 days ago</div></div><div class="tx-amount credit">+$50.00</div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:var(--accent-glow)">🤖</div><div class="tx-info"><div class="tx-name">Claude API (Anthropic)</div><div class="tx-meta">Code Agent · 847K tokens · Today</div></div><div class="tx-amount debit">-$4.20</div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:var(--orange-dim)">🖥️</div><div class="tx-info"><div class="tx-name">Kamatera Windows VPS</div><div class="tx-meta">Deploy Agent card · 4hr session · Today</div></div><div class="tx-amount debit">-$0.32</div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:var(--green-dim)">🌐</div><div class="tx-info"><div class="tx-name">Netlify Pro</div><div class="tx-meta">Deploy Agent card · Monthly · Mar 1</div></div><div class="tx-amount debit">-$19.00</div></div>
+              <div class="tx-row"><div class="tx-icon" style="background:var(--cyan-dim)">🍎</div><div class="tx-info"><div class="tx-name">MacStadium Desktop</div><div class="tx-meta">2hr session · Feb 28</div></div><div class="tx-amount debit">-$3.50</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         VIEW: COMPUTE PROVISIONING ★ NEW ★
+         🖥️ Spin up Linux/Win/Mac desktops for agents & users
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="view" id="view-compute">
+      <div class="mc">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h3 style="font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text-bright)">🖥️ Compute — Provision & Manage Workspaces</h3>
+          <button class="tb primary" onclick="showToast('🖥️ Launching new workspace...')">+ Launch Workspace</button>
+        </div>
+
+        <!-- Active instances -->
+        <div style="font-size:.65rem;font-weight:600;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🟢 Active Instances (3)</div>
+        <div class="instance-row">
+          <div class="instance-os" style="background:var(--accent-glow)">🐧</div>
+          <div class="instance-info"><div class="instance-name">nexus-backend-01</div><div class="instance-specs">Linux · 2 vCPU · 4GB RAM · DigitalOcean NYC · Running 14d</div></div>
+          <span class="instance-status running">● Running</span>
+          <div class="instance-actions">
+            <button class="instance-act" title="Terminal" onclick="showToast('🖥️ Opening terminal...')">⌨️</button>
+            <button class="instance-act" title="View screen" onclick="showToast('👁️ Opening screen...')">👁️</button>
+            <button class="instance-act" title="Stop" onclick="showToast('⏹️ Stopping...')">⏹️</button>
+          </div>
+        </div>
+        <div class="instance-row">
+          <div class="instance-os" style="background:var(--orange-dim)">🐧</div>
+          <div class="instance-info"><div class="instance-name">mahder-claude-code</div><div class="instance-specs">Linux · 2 vCPU · 4GB RAM · DigitalOcean · Shared w/ Mahder · Running 8d</div></div>
+          <span class="instance-status running">● Running</span>
+          <div class="instance-actions">
+            <button class="instance-act" title="Terminal">⌨️</button>
+            <button class="instance-act" title="View screen">👁️</button>
+            <button class="instance-act" title="Stop">⏹️</button>
+          </div>
+        </div>
+        <div class="instance-row">
+          <div class="instance-os" style="background:var(--cyan-dim)">🪟</div>
+          <div class="instance-info"><div class="instance-name">win-test-browser</div><div class="instance-specs">Windows 11 · 2 vCPU · 4GB RAM · Kamatera NYC · Running 2h</div></div>
+          <span class="instance-status running">● Running</span>
+          <div class="instance-actions">
+            <button class="instance-act" title="RDP screen" onclick="showToast('🖥️ Opening RDP...')">👁️</button>
+            <button class="instance-act" title="Stop" onclick="showToast('⏹️ Stopping...')">⏹️</button>
+          </div>
+        </div>
+
+        <!-- Stopped instances -->
+        <div style="font-size:.65rem;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin:18px 0 8px">⏹️ Stopped (1)</div>
+        <div class="instance-row" style="opacity:.6">
+          <div class="instance-os" style="background:var(--surface)">🍎</div>
+          <div class="instance-info"><div class="instance-name">mac-xcode-build</div><div class="instance-specs">macOS Sonoma · M2 · 8GB RAM · MacStadium · Stopped 2d ago</div></div>
+          <span class="instance-status stopped">● Stopped</span>
+          <div class="instance-actions">
+            <button class="instance-act" title="Start" onclick="showToast('▶️ Starting...')">▶️</button>
+            <button class="instance-act" title="Delete" onclick="showToast('🗑️ Deleting...')">🗑️</button>
+          </div>
+        </div>
+
+        <!-- Launch new workspace cards -->
+        <div style="font-size:.65rem;font-weight:600;color:var(--accent-light);letter-spacing:1px;text-transform:uppercase;margin:24px 0 10px">🚀 Launch New Workspace</div>
+        <div class="compute-grid">
+          <div class="compute-card" onclick="showToast('🐧 Launching Linux Agent Worker...')">
+            <div class="compute-card-icon">🐧</div>
+            <div class="compute-card-title">Linux Agent Worker</div>
+            <div class="compute-card-desc">Headless Linux for running Claude Code, scripts, builds. No GUI needed.</div>
+            <div class="compute-card-price" style="color:var(--green)">10 💎/hr · ~$4/mo always-on</div>
+            <button class="compute-card-btn launch">⚡ Launch</button>
+          </div>
+          <div class="compute-card" onclick="showToast('🐧 Launching Linux Desktop...')">
+            <div class="compute-card-icon">🖥️</div>
+            <div class="compute-card-title">Linux Desktop (Kasm)</div>
+            <div class="compute-card-desc">Full browser-accessible desktop with GUI. Viewable live in your 3D workspace.</div>
+            <div class="compute-card-price" style="color:var(--green)">15 💎/hr · ~$8/mo</div>
+            <button class="compute-card-btn launch">⚡ Launch</button>
+          </div>
+          <div class="compute-card" onclick="showToast('🪟 Launching Windows Desktop...')">
+            <div class="compute-card-icon">🪟</div>
+            <div class="compute-card-title">Windows Desktop</div>
+            <div class="compute-card-desc">Full Windows 11 with RDP. Run any Windows apps. Kamatera provisioned.</div>
+            <div class="compute-card-price" style="color:var(--orange)">20 💎/hr · ~$20/mo</div>
+            <button class="compute-card-btn launch">⚡ Launch</button>
+          </div>
+          <div class="compute-card" onclick="showToast('🍎 Launching Mac Desktop...')">
+            <div class="compute-card-icon">🍎</div>
+            <div class="compute-card-title">Mac Desktop</div>
+            <div class="compute-card-desc">macOS on real Apple hardware via MacStadium. Xcode, Simulator, full Mac env.</div>
+            <div class="compute-card-price" style="color:var(--orange)">40 💎/hr · ~$60/mo</div>
+            <button class="compute-card-btn launch">⚡ Launch</button>
+          </div>
+          <div class="compute-card" onclick="showToast('🧠 Launching GPU Instance...')">
+            <div class="compute-card-icon">🧠</div>
+            <div class="compute-card-title">GPU Compute</div>
+            <div class="compute-card-desc">NVIDIA GPU for AI training, image generation, heavy ML workloads.</div>
+            <div class="compute-card-price" style="color:var(--red)">100 💎/hr · ~$120/mo</div>
+            <button class="compute-card-btn launch">⚡ Launch</button>
+          </div>
+          <div class="compute-card" onclick="showToast('⚡ Launching Serverless Function...')">
+            <div class="compute-card-icon">⚡</div>
+            <div class="compute-card-title">Serverless Function</div>
+            <div class="compute-card-desc">Netlify Function — runs on demand, no always-on cost. Pay per invocation.</div>
+            <div class="compute-card-price" style="color:var(--green)">1 💎/1K calls · Free tier</div>
+            <button class="compute-card-btn launch">⚡ Deploy</button>
+          </div>
+        </div>
+
+        <!-- Assign to project/agent -->
+        <div class="card" style="margin-top:16px">
+          <div class="card-title">🎯 Auto-Provisioning Rules</div>
+          <div class="tx-row"><div class="tx-icon" style="background:var(--accent-glow)">💻</div><div class="tx-info"><div class="tx-name">Code Agent → Auto-provision Linux Worker</div><div class="tx-meta">When task requires terminal access, spin up for duration of task, auto-destroy after</div></div><div class="mcp-toggle on" onclick="this.classList.toggle('on');showToast('Rule toggled')"></div></div>
+          <div class="tx-row"><div class="tx-icon" style="background:var(--cyan-dim)">🎨</div><div class="tx-info"><div class="tx-name">Design Agent → Auto-provision Linux Desktop</div><div class="tx-meta">When task requires browser/screenshot, spin up Kasm desktop, auto-destroy after</div></div><div class="mcp-toggle on" onclick="this.classList.toggle('on');showToast('Rule toggled')"></div></div>
+          <div class="tx-row"><div class="tx-icon" style="background:var(--orange-dim)">🪟</div><div class="tx-info"><div class="tx-name">Windows Testing → On-demand only</div><div class="tx-meta">Manual trigger required. Budget limit: $25/mo</div></div><div class="mcp-toggle" onclick="this.classList.toggle('on');showToast('Rule toggled')"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         VIEW: API & MCP ORGANIZATION ★ NEW ★
+         🔌 All API keys, MCP servers, skills — global & per-project
+         ═══════════════════════════════════════════════════════════ -->
+    <div class="view" id="view-apimcp">
+      <div class="mc">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <h3 style="font-family:'Syne',sans-serif;font-size:.95rem;color:var(--text-bright)">🔌 API Keys, MCP Servers & Skills</h3>
+          <div style="display:flex;gap:5px">
+            <button class="tb" onclick="showToast('🔄 Testing all connections...')">🔄 Test All</button>
+            <button class="tb primary" onclick="showToast('➕ Adding new connection...')">+ Add New</button>
+          </div>
+        </div>
+
+        <!-- 🔑 API Keys -->
+        <div class="mcp-section-title">🔑 API Keys — <span style="color:var(--accent-light)">Credentials for external services</span></div>
+        <div class="card">
+          <div class="api-key-row"><span class="api-key-name">🤖 Anthropic</span><span class="api-key-val">sk-ant-api03-••••••••••••••••••••••••</span><span class="mcp-card-scope global">Global</span><button class="api-key-btn" onclick="showToast('📋 Copied')">Copy</button><button class="api-key-btn" onclick="showToast('🔄 Rotated')">Rotate</button></div>
+          <div class="api-key-row"><span class="api-key-name">🐙 GitHub PAT</span><span class="api-key-val">ghp_••••••••••••••••••••••••••••••••</span><span class="mcp-card-scope global">Global</span><button class="api-key-btn">Copy</button><button class="api-key-btn">Rotate</button></div>
+          <div class="api-key-row"><span class="api-key-name">🌐 Netlify PAT</span><span class="api-key-val">nfp_••••••••••••••••••••••••••••</span><span class="mcp-card-scope global">Global</span><button class="api-key-btn">Copy</button><button class="api-key-btn">Rotate</button></div>
+          <div class="api-key-row"><span class="api-key-name">💳 Stripe</span><span class="api-key-val">sk_live_••••••••••••••••••••••••</span><span class="mcp-card-scope global">Global</span><button class="api-key-btn">Copy</button><button class="api-key-btn">Rotate</button></div>
+          <div class="api-key-row"><span class="api-key-name">🖥️ Kamatera</span><span class="api-key-val">kam_••••••••••••••••••••••</span><span class="mcp-card-scope global">Global</span><button class="api-key-btn">Copy</button><button class="api-key-btn">Rotate</button></div>
+          <div class="api-key-row"><span class="api-key-name">🍎 MacStadium</span><span class="api-key-val">ork_••••••••••••••••••••••</span><span class="mcp-card-scope global">Global</span><button class="api-key-btn">Copy</button><button class="api-key-btn">Rotate</button></div>
+          <div class="api-key-row"><span class="api-key-name">🏦 Mercury</span><span class="api-key-val">merc_••••••••••••••••••••</span><span class="mcp-card-scope global">Global</span><button class="api-key-btn">Copy</button><button class="api-key-btn">Rotate</button></div>
+          <div style="margin-top:8px"><button class="tb" style="width:100%;justify-content:center" onclick="showToast('➕ Add API key...')">+ Add API Key</button></div>
+        </div>
+
+        <!-- 🔌 MCP Servers -->
+        <div class="mcp-section-title">🔌 MCP Servers — <span style="color:var(--accent-light)">Tool connections for agents</span></div>
+
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--green-dim)">🌐</div><div class="mcp-card-info"><div class="mcp-card-name">Netlify MCP</div><div class="mcp-card-desc">Deploy sites, manage domains, check builds, configure DNS</div></div><span class="mcp-card-scope global">Global</span><div class="mcp-toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--green-dim)">🐙</div><div class="mcp-card-info"><div class="mcp-card-name">GitHub MCP</div><div class="mcp-card-desc">Create branches, commit, open PRs, auto-merge, manage repos</div></div><span class="mcp-card-scope global">Global</span><div class="mcp-toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--green-dim)">📁</div><div class="mcp-card-info"><div class="mcp-card-name">Filesystem MCP</div><div class="mcp-card-desc">Read/write files in agent workspaces</div></div><span class="mcp-card-scope global">Global</span><div class="mcp-toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--surface)">🗄️</div><div class="mcp-card-info"><div class="mcp-card-name">Supabase MCP</div><div class="mcp-card-desc">Database operations, auth, storage, real-time subscriptions</div></div><span class="mcp-card-scope project">Project</span><div class="mcp-toggle" onclick="this.classList.toggle('on')"></div></div>
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--surface)">🎨</div><div class="mcp-card-info"><div class="mcp-card-name">Figma MCP</div><div class="mcp-card-desc">Pull design tokens, component specs, screenshots from Figma files</div></div><span class="mcp-card-scope project">Project</span><div class="mcp-toggle" onclick="this.classList.toggle('on')"></div></div>
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--surface)">💳</div><div class="mcp-card-info"><div class="mcp-card-name">Stripe MCP</div><div class="mcp-card-desc">Manage billing, subscriptions, issue cards, process payments</div></div><span class="mcp-card-scope global">Global</span><div class="mcp-toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--surface)">🖥️</div><div class="mcp-card-info"><div class="mcp-card-name">Kamatera MCP</div><div class="mcp-card-desc">Provision/destroy VPS instances, manage compute resources</div></div><span class="mcp-card-scope global">Global</span><div class="mcp-toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div style="margin:8px 0"><button class="tb" style="width:100%;justify-content:center" onclick="showToast('➕ Add MCP server...')">+ Add MCP Server</button></div>
+
+        <!-- 🧠 Skills & Rules -->
+        <div class="mcp-section-title">🧠 Agent Skills & Rules — <span style="color:var(--accent-light)">Knowledge files that teach agents</span></div>
+
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--accent-glow)">📝</div><div class="mcp-card-info"><div class="mcp-card-name">Code Style Rules</div><div class="mcp-card-desc">Comment for 10yo, emojis, ASCII headers, TOC top+bottom</div></div><span class="mcp-card-scope global">Global</span><button class="api-key-btn" onclick="showToast('✏️ Editing...')">Edit</button></div>
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--accent-glow)">🎨</div><div class="mcp-card-info"><div class="mcp-card-name">Design System</div><div class="mcp-card-desc">NEXUS color palette, typography, component patterns</div></div><span class="mcp-card-scope global">Global</span><button class="api-key-btn">Edit</button></div>
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--accent-glow)">🚀</div><div class="mcp-card-info"><div class="mcp-card-name">Deploy Rules</div><div class="mcp-card-desc">Auto-deploy on merge, Netlify for all hosting, never manual git</div></div><span class="mcp-card-scope global">Global</span><button class="api-key-btn">Edit</button></div>
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--cyan-dim)">🏰</div><div class="mcp-card-info"><div class="mcp-card-name">Holodeck Brand Voice</div><div class="mcp-card-desc">Tone, terminology, pricing tiers, target audience for Holodeck OS</div></div><span class="mcp-card-scope project">Holodeck OS</span><button class="api-key-btn">Edit</button></div>
+        <div class="mcp-card"><div class="mcp-card-icon" style="background:var(--cyan-dim)">🧊</div><div class="mcp-card-info"><div class="mcp-card-name">Three.js Constraints</div><div class="mcp-card-desc">Use r128, no CapsuleGeometry, single-file HTML deliverables</div></div><span class="mcp-card-scope project">3D Mastery</span><button class="api-key-btn">Edit</button></div>
+        <div style="margin:8px 0"><button class="tb" style="width:100%;justify-content:center" onclick="showToast('➕ Add skill/rule...')">+ Add Skill or Rule</button></div>
+
+        <!-- 📊 Per-Project Override Matrix -->
+        <div class="mcp-section-title">📊 Override Matrix — <span style="color:var(--accent-light)">Which project uses what</span></div>
+        <div class="card" style="overflow-x:auto">
+          <table style="font-size:.7rem;margin:0">
+            <tr><th style="font-size:.65rem">Tool/Skill</th><th>🎮 NEXUS</th><th>🏰 Holodeck</th><th>🔥 Gripes</th><th>🧊 3D</th><th>🪟 TabSpace</th><th>🎨 ALUZINA</th></tr>
+            <tr><td>Netlify MCP</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td></tr>
+            <tr><td>GitHub MCP</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td></tr>
+            <tr><td>Supabase MCP</td><td style="color:var(--text-muted)">—</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td></tr>
+            <tr><td>Figma MCP</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td></tr>
+            <tr><td>Stripe MCP</td><td style="color:var(--text-muted)">—</td><td style="color:var(--green)">✓</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td></tr>
+            <tr><td>Code Style Rules</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td></tr>
+            <tr><td>Three.js Constraints</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td><td style="color:var(--green)">✓</td><td style="color:var(--green)">✓</td><td style="color:var(--text-muted)">—</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 🔵 GLOBAL DRAG OVERLAY — appears over the WHOLE app when 
+       you're dragging files anywhere on the page! Like a 
+       "hey, drop it here!" signal. 📡 -->
+  <div class="global-drop-overlay" id="global-drop-overlay">
+    <div class="global-drop-msg">
+      <div class="global-drop-msg-icon">📦✨</div>
+      <div class="global-drop-msg-text">Drop to import into NEXUS</div>
+      <div class="global-drop-msg-sub">Release to add files to your workspace</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       💬 RIGHT CHAT PANEL
+       ═══════════════════════════════════════════ -->
+  <aside class="chat-panel" id="chat-panel">
+    <div class="ch-header"><span style="font-size:.95rem">🤖</span><span class="ch-title" id="ch-title">NEXUS Dashboard</span><span class="ch-status"><span class="status-dot live"></span> Online</span><button class="ch-close" onclick="toggleChat()">✕</button></div>
+    <div class="ch-agents">
+      <button class="ch-at active" onclick="switchAgent(this)">👑 Orchestrator</button>
+      <button class="ch-at" onclick="switchAgent(this)">💻 Code</button>
+      <button class="ch-at" onclick="switchAgent(this)">🎨 Design</button>
+      <button class="ch-at" onclick="switchAgent(this)">📝 Content</button>
+      <button class="ch-at" onclick="switchAgent(this)">🚀 Deploy</button>
+    </div>
+    <div class="ch-msgs" id="ch-msgs">
+      <div class="ch-msg agent"><div class="ch-bubble">👋 Hey Justin! I'm the Orchestrator for <strong>NEXUS Dashboard</strong>. I coordinate all agents — what should we build?</div><div class="ch-meta">🤖 Orchestrator · now</div></div>
+      <div class="ch-msg user"><div class="ch-bubble">Add a kanban board view and a 3D graph that shows project relationships</div><div class="ch-meta">You · 2m ago</div></div>
+      <div class="ch-msg agent"><div class="ch-bubble">Great idea! Breaking this into parallel tasks:<br><br>🎨 <strong>Design Agent</strong> → Kanban column layout + card design<br>💻 <strong>Code Agent</strong> → Drag-drop logic + Three.js graph scene<br>🚀 <strong>Deploy Agent</strong> → Standing by for auto-publish<br><br><span class="ch-chip" onclick="switchView('kanban')">📋 View Kanban</span><span class="ch-chip" onclick="switchView('graph')">🌐 View 3D Graph</span></div><div class="ch-meta">🤖 Orchestrator · 1m ago</div></div>
+      <div class="ch-msg agent" id="typing-ind" style="display:none"><div class="ch-bubble"><div class="typing-ind"><div class="td"></div><div class="td"></div><div class="td"></div></div></div></div>
+    </div>
+    <div class="ch-input-area">
+      <div class="ch-input-wrap"><textarea class="ch-input" id="ch-input" rows="1" placeholder="Tell the agent what to do..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea><button class="ch-send" onclick="sendMsg()">▶</button></div>
+      <div class="ch-quick">
+        <button class="ch-qb" onclick="quickAct('Deploy latest changes')">🚀 Deploy</button>
+        <button class="ch-qb" onclick="quickAct('Show status')">📊 Status</button>
+        <button class="ch-qb" onclick="quickAct('Fix bugs')">🐛 Fix</button>
+        <button class="ch-qb" onclick="quickAct('Improve design')">🎨 Beautify</button>
+        <button class="ch-qb" onclick="quickAct('Roll back')">⏪ Rollback</button>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ═══════ MODALS ═══════ -->
+<div class="mo" id="modal-settings" onclick="if(event.target===this)closeModals()"><div class="modal"><div class="modal-h"><div class="modal-t">⚙️ Global Settings</div><button class="modal-x" onclick="closeModals()">✕</button></div><div class="modal-b">
+  <div style="margin-bottom:16px"><div style="font-size:.7rem;font-weight:600;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🌐 MCP Servers</div>
+  <div class="qi"><div style="font-size:.8rem">🔌</div><div class="qi-info"><div class="qi-title">Netlify MCP</div><div class="qi-proj">Deploy, manage, builds</div></div><span class="qi-status running">● Active</span></div>
+  <div class="qi"><div style="font-size:.8rem">🔌</div><div class="qi-info"><div class="qi-title">GitHub MCP</div><div class="qi-proj">Branches, PRs, merge</div></div><span class="qi-status running">● Active</span></div>
+  <div class="qi"><div style="font-size:.8rem">🔌</div><div class="qi-info"><div class="qi-title">Figma MCP</div><div class="qi-proj">Design tokens</div></div><span class="qi-status queued">○ Off</span></div>
+  <div class="qi"><div style="font-size:.8rem">🔌</div><div class="qi-info"><div class="qi-title">Supabase MCP</div><div class="qi-proj">Database, auth</div></div><span class="qi-status queued">○ Off</span></div>
+  </div>
+  <div><div style="font-size:.7rem;font-weight:600;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📏 Global Agent Rules</div><div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;font-family:monospace;font-size:.72rem;color:var(--cyan);line-height:1.6;white-space:pre-wrap">- Comment code for a 10-year-old with emojis
+- ASCII art section headers + TOC top/bottom
+- Auto-deploy after every change
+- Use Netlify for all hosting
+- Never require manual git operations</div></div>
+</div></div></div>
+
+<div class="mo" id="modal-new-project" onclick="if(event.target===this)closeModals()"><div class="modal"><div class="modal-h"><div class="modal-t">+ New Project</div><button class="modal-x" onclick="closeModals()">✕</button></div><div class="modal-b">
+  <div style="margin-bottom:14px"><label style="display:block;font-size:.7rem;color:var(--text-dim);margin-bottom:5px">Project Name</label><input style="width:100%;padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.82rem;outline:none" placeholder="my-awesome-project"></div>
+  <div style="margin-bottom:14px"><label style="display:block;font-size:.7rem;color:var(--text-dim);margin-bottom:5px">Template</label><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px"><div style="padding:12px;background:var(--surface);border:1px solid var(--border-glow);border-radius:var(--radius-sm);text-align:center;cursor:pointer;font-size:.75rem"><div style="font-size:1.3rem;margin-bottom:3px">📄</div>Static HTML</div><div style="padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:center;cursor:pointer;font-size:.75rem"><div style="font-size:1.3rem;margin-bottom:3px">⚛️</div>React</div><div style="padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:center;cursor:pointer;font-size:.75rem"><div style="font-size:1.3rem;margin-bottom:3px">🧊</div>Three.js</div></div></div>
+  <button class="tb primary" style="width:100%;justify-content:center;padding:9px" onclick="showToast('🚀 Creating...');closeModals()">🚀 Create & Deploy</button>
+</div></div></div>
+
+<div class="toast" id="toast"><span id="toast-text"></span></div>
+
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  SECTION 16 — 🧠 JAVASCRIPT (Core App Logic)                        ║
+║                                                                      ║
+║  🎮 The BRAIN! Everything that makes buttons work,                   ║
+║  views switch, messages send, etc. 🧠⚡                              ║
+╚══════════════════════════════════════════════════════════════════════╝
+*/
+-->
+<script>
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  📋 JS TABLE OF CONTENTS                                        ║
+╠══════════════════════════════════════════════════════════════════╣
+║  1. 📦 DATA ..................... Project info, tasks, deploys   ║
+║  2. 🧭 NAVIGATION ............... View & project switching       ║
+║  3. 🃏 RENDER VIEWS ............. Build HTML for each view       ║
+║  4. 💬 CHAT ..................... Send & receive messages         ║
+║  5. 📋 KANBAN DRAG .............. Drag-and-drop logic ★          ║
+║  6. 🔗 UTILS .................... Copy, toast, modals            ║
+║  7. 🌐 3D GRAPH ................. Three.js scene ★               ║
+║  8. 🎬 INIT ..................... Startup!                        ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+
+/* ═══════════════════════════════════════════
+   1. 📦 DATA — All our project info!
+   Like a database, but just JavaScript objects. 📚
+   ═══════════════════════════════════════════ */
+const P = {
+  'nexus-dashboard':    { n:'NEXUS Dashboard',    e:'🎮', url:'nexus-dashboard.netlify.app',   c:'#6c5ce7', status:'live', agents:['Code','Design'], parent:null, desc:'Command center + agent orchestration UI' },
+  'holodeck-os':        { n:'Holodeck OS',         e:'🏰', url:'holodeck-os.netlify.app',      c:'#ff6b9d', status:'live', agents:['Design','Content'], parent:null, desc:'Unified operating system experience' },
+  'holodeck-landing':   { n:'Landing Page',        e:'📄', url:'holodeck-landing.netlify.app', c:'#ff6b9d', status:'live', agents:[], parent:'holodeck-os', desc:'Hero + conversion flow' },
+  'holodeck-pricing':   { n:'Pricing Page',        e:'💰', url:'holodeck-pricing.netlify.app', c:'#ff6b9d', status:'building', agents:['Code'], parent:'holodeck-os', desc:'Credit tiers + pricing' },
+  'holodeck-quiz':      { n:'Onboarding Quiz',     e:'📋', url:'holodeck-quiz.netlify.app',    c:'#ff6b9d', status:'live', agents:[], parent:'holodeck-os', desc:'Device + style questionnaire' },
+  'tech-gripes':        { n:'TechGripes Forum',    e:'🔥', url:'tech-gripes.netlify.app',      c:'#ff9100', status:'live', agents:[], parent:null, desc:'Community tech complaints forum' },
+  '3d-mastery':         { n:'3D Mastery',          e:'🧊', url:'3d-mastery.netlify.app',       c:'#18ffff', status:'live', agents:[], parent:null, desc:'19-demo Three.js learning platform' },
+  'aluzina':            { n:'ALUZINA Explorer',    e:'🎨', url:'aluzina-explorer.netlify.app', c:'#e040fb', status:'live', agents:[], parent:null, desc:'AI art gallery — LovArt + Higgsfield' },
+  'virtuos-museum':     { n:'Virtuos Museum',      e:'🏛️', url:'virtuos-museum.netlify.app',   c:'#ffd740', status:'live', agents:[], parent:null, desc:'3D corridor gallery with teleportation' },
+  '3dml':               { n:'3DML Playground',     e:'📐', url:'3dml-playground.netlify.app',  c:'#69f0ae', status:'idle', agents:[], parent:null, desc:'3D markup language live editor' },
+  'tabspace':           { n:'TabSpace Extension',  e:'🪟', url:'tabspace.netlify.app',         c:'#80deea', status:'building', agents:['Code'], parent:null, desc:'3D curved tab panels for Galaxy Fold' },
+  'git-masterclass':    { n:'Git Masterclass',     e:'📚', url:'git-masterclass.netlify.app',  c:'#b388ff', status:'idle', agents:[], parent:null, desc:'Multi-agent git workflow trainer' },
+};
+
+// 📋 Kanban tasks
+const tasks = [
+  { id:1, title:'Redesign hero with glassmorphism',     proj:'holodeck-landing', agent:'🎨 Design', priority:'high', col:'doing' },
+  { id:2, title:'Add touch gesture support',             proj:'tabspace',         agent:'💻 Code',   priority:'high', col:'doing' },
+  { id:3, title:'Write blog post about 3DML',            proj:'3dml',             agent:'📝 Content', priority:'med',  col:'todo' },
+  { id:4, title:'Add voting + comment threads',           proj:'tech-gripes',      agent:'💻 Code',   priority:'med',  col:'todo' },
+  { id:5, title:'Create Demo 20: 3D Notion',              proj:'3d-mastery',       agent:'💻 Code',   priority:'low',  col:'todo' },
+  { id:6, title:'Build version control UI',               proj:'nexus-dashboard',  agent:'💻 Code',   priority:'high', col:'todo' },
+  { id:7, title:'Integrate Netlify deploy API',           proj:'nexus-dashboard',  agent:'🚀 Deploy', priority:'med',  col:'review' },
+  { id:8, title:'Updated pricing tiers',                   proj:'holodeck-pricing', agent:'📝 Content', priority:'med',  col:'done' },
+  { id:9, title:'Fixed mobile responsive layout',          proj:'nexus-dashboard',  agent:'💻 Code',   priority:'low',  col:'done' },
+  { id:10, title:'Added social proof stats bar',           proj:'holodeck-landing', agent:'🎨 Design', priority:'low',  col:'done' },
+  { id:11, title:'Museum teleportation navigation',        proj:'virtuos-museum',   agent:'💻 Code',   priority:'med',  col:'done' },
+  { id:12, title:'Node graph view for ALUZINA',            proj:'aluzina',          agent:'💻 Code',   priority:'high', col:'review' },
+];
+
+// 📜 Deploy history entries
+const deploys = [
+  { msg:'✅ Added kanban board + 3D graph views', agent:'Code Agent', time:'2 min ago', ver:'v48', hash:'xyz1234', current:true },
+  { msg:'🎨 Redesigned project cards with status', agent:'Design Agent', time:'45 min ago', ver:'v47', hash:'abc5678' },
+  { msg:'🔧 Live preview iframe + device switch', agent:'Code Agent', time:'2 hours ago', ver:'v46', hash:'def9012' },
+  { msg:'📁 Monorepo structure + Netlify config', agent:'Deploy Agent', time:'Yesterday', ver:'v45', hash:'ghi3456' },
+  { msg:'🚀 First deploy — empty scaffold', agent:'Deploy Agent', time:'2 days ago', ver:'v1', hash:'mno7890' },
+];
+
+let curProj = 'nexus-dashboard';
+
+
+/* ═══════════════════════════════════════════
+   2. 🧭 NAVIGATION — Switching views & projects
+   ═══════════════════════════════════════════ */
+function switchView(id, tabEl) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.mt').forEach(t => t.classList.remove('active'));
+  const view = document.getElementById('view-' + id);
+  if (view) view.classList.add('active');
+  if (tabEl) tabEl.classList.add('active');
+  else document.querySelector(`.mt[onclick*="${id}"]`)?.classList.add('active');
+
+  // 🌐 Initialize 3D graph when its tab is shown!
+  if (id === 'graph') initGraph();
+}
+
+function selProject(el, pid) {
+  curProj = pid;
+  document.querySelectorAll('.pi').forEach(p => p.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const p = P[pid] || { n:pid, e:'📁', url:pid+'.netlify.app' };
+  document.getElementById('breadcrumb').innerHTML = `<span style="cursor:pointer" onclick="switchView('overview')">All Projects</span> <span style="color:var(--border-active)">›</span> <span class="crumb-active">${p.e} ${p.n}</span>`;
+  document.getElementById('ch-title').textContent = p.n;
+  document.getElementById('prev-url-text').textContent = p.url;
+  document.getElementById('prev-name').textContent = p.n;
+  document.getElementById('dl-name').textContent = p.n;
+}
+
+
+/* ═══════════════════════════════════════════
+   3. 🃏 RENDER VIEWS — Build HTML content
+   ═══════════════════════════════════════════ */
+function renderAll() { renderGrid(); renderKanban(); renderDeploys(); renderQueue(); renderLinks(); }
+
+// 🃏 Project cards grid
+function renderGrid() {
+  const g = document.getElementById('project-grid');
+  g.innerHTML = Object.entries(P).filter(([,p]) => !p.parent).map(([id,p], i) => {
+    const statusColor = p.status==='live' ? 'var(--green)' : p.status==='building' ? 'var(--orange)' : 'var(--text-muted)';
+    return `<div class="pc stag-${Math.min(i+1,6)}" onclick="selProject(document.querySelector('[data-p=${id}]'),'${id}')">
+      <div class="pc-prev" style="background:linear-gradient(135deg,${p.c}15,${p.c}05)">${p.e}
+        <div class="pc-status" style="color:${statusColor}"><span class="status-dot ${p.status}"></span> ${p.status}</div>
+      </div>
+      <div class="pc-body">
+        <div class="pc-title">${p.e} ${p.n}</div>
+        <div class="pc-desc">${p.desc}</div>
+        <div class="pc-agents">${p.agents.length ? p.agents.map(a => `<span class="ac on"><span class="ac-dot"></span> ${a}</span>`).join('') : '<span class="ac">Idle</span>'}</div>
+        <div class="pc-foot"><span class="pc-time">${p.status==='building'?'Building now...':'Live'}</span><div class="pc-acts"><button class="pa" onclick="event.stopPropagation();copyTxt('${p.url}')" title="Copy link">🔗</button><button class="pa" onclick="event.stopPropagation();showToast('📤 Sharing...')" title="Share">📤</button><button class="pa" onclick="event.stopPropagation();openModal('settings')" title="Settings">⚙️</button></div></div>
+      </div></div>`;
+  }).join('');
+}
+
+// 📋 Kanban board
+function renderKanban() {
+  const cols = [
+    { id:'todo',   title:'📝 Backlog',     dot:'var(--text-muted)' },
+    { id:'doing',  title:'⚡ In Progress', dot:'var(--orange)' },
+    { id:'review', title:'👁️ Review',       dot:'var(--cyan)' },
+    { id:'done',   title:'✅ Done',         dot:'var(--green)' },
+  ];
+  document.getElementById('kanban-board').innerHTML = cols.map(col => {
+    const items = tasks.filter(t => t.col === col.id);
+    return `<div class="kb-col" data-col="${col.id}" ondragover="event.preventDefault();this.style.borderColor='var(--accent)'" ondragleave="this.style.borderColor=''" ondrop="dropCard(event,'${col.id}');this.style.borderColor=''">
+      <div class="kb-header"><div class="kb-header-dot" style="background:${col.dot}"></div><div class="kb-header-title">${col.title}</div><div class="kb-count">${items.length}</div></div>
+      <div class="kb-cards">${items.map(t => {
+        const proj = P[t.proj] || { e:'📁', n:t.proj };
+        return `<div class="kb-card" draggable="true" data-id="${t.id}" ondragstart="event.dataTransfer.setData('text/plain','${t.id}')">
+          <div class="kb-card-title">${t.title}</div>
+          <div class="kb-card-meta">
+            <span>${proj.e} ${proj.n}</span>
+            <span class="kb-tag ${t.priority}">${t.priority}</span>
+            <span class="kb-agent">${t.agent}<span class="kb-agent-dot">${t.agent[0]}</span></span>
+          </div></div>`;
+      }).join('')}</div>
+      <button class="kb-add" onclick="showToast('➕ Add task to ${col.title}')">+ Add task</button>
+    </div>`;
+  }).join('');
+}
+
+// 📜 Deploy history
+function renderDeploys() {
+  document.getElementById('deploy-list').innerHTML = deploys.map((d,i) =>
+    `<div class="dl-item"><div class="dl-dot-col"><div class="dl-dot ${d.current?'current':''}"></div>${i<deploys.length-1?'<div class="dl-line"></div>':''}</div>
+    <div class="dl-info"><div class="dl-msg">${d.msg}</div><div class="dl-meta"><span>🤖 ${d.agent}</span><span>🕐 ${d.time}</span>${d.current?'<span class="dl-tag" style="color:var(--green)">● Production</span>':''}<span class="dl-tag">${d.ver} · ${d.hash}</span></div></div>
+    <div class="dl-acts"><button class="dl-btn" onclick="showToast('👁️ Preview ${d.ver}')">👁️</button>${!d.current?`<button class="dl-btn revert" onclick="showToast('⏪ Reverting to ${d.ver}...')">⏪ Revert</button>`:''}</div></div>`
+  ).join('');
+}
+
+// 🤖 Queue
+function renderQueue() {
+  const running = tasks.filter(t => t.col==='doing');
+  const queued = tasks.filter(t => t.col==='todo');
+  const done = tasks.filter(t => t.col==='done');
+  const renderItems = (items, status) => items.map(t => {
+    const proj = P[t.proj] || { e:'📁', n:t.proj };
+    return `<div class="qi ${status==='running'?'running':''}"><div style="color:var(--text-muted);font-size:.75rem">⠿</div><div class="qi-info"><div class="qi-title">${t.title}</div><div class="qi-proj">${proj.e} ${proj.n}</div></div><span class="qi-status ${status}">${status==='running'?'● Running':status==='queued'?'Queued':'✓ Done'}</span></div>`;
+  }).join('');
+  document.getElementById('queue-list').innerHTML =
+    `<div style="font-size:.65rem;font-weight:600;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">▶️ Running</div>${renderItems(running,'running')}
+    <div style="font-size:.65rem;font-weight:600;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin:16px 0 6px">📋 Up Next</div>${renderItems(queued,'queued')}
+    <div style="font-size:.65rem;font-weight:600;color:var(--accent-light);letter-spacing:1px;text-transform:uppercase;margin:16px 0 6px">✅ Completed</div><div style="opacity:.6">${renderItems(done,'done')}</div>`;
+}
+
+// 🔗 Links
+function renderLinks() {
+  const liveProjects = Object.entries(P).filter(([,p]) => p.status==='live');
+  document.getElementById('links-panel').innerHTML =
+    `<div class="share-panel"><div class="share-title">🟢 Live Sites</div>${liveProjects.map(([id,p]) =>
+      `<div class="sr"><span class="sr-label">${p.e} ${p.n.split(' ')[0]}</span><span class="sr-url" onclick="copyTxt('${p.url}')">${p.url}</span><button class="sr-btn" onclick="copyBtn(this,'${p.url}')">📋 Copy</button><button class="sr-btn" onclick="showToast('↗️ Opening...')">↗️</button></div>`
+    ).join('')}</div>
+    <div class="share-panel"><div class="share-title">🐙 GitHub</div><div class="sr"><span class="sr-label">Monorepo</span><span class="sr-url" onclick="copyTxt('github.com/justin/nexus-os')">github.com/justin/nexus-os</span><button class="sr-btn" onclick="copyBtn(this,'github.com/justin/nexus-os')">📋 Copy</button><button class="sr-btn" onclick="showToast('↗️ Opening...')">↗️</button></div></div>`;
+}
+
+
+/* ═══════════════════════════════════════════
+   4. 💬 CHAT — Messages & responses
+   ═══════════════════════════════════════════ */
+function sendMsg() {
+  const input = document.getElementById('ch-input');
+  const text = input.value.trim();
+  if (!text) return;
+  addMsg('user', text);
+  input.value = '';
+  input.style.height = 'auto';
+  const ti = document.getElementById('typing-ind');
+  ti.style.display = 'block';
+  setTimeout(() => {
+    ti.style.display = 'none';
+    const r = ['Got it! Assigning to the right agents. Auto-deploy when done. 🚀','Working on it now! Check the queue tab for progress. ⚡','Added to the queue with high priority. Watch the kanban board for movement! 📋','Both Code and Design agents are on it. ETA ~5 min. ✨'][Math.floor(Math.random()*4)];
+    addMsg('agent', r);
+  }, 1500);
+}
+function addMsg(role, text) {
+  const c = document.getElementById('ch-msgs');
+  const ti = document.getElementById('typing-ind');
+  const m = document.createElement('div');
+  m.className = `ch-msg ${role}`;
+  m.innerHTML = `<div class="ch-bubble">${text}</div><div class="ch-meta">${role==='user'?'You':'🤖 Orchestrator'} · now</div>`;
+  c.insertBefore(m, ti);
+  c.scrollTop = c.scrollHeight;
+}
+function quickAct(t) { document.getElementById('ch-input').value = t; sendMsg(); }
+function switchAgent(el) { document.querySelectorAll('.ch-at').forEach(t=>t.classList.remove('active')); el.classList.add('active'); showToast('🤖 Switched agent'); }
+
+
+/* ═══════════════════════════════════════════
+   5. 📋 KANBAN DRAG — Drag cards between columns!
+   When you drop a card in a new column, it moves there. 🎯
+   ═══════════════════════════════════════════ */
+function dropCard(event, newCol) {
+  event.preventDefault();
+  const taskId = parseInt(event.dataTransfer.getData('text/plain'));
+  const task = tasks.find(t => t.id === taskId);
+  if (task) {
+    task.col = newCol;
+    renderKanban();
+    showToast(`📋 Moved "${task.title.substring(0,30)}..." to ${newCol}`);
+  }
+}
+
+
+/* ═══════════════════════════════════════════
+   6. 🔗 UTILS — Toast, copy, modals, filter
+   ═══════════════════════════════════════════ */
+let toastT = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  t.classList.add('show');
+  if (toastT) clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2500);
+}
+function copyTxt(t) { navigator.clipboard.writeText('https://'+t).then(()=>showToast('📋 Copied: '+t)); }
+function copyBtn(btn,t) { navigator.clipboard.writeText('https://'+t).then(()=>{ btn.classList.add('copied');btn.textContent='✅ Copied!';setTimeout(()=>{btn.classList.remove('copied');btn.textContent='📋 Copy'},2000) }); }
+function copyUrl() { copyTxt(document.getElementById('prev-url-text').textContent); }
+function openModal(n) { closeModals(); const m=document.getElementById('modal-'+n); if(m)m.classList.add('open'); }
+function closeModals() { document.querySelectorAll('.mo').forEach(m=>m.classList.remove('open')); }
+function toggleChat() { document.getElementById('app').classList.toggle('chat-collapsed'); }
+function filterProjects(q) { const s=q.toLowerCase(); document.querySelectorAll('.pi').forEach(i=>{ const n=i.querySelector('.pi-name').textContent.toLowerCase(); i.style.display=n.includes(s)?'flex':'none'; }); }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModals(); });
+document.getElementById('ch-input').addEventListener('input', function() { this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,100)+'px'; });
+
+
+/* ═══════════════════════════════════════════════════════════════
+   7. 🌐 THREE.JS 3D GRAPH — Projects floating in space! 🚀
+
+   📋 SECTION 17 — The actual 3D scene code!
+
+   🌍 Each project becomes a glowing SPHERE in 3D space.
+   Lines connect parent projects to their children.
+   You can DRAG to orbit around, SCROLL to zoom! 🎯
+   ═══════════════════════════════════════════════════════════════ */
+
+let graphInited = false;    // 🔒 Only create the scene once!
+let scene, camera, renderer; // 🌍 Three.js essentials
+let nodes = [];             // 🔵 All the sphere objects
+let edges = [];             // 🔗 Lines connecting spheres
+let labels = [];            // 🏷️ Floating text labels
+let graphFrame;             // 🎬 Animation frame ID
+let graphLayout = 'orbital'; // 🌀 Current layout mode
+
+function initGraph() {
+  // 🔒 Don't reinitialize if already built
+  if (graphInited) { animateGraph(); return; }
+  graphInited = true;
+
+  const container = document.getElementById('graph-container');
+  const canvas = document.getElementById('graph-canvas');
+  const W = container.clientWidth;
+  const H = container.clientHeight;
+
+  // 🎥 Camera — your eyeball in the 3D world!
+  camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 1000);
+  camera.position.set(0, 2, 12);
+
+  // 🌍 Scene — the empty 3D world we fill with objects
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x06060b);
+  scene.fog = new THREE.FogExp2(0x06060b, 0.03);
+
+  // 🖥️ Renderer — draws the 3D onto the 2D screen
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  // 💡 Lights — so we can SEE the objects!
+  const ambient = new THREE.AmbientLight(0x404060, 0.6);
+  scene.add(ambient);
+  const point = new THREE.PointLight(0x6c5ce7, 1.5, 50);
+  point.position.set(5, 8, 5);
+  scene.add(point);
+  const point2 = new THREE.PointLight(0xff6b9d, 0.8, 40);
+  point2.position.set(-5, -3, 5);
+  scene.add(point2);
+
+  // ✨ Starfield particles in the background!
+  const starGeo = new THREE.BufferGeometry();
+  const starPositions = [];
+  for (let i = 0; i < 500; i++) {
+    starPositions.push((Math.random()-0.5)*80, (Math.random()-0.5)*80, (Math.random()-0.5)*80);
+  }
+  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+  const starMat = new THREE.PointsMaterial({ color: 0x555577, size: 0.08 });
+  scene.add(new THREE.Points(starGeo, starMat));
+
+  // 🔵 Create a node (sphere) for each project!
+  const entries = Object.entries(P);
+  entries.forEach(([id, p], i) => {
+    // 📐 Position in an orbital ring layout
+    const isChild = !!p.parent;
+    const angle = (i / entries.length) * Math.PI * 2;
+    const radius = isChild ? 3.5 : 5.5;
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    const y = isChild ? -0.5 : (Math.random() - 0.5) * 2;
+
+    // 🔵 The sphere itself
+    const size = isChild ? 0.25 : 0.4;
+    const color = new THREE.Color(p.c);
+    const geo = new THREE.SphereGeometry(size, 24, 24);
+    const mat = new THREE.MeshPhongMaterial({
+      color, emissive: color, emissiveIntensity: 0.3,
+      transparent: true, opacity: 0.9, shininess: 80
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(x, y, z);
+    mesh.userData = { id, ...p, floatOffset: Math.random() * Math.PI * 2 };
+    scene.add(mesh);
+    nodes.push(mesh);
+
+    // ✨ Glow ring around each node
+    const ringGeo = new THREE.RingGeometry(size + 0.05, size + 0.12, 32);
+    const ringMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.15, side: THREE.DoubleSide });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.position.copy(mesh.position);
+    ring.lookAt(camera.position);
+    scene.add(ring);
+
+    // 🏷️ HTML label
+    const label = document.createElement('div');
+    label.className = 'graph-label';
+    label.textContent = `${p.e} ${p.n}`;
+    container.appendChild(label);
+    labels.push({ el: label, node: mesh });
+  });
+
+  // 🔗 Draw lines connecting parent → child
+  entries.forEach(([id, p]) => {
+    if (p.parent) {
+      const parentNode = nodes.find(n => n.userData.id === p.parent);
+      const childNode = nodes.find(n => n.userData.id === id);
+      if (parentNode && childNode) {
+        const points = [parentNode.position.clone(), childNode.position.clone()];
+        const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+        const lineMat = new THREE.LineBasicMaterial({ color: new THREE.Color(p.c), transparent: true, opacity: 0.25 });
+        const line = new THREE.Line(lineGeo, lineMat);
+        scene.add(line);
+        edges.push({ line, parent: parentNode, child: childNode });
+      }
+    }
+  });
+
+  // 🖱️ Orbit controls (manual implementation)
+  let isDragging = false, prevX = 0, prevY = 0;
+  let theta = 0, phi = Math.PI / 4, dist = 12;
+
+  canvas.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
+  canvas.addEventListener('mousemove', e => {
+    if (!isDragging) {
+      // 🎯 Hover detection for info panel
+      updateHoverInfo(e);
+      return;
+    }
+    theta -= (e.clientX - prevX) * 0.005;
+    phi = Math.max(0.1, Math.min(Math.PI - 0.1, phi + (e.clientY - prevY) * 0.005));
+    prevX = e.clientX; prevY = e.clientY;
+  });
+  canvas.addEventListener('mouseup', () => isDragging = false);
+  canvas.addEventListener('mouseleave', () => isDragging = false);
+  canvas.addEventListener('wheel', e => { dist = Math.max(4, Math.min(25, dist + e.deltaY * 0.01)); });
+
+  // 🎬 Animation loop!
+  function animate() {
+    graphFrame = requestAnimationFrame(animate);
+    const time = Date.now() * 0.001;
+
+    // 📷 Update camera position from orbit controls
+    camera.position.x = dist * Math.sin(phi) * Math.sin(theta);
+    camera.position.y = dist * Math.cos(phi);
+    camera.position.z = dist * Math.sin(phi) * Math.cos(theta);
+    camera.lookAt(0, 0, 0);
+
+    // 🫧 Float nodes gently up and down
+    nodes.forEach(n => {
+      const off = n.userData.floatOffset;
+      n.position.y += Math.sin(time * 0.8 + off) * 0.001;
+    });
+
+    // 🔗 Update edge positions
+    edges.forEach(e => {
+      const positions = e.line.geometry.attributes.position.array;
+      positions[0] = e.parent.position.x; positions[1] = e.parent.position.y; positions[2] = e.parent.position.z;
+      positions[3] = e.child.position.x; positions[4] = e.child.position.y; positions[5] = e.child.position.z;
+      e.line.geometry.attributes.position.needsUpdate = true;
+    });
+
+    // 🏷️ Update label positions (3D → 2D screen projection)
+    labels.forEach(l => {
+      const pos = l.node.position.clone().project(camera);
+      const rect = container.getBoundingClientRect();
+      const x = (pos.x * 0.5 + 0.5) * rect.width;
+      const y = (-pos.y * 0.5 + 0.5) * rect.height;
+      l.el.style.left = x + 'px';
+      l.el.style.top = (y - 10) + 'px';
+      l.el.style.opacity = pos.z < 1 ? 1 : 0;
+    });
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // 📐 Handle resize
+  window.addEventListener('resize', () => {
+    const w = container.clientWidth, h = container.clientHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+}
+
+// 🎯 Hover info panel — shows project details when mouse near a node
+function updateHoverInfo(e) {
+  const container = document.getElementById('graph-container');
+  const rect = container.getBoundingClientRect();
+  const mouse = new THREE.Vector2(
+    ((e.clientX - rect.left) / rect.width) * 2 - 1,
+    -((e.clientY - rect.top) / rect.height) * 2 + 1
+  );
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(nodes);
+  const info = document.getElementById('graph-info');
+  if (intersects.length > 0) {
+    const d = intersects[0].object.userData;
+    document.getElementById('gi-title').textContent = d.e + ' ' + d.n;
+    document.getElementById('gi-url').textContent = d.url;
+    document.getElementById('gi-status').textContent = 'Status: ' + d.status;
+    document.getElementById('gi-agents').textContent = d.agents.length ? 'Agents: ' + d.agents.join(', ') : 'No active agents';
+    info.classList.add('show');
+  } else {
+    info.classList.remove('show');
+  }
+}
+
+// 🌀 Layout switching (orbital, tree, cluster)
+function setGraphLayout(layout, btn) {
+  graphLayout = layout;
+  document.querySelectorAll('.graph-ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const entries = Object.entries(P);
+  nodes.forEach((node, i) => {
+    const [id, p] = entries[i];
+    const isChild = !!p.parent;
+    let x, y, z;
+
+    if (layout === 'orbital') {
+      const angle = (i / entries.length) * Math.PI * 2;
+      const radius = isChild ? 3.5 : 5.5;
+      x = Math.cos(angle) * radius;
+      z = Math.sin(angle) * radius;
+      y = isChild ? -0.5 : (Math.random() - 0.5) * 1.5;
+    } else if (layout === 'tree') {
+      const mainIndex = entries.filter(([,pp]) => !pp.parent).indexOf(entries.find(([ii]) => ii === (p.parent || id)));
+      x = (mainIndex !== -1 ? mainIndex : i) * 2.5 - 8;
+      y = isChild ? -2.5 : 1;
+      z = isChild ? (Math.random() - 0.5) * 3 : 0;
+    } else { // cluster
+      const angle = Math.random() * Math.PI * 2;
+      const r = isChild ? 2 + Math.random() * 2 : 4 + Math.random() * 3;
+      x = Math.cos(angle) * r;
+      z = Math.sin(angle) * r;
+      y = (Math.random() - 0.5) * 4;
+    }
+
+    // 🎬 Animate to new position
+    const start = { x: node.position.x, y: node.position.y, z: node.position.z };
+    const dur = 800;
+    const startTime = Date.now();
+    function animPos() {
+      const t = Math.min(1, (Date.now() - startTime) / dur);
+      const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t; // easeInOutQuad
+      node.position.x = start.x + (x - start.x) * ease;
+      node.position.y = start.y + (y - start.y) * ease;
+      node.position.z = start.z + (z - start.z) * ease;
+      if (t < 1) requestAnimationFrame(animPos);
+    }
+    animPos();
+  });
+  showToast(`🌐 Layout: ${layout}`);
+}
+
+function resetGraphCamera() { showToast('📷 Camera reset'); }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   8.5. 📦 IMPORT / DROP ZONE — File handling logic! ★ NEW ★
+
+   🎁 This section handles everything about dragging files
+   into NEXUS from other tools like Claude, ChatGPT, Cursor.
+   
+   It reads the file names, sizes, types, shows them in a queue,
+   and lets you pick WHERE each file goes (which project/level).
+   
+   Like a mail sorting room at the post office! 📬📦
+   ═══════════════════════════════════════════════════════════════ */
+
+// 📋 Array to hold all queued files waiting to be imported
+let importQueue = [];
+
+// 🗂️ Map of file extensions → icon info
+//    This tells us what emoji and color to use for each file type!
+const fileTypeMap = {
+  'html': { icon: '📄', cls: 'html',  label: 'HTML' },
+  'htm':  { icon: '📄', cls: 'html',  label: 'HTML' },
+  'jsx':  { icon: '⚛️', cls: 'jsx',   label: 'React JSX' },
+  'tsx':  { icon: '⚛️', cls: 'jsx',   label: 'React TSX' },
+  'js':   { icon: '⚡', cls: 'js',    label: 'JavaScript' },
+  'ts':   { icon: '⚡', cls: 'js',    label: 'TypeScript' },
+  'css':  { icon: '🎨', cls: 'css',   label: 'CSS' },
+  'json': { icon: '📋', cls: 'json',  label: 'JSON' },
+  'md':   { icon: '📝', cls: 'md',    label: 'Markdown' },
+  'zip':  { icon: '📦', cls: 'zip',   label: 'ZIP Archive' },
+  'py':   { icon: '🐍', cls: 'other', label: 'Python' },
+  'svg':  { icon: '🖼️', cls: 'other', label: 'SVG' },
+  'png':  { icon: '🖼️', cls: 'other', label: 'Image' },
+  'jpg':  { icon: '🖼️', cls: 'other', label: 'Image' },
+  'gif':  { icon: '🖼️', cls: 'other', label: 'Image' },
+  'webp': { icon: '🖼️', cls: 'other', label: 'Image' },
+  'toml': { icon: '⚙️', cls: 'json',  label: 'Config' },
+  'yml':  { icon: '⚙️', cls: 'json',  label: 'YAML' },
+  'yaml': { icon: '⚙️', cls: 'json',  label: 'YAML' },
+  'txt':  { icon: '📄', cls: 'md',    label: 'Text' },
+  'env':  { icon: '🔑', cls: 'other', label: 'Env Config' },
+};
+
+// ─── 🖱️ DRAG HANDLERS — What happens when you drag files around ─── 
+
+// 📡 Global drag enter — shows the big overlay across the WHOLE app
+//    This fires when you first drag a file INTO the browser window
+let globalDragCounter = 0;
+document.addEventListener('dragenter', (e) => {
+  e.preventDefault();
+  globalDragCounter++;
+  // ✅ Only show if dragging files (not text or other stuff)
+  if (e.dataTransfer && e.dataTransfer.types.includes('Files')) {
+    document.getElementById('global-drop-overlay').classList.add('show');
+  }
+});
+
+document.addEventListener('dragleave', (e) => {
+  e.preventDefault();
+  globalDragCounter--;
+  // 🙈 Hide when the drag leaves the browser window completely
+  if (globalDragCounter <= 0) {
+    globalDragCounter = 0;
+    document.getElementById('global-drop-overlay').classList.remove('show');
+  }
+});
+
+document.addEventListener('dragover', (e) => { e.preventDefault(); });
+
+// 📬 Global drop — catches drops ANYWHERE on the page!
+//    Automatically switches to the Import tab and processes files
+document.addEventListener('drop', (e) => {
+  e.preventDefault();
+  globalDragCounter = 0;
+  document.getElementById('global-drop-overlay').classList.remove('show');
+  
+  if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+    // 🔀 Switch to the Import view automatically!
+    switchView('import');
+    // 📥 Process the dropped files
+    handleFileSelect(e.dataTransfer.files);
+  }
+});
+
+// 🎯 Drop target specific handlers (the box inside Import view)
+function handleDragOver(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.add('dragover');
+}
+
+function handleDragLeave(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove('dragover');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove('dragover');
+  if (e.dataTransfer.files.length > 0) {
+    handleFileSelect(e.dataTransfer.files);
+  }
+}
+
+// ─── 📥 FILE PROCESSING — Read dropped/selected files ─── 
+
+function handleFileSelect(files) {
+  // 🔄 Convert FileList to Array and add each file to our queue
+  Array.from(files).forEach(file => {
+    // 🏷️ Get the file extension (like "html" or "zip")
+    const ext = file.name.split('.').pop().toLowerCase();
+    
+    // 📋 Get the type info from our map (or use defaults)
+    const typeInfo = fileTypeMap[ext] || { icon: '📄', cls: 'other', label: ext.toUpperCase() };
+    
+    // 📦 Create a queue entry for this file
+    const entry = {
+      id: Date.now() + Math.random(),  // Unique ID
+      file: file,                       // The actual file object
+      name: file.name,                  // Filename like "index.html"
+      size: file.size,                  // Size in bytes
+      ext: ext,                         // Extension like "html"
+      typeInfo: typeInfo,               // Icon/label info
+      placement: ext === 'zip' ? '__new__' : curProj,  // Where to put it
+      // 🎯 ZIPs default to "Create New Project"
+      // Other files default to the currently selected project
+    };
+    
+    importQueue.push(entry);
+  });
+  
+  // 🔄 Re-render the queue display
+  renderImportQueue();
+  
+  // 🎉 Show a toast!
+  showToast(`📦 ${files.length} file${files.length > 1 ? 's' : ''} added to import queue`);
+}
+
+// ─── 🖼️ RENDER THE IMPORT QUEUE — Show all queued files ─── 
+
+function renderImportQueue() {
+  const queueEl = document.getElementById('import-queue');
+  const listEl = document.getElementById('import-file-list');
+  const countEl = document.getElementById('import-count');
+  const summaryEl = document.getElementById('import-summary');
+  
+  if (importQueue.length === 0) {
+    // 🙈 Hide the queue if empty
+    queueEl.style.display = 'none';
+    return;
+  }
+  
+  // 👁️ Show the queue
+  queueEl.style.display = 'block';
+  countEl.textContent = importQueue.length;
+  
+  // 📊 Calculate total size
+  const totalBytes = importQueue.reduce((sum, f) => sum + f.size, 0);
+  summaryEl.textContent = `${importQueue.length} file${importQueue.length > 1 ? 's' : ''} · ${formatBytes(totalBytes)}`;
+  
+  // 🏗️ Build the HTML for each file in the queue
+  //    Each file shows: icon, name, size, type label, placement picker, remove button
+  listEl.innerHTML = importQueue.map(f => {
+    // 🎯 Build the placement dropdown options
+    //    "Create New Project" + all existing projects
+    const placementOptions = `
+      <option value="__new__" ${f.placement === '__new__' ? 'selected' : ''}>✨ Create New Project</option>
+      <optgroup label="── Main Projects ──">
+        ${Object.entries(P).filter(([,p]) => !p.parent).map(([id,p]) =>
+          `<option value="${id}" ${f.placement === id ? 'selected' : ''}>${p.e} ${p.n}</option>`
+        ).join('')}
+      </optgroup>
+      <optgroup label="── Sub-projects ──">
+        ${Object.entries(P).filter(([,p]) => p.parent).map(([id,p]) => {
+          const parentName = P[p.parent] ? P[p.parent].e + ' ' : '';
+          return `<option value="${id}" ${f.placement === id ? 'selected' : ''}>${parentName}→ ${p.e} ${p.n}</option>`;
+        }).join('')}
+      </optgroup>
+    `;
+    
+    return `<div class="import-file" id="import-file-${f.id}">
+      <div class="import-file-icon ${f.typeInfo.cls}">${f.typeInfo.icon}</div>
+      <div class="import-file-info">
+        <div class="import-file-name">${f.name}</div>
+        <div class="import-file-meta">
+          <span>${formatBytes(f.size)}</span>
+          <span>·</span>
+          <span>${f.typeInfo.label}</span>
+          ${f.ext === 'zip' ? '<span>· 📦 Package</span>' : ''}
+        </div>
+      </div>
+      <select class="import-file-placement" onchange="updatePlacement('${f.id}', this.value)" title="Where should this go?">
+        ${placementOptions}
+      </select>
+      <button class="import-file-remove" onclick="removeFromQueue('${f.id}')" title="Remove">✕</button>
+    </div>`;
+  }).join('');
+}
+
+// ─── 🔧 QUEUE MANAGEMENT — Add, remove, update files ─── 
+
+// 🎯 Update where a file will be placed
+function updatePlacement(fileId, projectId) {
+  const entry = importQueue.find(f => String(f.id) === String(fileId));
+  if (entry) entry.placement = projectId;
+}
+
+// ❌ Remove a single file from the queue
+function removeFromQueue(fileId) {
+  importQueue = importQueue.filter(f => String(f.id) !== String(fileId));
+  renderImportQueue();
+  
+  if (importQueue.length === 0) {
+    showToast('🗑️ Import queue cleared');
+  }
+}
+
+// 🗑️ Clear the entire queue
+function clearImportQueue() {
+  importQueue = [];
+  renderImportQueue();
+  // 🔄 Reset the file input so the same files can be re-selected
+  document.getElementById('file-input').value = '';
+  showToast('🗑️ Import queue cleared');
+}
+
+// ─── 🚀 PROCESS IMPORT — Actually "import" the files ─── 
+
+// 🚀 Import & Deploy — simulates creating projects and deploying
+function processImport() {
+  if (importQueue.length === 0) return;
+  
+  const newProjects = importQueue.filter(f => f.placement === '__new__');
+  const existingUpdates = importQueue.filter(f => f.placement !== '__new__');
+  
+  // 🎉 Build a summary message
+  let msg = '🚀 Importing: ';
+  if (newProjects.length > 0) {
+    msg += `${newProjects.length} new project${newProjects.length > 1 ? 's' : ''}`;
+  }
+  if (existingUpdates.length > 0) {
+    if (newProjects.length > 0) msg += ' + ';
+    msg += `${existingUpdates.length} file${existingUpdates.length > 1 ? 's' : ''} to existing projects`;
+  }
+  
+  showToast(msg);
+  
+  // 🧹 Clear the queue (in real version, this would trigger the actual import pipeline)
+  importQueue = [];
+  renderImportQueue();
+  document.getElementById('file-input').value = '';
+  
+  // 🤖 Add a message to the chat about the import
+  setTimeout(() => {
+    showToast('✅ Import complete! Auto-deploying...');
+  }, 1500);
+}
+
+// 📝 Import as Draft — doesn't auto-deploy, just stages the files
+function processImportDraft() {
+  if (importQueue.length === 0) return;
+  showToast(`📝 ${importQueue.length} file${importQueue.length > 1 ? 's' : ''} imported as draft (not deployed yet)`);
+  importQueue = [];
+  renderImportQueue();
+  document.getElementById('file-input').value = '';
+}
+
+// ─── 📐 HELPER: Format bytes to human-readable size ─── 
+
+function formatBytes(bytes) {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+
+/* ═══════════════════════════════════════════
+   8. 🎬 INIT — Start everything up! 🚀
+   ═══════════════════════════════════════════ */
+renderAll();
+console.log('🎮 NEXUS Mission Control v2 — Ready! (Kanban + 3D Graph)');
+</script>
+
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║                                                                      ║
+║  📋 TABLE OF CONTENTS (BOTTOM) — Quick Reference                    ║
+║                                                                      ║
+╠══════════════════════════════════════════════════════════════════════╣
+║                                                                      ║
+║   SEC 1   🎨  CSS Variables & Reset                                  ║
+║   SEC 2   🏗️  Layout Grid                                            ║
+║   SEC 3   🔝  Top Bar                                                ║
+║   SEC 4   🧭  Left Sidebar                                           ║
+║   SEC 5   📊  Center Tabs                                            ║
+║   SEC 6   🃏  Overview View                                          ║
+║   SEC 7   📋  Kanban View ★                                          ║
+║   SEC 8   🌐  3D Graph View ★                                        ║
+║   SEC 9   👁️  Preview View                                           ║
+║   SEC 10  📜  Deploy View                                            ║
+║   SEC 11  🤖  Queue View                                             ║
+║   SEC 12  🔗  Links View                                             ║
+║   SEC 12.5📦  Import / Drop Zone View ★                              ║
+║   SEC 13  💬  Chat Panel                                             ║
+║   SEC 14  ⚙️  Modals                                                 ║
+║   SEC 15  🎬  Animations                                             ║
+║   SEC 16  🧠  JavaScript Core                                        ║
+║   SEC 17  🌐  Three.js 3D Graph Engine ★                             ║
+║   SEC 18  📋  Table of Contents (Bottom)                             ║
+║                                                                      ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+
+</body>
+</html>

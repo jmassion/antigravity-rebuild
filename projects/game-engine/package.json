@@ -1,0 +1,29 @@
+{
+  "name": "antigravity-engine",
+  "version": "0.1.0",
+  "description": "A holodeck-like imagination engine — wish for anything and it appears in 3D.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "3d",
+    "game-engine",
+    "holodeck",
+    "webgl",
+    "webgpu",
+    "imagination"
+  ],
+  "author": "AntiGravity",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

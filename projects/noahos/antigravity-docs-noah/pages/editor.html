@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Editor — HolodeckOS Docs</title>
+  <meta name="description" content="A VS Code-based environment with rich AI enhancements — Tab autocomplete, inline Commands, and the Agent side panel.">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .doc-page { padding-top: 100px; }
+    .doc-hero { position: relative; border-radius: var(--radius-xl); overflow: hidden; margin-bottom: var(--space-2xl); border: 1px solid var(--border-glass); box-shadow: var(--shadow-elevated), 0 0 60px rgba(0,245,212,0.08); }
+    .doc-hero img { width: 100%; height: auto; display: block; max-height: 500px; object-fit: cover; }
+    .doc-hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40%; background: linear-gradient(transparent, var(--bg-primary)); pointer-events: none; }
+    .doc-back { display: inline-flex; align-items: center; gap: var(--space-sm); color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--space-xl); padding: var(--space-sm) var(--space-md); background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); transition: var(--transition-fast); }
+    .doc-back:hover { color: var(--cyan-glow); border-color: var(--border-glow); background: rgba(0,245,212,0.05); }
+    .doc-tag { display: inline-block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 4px; margin-bottom: var(--space-md); }
+    .doc-tag.core { background: rgba(0,245,212,0.12); color: var(--cyan-glow); }
+    .doc-tag.agent { background: rgba(179,136,255,0.12); color: var(--purple-iridescent); }
+    .doc-tag.security { background: rgba(248,164,208,0.12); color: var(--pink-soft); }
+    .doc-tag.artifacts { background: rgba(168,237,202,0.12); color: var(--mint); }
+    .doc-title { margin-bottom: var(--space-md); }
+    .doc-title .icon { font-size: 2rem; margin-right: var(--space-sm); }
+    .doc-description { font-size: 1.15rem; color: var(--text-secondary); margin-bottom: var(--space-2xl); max-width: 70ch; }
+    .doc-content { max-width: 800px; }
+    .doc-content h2 { font-size: 1.5rem; margin: var(--space-2xl) 0 var(--space-md); color: var(--text-primary); }
+    .doc-content h3 { font-size: 1.15rem; margin: var(--space-xl) 0 var(--space-sm); color: var(--text-primary); }
+    .doc-content p { margin-bottom: var(--space-md); line-height: 1.8; }
+    .doc-content ul, .doc-content ol { margin: var(--space-md) 0 var(--space-lg) var(--space-xl); color: var(--text-secondary); }
+    .doc-content li { margin-bottom: var(--space-sm); line-height: 1.7; }
+    .doc-content li::marker { color: var(--cyan-glow); }
+    .doc-content code { background: rgba(0,245,212,0.08); color: var(--cyan-glow); padding: 2px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.85em; }
+    .doc-content .highlight-box { background: var(--bg-glass); border: 1px solid var(--border-glow); border-radius: var(--radius-md); padding: var(--space-lg); margin: var(--space-lg) 0; }
+    .doc-content .highlight-box h4 { color: var(--cyan-glow); margin-bottom: var(--space-sm); font-size: 1rem; }
+    .doc-nav { display: flex; justify-content: space-between; margin-top: var(--space-3xl); padding-top: var(--space-xl); border-top: 1px solid var(--border-glass); }
+    .doc-nav a { display: inline-flex; align-items: center; gap: var(--space-sm); color: var(--text-secondary); font-size: 0.9rem; padding: var(--space-sm) var(--space-md); background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); transition: var(--transition-fast); }
+    .doc-nav a:hover { color: var(--cyan-glow); border-color: var(--border-glow); }
+  </style>
+</head>
+<body>
+  <nav class="nav" id="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">
+        <span class="logo-icon">🐸</span>
+        <span>Holodeck<span class="logo-text-accent">OS</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../index.html#core-platform">Core</a></li>
+        <li><a href="../index.html#agent-capabilities">Agent</a></li>
+        <li><a href="../index.html#security">Security</a></li>
+        <li><a href="../index.html#artifacts">Artifacts</a></li>
+        <li><a href="../index.html#devices">Devices</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="doc-page">
+    <div class="container">
+      <a href="../index.html" class="doc-back">← Back to HolodeckOS</a>
+
+      <div class="doc-hero">
+        <img src="../assets/images/docs/editor.png" alt="The Editor">
+      </div>
+
+      <span class="doc-tag core">Core</span>
+      <h1 class="doc-title"><span class="icon">✏️</span>The Editor</h1>
+      <p class="doc-description">A VS Code-based environment with rich AI enhancements — Tab autocomplete, inline Commands, and the Agent side panel.</p>
+
+      <div class="doc-content">
+        <h2>Your Crystalline Workspace</h2>
+<p>The AntiGravity editor is built on VS Code, enhanced with AI superpowers that transform how you write code. Think of it as Lumi's crystalline desk — familiar tools made magical.</p>
+
+<h2>AI-Enhanced Features</h2>
+
+<h3>⚡ Tab — Advanced Autocomplete</h3>
+<p>Like having Ribbit whisper the next line of code. Tab provides intelligent, context-aware completions that understand your entire codebase.</p>
+
+<h3>💬 Command — Inline Instructions</h3>
+<p>Press <code>Cmd + K</code> to open the inline command bar. Describe what you want in natural language, and the editor transforms your words into code.</p>
+
+<h3>🐸 Agent Panel</h3>
+<p>The side panel where your full AI agent lives. For complex, multi-step tasks that go beyond simple edits — research, refactoring, debugging, and more.</p>
+
+<div class="highlight-box">
+<h4>💡 Pro Tip</h4>
+<p>Use Tab for quick completions, Command for single-file edits, and the Agent Panel for complex multi-file operations. Each tool has its sweet spot!</p>
+</div>
+      </div>
+
+      <div class="doc-nav">
+        <a href="../index.html">← Back to Docs</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer" style="margin-top: var(--space-3xl);">
+    <div class="container">
+      <p class="footer-brand">🐸 Holodeck<span class="accent">OS</span> — AntiGravity Edition</p>
+      <p>Lumi's guide to AntiGravity</p>
+    </div>
+  </footer>
+
+  <script src="../main.js"></script>
+</body>
+</html>

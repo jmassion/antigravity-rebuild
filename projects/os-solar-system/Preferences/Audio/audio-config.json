@@ -1,0 +1,7 @@
+{
+  "masterVolume": 80,
+  "outputDevice": "default",
+  "inputDevice": "default",
+  "spatialAudio": false,
+  "equalizer": "flat"
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "timestamp": "2026-02-28T15:12:01.872Z",
+    "topic": "general",
+    "text": "consider that we will want to see what other users are doing in the browsers, so some browsers need persistance, and others will allow each user to have their own instance logged in to the same account, and others with an instance logged in through a different account. \n\nI think we are ready for CDP streaming, this is very important to try out. \n\nThis is figuring things out as a prototype and problem solution finding proof of concept and process so that you can give cleaner instructions on the next rebuild. \n\nConsider that I have many devices of my own around the house and offfice that need to be persistant. Also the other people will also have many as well. \n\nAnd of course, later we will give agents access with keyboard/mouse touch or code based access to use the brwosers their way. \n\nMake sure you give me the ability to add and remove browsers, update the name of each browser to match the site its on automatically. \n\nalso i want a few ways to view the browser lauouts, yespecially some 3d spatially orgnaized methods with 3js",
+    "from": "justin"
+  },
+  {
+    "timestamp": "2026-02-28T16:03:05.169Z",
+    "topic": "general",
+    "text": "the red yellow green buttons to close minimize maximize arent working on each browser",
+    "from": "justin"
+  },
+  {
+    "timestamp": "2026-02-28T16:04:29.500Z",
+    "topic": "general",
+    "text": "having different ways to view and organize the browsers as cards and 3D objects, and more will be useful, carousels, etc. \n\nAlso consider that sometimes we want to see the full height of websites, and sometimes just sections like normal. \n\nAlso, please give me a couple examples of a website sitemap flowchart with the live sites we can interact with. Connected by wires to show the . We will want this laid out on a canvas , and a 3D canvas.\n\nShow me a few ways to view the info",
+    "from": "justin"
+  }
+]

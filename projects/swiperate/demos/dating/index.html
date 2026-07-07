@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwipeRate Demo — Dating App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="dating-app">
+        <header class="dating-header">
+            <div class="dating-logo">💜 <span>LoveRate</span></div>
+            <div class="dating-nav">
+                <button class="dating-nav-btn active" data-tab="swipe">Swipe</button>
+                <button class="dating-nav-btn" data-tab="matches">Matches</button>
+                <button class="dating-nav-btn" data-tab="notes">Notes</button>
+            </div>
+            <div class="dating-progress">
+                <span id="dating-count">0</span> rated
+            </div>
+        </header>
+
+        <main class="dating-main" id="dating-arena">
+            <!-- Mode indicator -->
+            <div class="dating-mode-bar">
+                <span class="dating-axis">← Less Attractive | More Attractive →</span>
+                <span class="dating-axis">↑ Great Personality | Bad Personality ↓</span>
+                <span class="dating-axis dating-z">🔍 Scroll: Compatibility</span>
+            </div>
+
+            <!-- Card stack -->
+            <div class="dating-stack" id="dating-stack"></div>
+
+            <!-- Hint text -->
+            <div class="dating-hint" id="dating-hint">
+                <p>Drag profiles to rate on Attractiveness × Personality</p>
+                <p class="hint-sub">Scroll for compatibility depth • 9 zones = nuanced matching</p>
+            </div>
+        </main>
+
+        <!-- Matches Panel -->
+        <aside class="dating-sidebar" id="dating-matches" style="display:none;">
+            <h3>Your Matches</h3>
+            <div class="dating-matches-list" id="dating-matches-list"></div>
+        </aside>
+
+        <!-- Bottom bar with zone legend -->
+        <footer class="dating-footer">
+            <div class="zone-legend">
+                <span class="zone-chip zone-s">💎 S-Tier</span>
+                <span class="zone-chip zone-a">🔥 A-Tier</span>
+                <span class="zone-chip zone-b">👍 B-Tier</span>
+                <span class="zone-chip zone-c">🤷 C-Tier</span>
+                <span class="zone-chip zone-d">👎 D-Tier</span>
+            </div>
+        </footer>
+    </div>
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>

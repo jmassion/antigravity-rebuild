@@ -1,0 +1,11 @@
+# Claude Code workspace
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env files (belt-and-suspenders; subprojects also ignore)
+.env
+.env.local
+.env*.local

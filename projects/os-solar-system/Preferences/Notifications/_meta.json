@@ -1,0 +1,12 @@
+{
+  "icon": "Bell",
+  "tags": [
+    "notifications",
+    "phone",
+    "tablet",
+    "laptop",
+    "desktop",
+    "watch"
+  ],
+  "description": "Notification preferences"
+}

@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntiGravity WebBrowser — Building a Better Web Browser</title>
+    <meta name="description"
+        content="A next-generation web browser that is multiplayer, multiplatform, 3D, beyond tabs, and agent-orchestratable. By AntiGravity.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a12;
+            --bg-secondary: #111122;
+            --bg-card: rgba(20, 20, 40, 0.7);
+            --border-glass: rgba(120, 100, 255, 0.15);
+            --text-primary: #f0f0ff;
+            --text-secondary: #a0a0c8;
+            --accent-cyan: #00e5ff;
+            --accent-purple: #8b5cf6;
+            --accent-magenta: #e040fb;
+            --accent-green: #22d3ee;
+            --gradient-hero: linear-gradient(135deg, #8b5cf6 0%, #00e5ff 50%, #e040fb 100%);
+            --glow-cyan: 0 0 40px rgba(0, 229, 255, 0.3);
+            --glow-purple: 0 0 40px rgba(139, 92, 246, 0.3);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ─── Star field background ─── */
+        .stars {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .stars canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ─── NAV ─── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 18, 0.8);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 0 40px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--gradient-hero);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .nav-cta {
+            padding: 8px 20px;
+            border-radius: 8px;
+            background: var(--gradient-hero);
+            color: #fff !important;
+            font-weight: 600 !important;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--glow-purple);
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            border: 1px solid var(--border-glass);
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            font-size: 13px;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            margin-bottom: 32px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 80px);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            max-width: 900px;
+            animation: fadeInUp 0.8s ease 0.1s both;
+        }
+
+        .hero h1 .gradient-text {
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: clamp(16px, 2vw, 20px);
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin: 24px auto 40px;
+            line-height: 1.7;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-hero);
+            color: #fff;
+            box-shadow: 0 4px 24px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 40px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-glass);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+            transform: translateY(-2px);
+        }
+
+        /* ─── PILLARS SECTION ─── */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 100px 24px;
+        }
+
+        .section-label {
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-cyan);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            text-align: center;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 60px;
+            font-size: 16px;
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pillar-card {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 36px 28px;
+            backdrop-filter: blur(16px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .pillar-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: radial-gradient(circle at var(--glow-x, 50%) var(--glow-y, 50%), rgba(139, 92, 246, 0.08), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .pillar-card:hover::before {
+            opacity: 1;
+        }
+
+        .pillar-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: var(--glow-purple);
+        }
+
+        .pillar-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .pillar-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .pillar-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .pillar-tag {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Per-card color accents */
+        .pillar-card[data-accent="cyan"] .pillar-icon {
+            background: rgba(0, 229, 255, 0.12);
+        }
+
+        .pillar-card[data-accent="cyan"] .pillar-tag {
+            background: rgba(0, 229, 255, 0.12);
+            color: var(--accent-cyan);
+        }
+
+        .pillar-card[data-accent="purple"] .pillar-icon {
+            background: rgba(139, 92, 246, 0.12);
+        }
+
+        .pillar-card[data-accent="purple"] .pillar-tag {
+            background: rgba(139, 92, 246, 0.12);
+            color: var(--accent-purple);
+        }
+
+        .pillar-card[data-accent="magenta"] .pillar-icon {
+            background: rgba(224, 64, 251, 0.12);
+        }
+
+        .pillar-card[data-accent="magenta"] .pillar-tag {
+            background: rgba(224, 64, 251, 0.12);
+            color: var(--accent-magenta);
+        }
+
+        .pillar-card[data-accent="green"] .pillar-icon {
+            background: rgba(34, 211, 238, 0.12);
+        }
+
+        .pillar-card[data-accent="green"] .pillar-tag {
+            background: rgba(34, 211, 238, 0.12);
+            color: var(--accent-green);
+        }
+
+        .pillar-card[data-accent="gold"] .pillar-icon {
+            background: rgba(251, 191, 36, 0.12);
+        }
+
+        .pillar-card[data-accent="gold"] .pillar-tag {
+            background: rgba(251, 191, 36, 0.12);
+            color: #fbbf24;
+        }
+
+        /* ─── DEMO SECTION ─── */
+        .demo-section {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-glass);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .demo-card {
+            display: block;
+            text-decoration: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .demo-card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .demo-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: rgba(0, 229, 255, 0.1);
+        }
+
+        .demo-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .demo-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .demo-card .arrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent-cyan);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* ─── ARCHITECTURE SECTION ─── */
+        .arch-list {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .arch-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .arch-item:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .arch-num {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--gradient-hero);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .arch-item h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .arch-item p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* ─── CTA ─── */
+        .cta-section {
+            text-align: center;
+            padding: 120px 24px;
+        }
+
+        .cta-section h2 {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .cta-section p {
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto 40px;
+            font-size: 16px;
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--border-glass);
+            padding: 40px 24px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        footer a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        /* ─── ANIMATIONS ─── */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+            nav {
+                padding: 0 20px;
+            }
+
+            .nav-links a:not(.nav-cta) {
+                display: none;
+            }
+
+            .pillars-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Star field -->
+    <div class="stars"><canvas id="stars-canvas"></canvas></div>
+
+    <!-- ─── NAV ─── -->
+    <nav>
+        <div class="nav-logo">
+            <div class="nav-logo-icon">🌐</div>
+            <span>AntiGravity <span style="color:var(--accent-cyan)">Browser</span></span>
+        </div>
+        <div class="nav-links">
+            <a href="#pillars">Vision</a>
+            <a href="#demo">Demo</a>
+            <a href="#architecture">Architecture</a>
+            <a href="./SharedBrowserPrototype/client/index.html" class="nav-cta">Launch Demo →</a>
+        </div>
+    </nav>
+
+    <!-- ─── HERO ─── -->
+    <section class="hero" id="hero">
+        <div class="hero-badge">
+            <span class="dot"></span>
+            Prototype Live
+        </div>
+        <h1>Building a<br><span class="gradient-text">Better Web Browser</span></h1>
+        <p class="hero-sub">
+            Multiplayer. MultiPlatform. 3D. Beyond Tabs.<br>
+            The web browser reimagined as a shared, spatial, agent-orchestratable workspace.
+        </p>
+        <div class="hero-actions">
+            <a href="./SharedBrowserPrototype/client/index.html" class="btn btn-primary" id="hero-demo-btn">
+                🚀 Try the Demo
+            </a>
+            <a href="#pillars" class="btn btn-secondary">
+                Learn More ↓
+            </a>
+        </div>
+    </section>
+
+    <!-- ─── PILLARS ─── -->
+    <section id="pillars">
+        <div class="section-label reveal">Core Pillars</div>
+        <h2 class="section-title reveal">Five Ideas That Change Everything</h2>
+        <p class="section-desc reveal">Every modern browser is still a single-user, single-device, flat-tab experience.
+            We're building something fundamentally different.</p>
+
+        <div class="pillars-grid">
+            <div class="pillar-card reveal" data-accent="cyan">
+                <div class="pillar-icon">👥</div>
+                <h3>Multiplayer</h3>
+                <p>Browse together in real-time. Share live browser surfaces with teammates, friends, or AI agents —
+                    everyone sees the same page, interacts simultaneously.</p>
+                <span class="pillar-tag">Real-Time Collaboration</span>
+            </div>
+
+            <div class="pillar-card reveal" data-accent="purple">
+                <div class="pillar-icon">🌍</div>
+                <h3>MultiPlatform</h3>
+                <p>Run on any device, any OS. Browser surfaces are rendered server-side via CDP and streamed as pixels —
+                    your device just needs a screen.</p>
+                <span class="pillar-tag">Universal Access</span>
+            </div>
+
+            <div class="pillar-card reveal" data-accent="magenta">
+                <div class="pillar-icon">🔮</div>
+                <h3>3D Spatial</h3>
+                <p>Websites float in 3D space on a rotating sphere. Orbit, zoom, and arrange your browsing universe with
+                    Three.js CSS3DRenderer — real HTML, not textures.</p>
+                <span class="pillar-tag">Immersive</span>
+            </div>
+
+            <div class="pillar-card reveal" data-accent="green">
+                <div class="pillar-icon">🧊</div>
+                <h3>Beyond Tabs</h3>
+                <p>Eight view modes: Grid, Carousel, Stack, Mosaic, Focus, Cinema, Full Height, and Sitemap. Tabs are
+                    dead — spatial layouts are alive.</p>
+                <span class="pillar-tag">8 View Modes</span>
+            </div>
+
+            <div class="pillar-card reveal" data-accent="gold">
+                <div class="pillar-icon">🤖</div>
+                <h3>Agent Orchestratable</h3>
+                <p>AI agents can spawn, navigate, click, type, and read any browser surface. The browser becomes a tool
+                    that agents can wield autonomously.</p>
+                <span class="pillar-tag">AI-Native</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── DEMO ─── -->
+    <section class="demo-section" id="demo">
+        <div class="section-label reveal">Live Prototype</div>
+        <h2 class="section-title reveal">See It In Action</h2>
+        <p class="section-desc reveal">The SharedBrowserPrototype is a working multiplayer browser world with CDP
+            streaming, 3D views, and dynamic browser management.</p>
+
+        <div class="demo-grid">
+            <a href="./SharedBrowserPrototype/client/index.html" class="demo-card reveal" id="demo-main">
+                <div class="demo-card-header">
+                    <div class="demo-card-icon">🖥️</div>
+                    <h3>Main App — Grid View</h3>
+                </div>
+                <p>6 live browser surfaces with URL navigation, add/remove, host metrics panel, and 8 switchable view
+                    modes.</p>
+                <span class="arrow">Launch → </span>
+            </a>
+
+            <a href="./SharedBrowserPrototype/client/3d.html" class="demo-card reveal" id="demo-3d">
+                <div class="demo-card-header">
+                    <div class="demo-card-icon">🌐</div>
+                    <h3>3D Sphere View</h3>
+                </div>
+                <p>Browser windows floating on a rotating Three.js sphere with orbit controls, auto-rotation, and
+                    animated star field.</p>
+                <span class="arrow">Launch → </span>
+            </a>
+
+            <a href="./SharedBrowserPrototype/client/notes.html" class="demo-card reveal" id="demo-notes">
+                <div class="demo-card-header">
+                    <div class="demo-card-icon">📋</div>
+                    <h3>Notes & Feedback</h3>
+                </div>
+                <p>In-browser feedback and note-taking system connected to the shared browsing session.</p>
+                <span class="arrow">Launch → </span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ─── ARCHITECTURE ─── -->
+    <section id="architecture">
+        <div class="section-label reveal">Under the Hood</div>
+        <h2 class="section-title reveal">How It Works</h2>
+        <p class="section-desc reveal">A three-tier architecture designed for real-time multiplayer browsing at scale.
+        </p>
+
+        <div class="arch-list">
+            <div class="arch-item reveal">
+                <div class="arch-num">1</div>
+                <div>
+                    <h4>WebSocket Room Server</h4>
+                    <p>Authoritative Node.js server managing rooms, presence, capability tokens, epoch-based revocation,
+                        and binary frame forwarding. Every interaction is permission-gated.</p>
+                </div>
+            </div>
+            <div class="arch-item reveal">
+                <div class="arch-num">2</div>
+                <div>
+                    <h4>CDP Host / Browser Engine</h4>
+                    <p>Playwright-powered headless Chrome instances that capture screencast frames via CDP and stream
+                        JPEG pixels over WebSocket. Mouse & keyboard input is injected back into the real browser.</p>
+                </div>
+            </div>
+            <div class="arch-item reveal">
+                <div class="arch-num">3</div>
+                <div>
+                    <h4>Spatial Web Client</h4>
+                    <p>Interactive frontend with iframe-first viewports, CDP canvas overlays, 8 view modes, and a
+                        Three.js 3D sphere renderer. Auto-connects to the room server for live surface data.</p>
+                </div>
+            </div>
+            <div class="arch-item reveal">
+                <div class="arch-num">4</div>
+                <div>
+                    <h4>Future: Agent Layer</h4>
+                    <p>AI agents receive capability tokens to interact with browser surfaces — spawning pages,
+                        navigating, extracting data, and executing multi-step workflows autonomously.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── CTA ─── -->
+    <section class="cta-section">
+        <h2 class="reveal">Ready to <span
+                style="background:var(--gradient-hero);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Explore?</span>
+        </h2>
+        <p class="reveal">Launch the SharedBrowserPrototype and experience the future of browsing.</p>
+        <div class="hero-actions reveal">
+            <a href="./SharedBrowserPrototype/client/index.html" class="btn btn-primary" id="cta-demo-btn">🚀 Launch
+                Demo</a>
+            <a href="./SharedBrowserPrototype/client/3d.html" class="btn btn-secondary" id="cta-3d-btn">🌐 3D Sphere</a>
+        </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer>
+        <p>AntiGravity WebBrowser © 2026 · Built with ❤️ by the <a href="#">AntiGravity</a> team</p>
+    </footer>
+
+    <script>
+        // ─── STAR FIELD ───
+        (function () {
+            const canvas = document.getElementById('stars-canvas');
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            function init() {
+                resize();
+                stars = Array.from({ length: 200 }, () => ({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 1.5 + 0.3,
+                    a: Math.random(),
+                    da: (Math.random() - 0.5) * 0.01
+                }));
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                stars.forEach(s => {
+                    s.a += s.da;
+                    if (s.a > 1 || s.a < 0.1) s.da *= -1;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(200, 200, 255, ${s.a})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+
+            init();
+            draw();
+            window.addEventListener('resize', init);
+        })();
+
+        // ─── SCROLL REVEAL ───
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // ─── CARD GLOW FOLLOW MOUSE ───
+        document.querySelectorAll('.pillar-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--glow-x', x + '%');
+                card.style.setProperty('--glow-y', y + '%');
+            });
+        });
+    </script>
+
+</body>
+
+</html>

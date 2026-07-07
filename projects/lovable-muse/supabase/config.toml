@@ -1,0 +1,22 @@
+project_id = "ccgxviamkiyclazabyml"
+
+[functions.analyze-asset]
+verify_jwt = false
+
+[functions.extract-zip]
+verify_jwt = false
+
+[functions.import-cloud-file]
+verify_jwt = false
+
+[functions.search-expand]
+verify_jwt = false
+
+[functions.export-project]
+verify_jwt = false
+
+[functions.chat]
+verify_jwt = false
+
+[functions.invite-member]
+verify_jwt = false

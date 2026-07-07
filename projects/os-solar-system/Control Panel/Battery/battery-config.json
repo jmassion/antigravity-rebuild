@@ -1,0 +1,5 @@
+{
+  "powerSaver": false,
+  "optimizedCharging": true,
+  "lowPowerThreshold": 20
+}

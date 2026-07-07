@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║                                                                      ║
+║   🌌  V O I D   R O O M  🌌                                        ║
+║   A Universal Collaborative 3D Space                                 ║
+║                                                                      ║
+║   Works on: 🍎 Apple · 🪟 Windows · 🤖 Android · 📺 Smart TVs     ║
+║                                                                      ║
+║   Input: 🖱️ Mouse · 👆 Touch · ⌨️ Keyboard · 🎮 Gamepad · ✏️ Pen  ║
+║                                                                      ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────┐
+│  📖 TABLE OF CONTENTS (TOP)            │
+│                                         │
+│  1. 🎨 STYLES & THEME                  │
+│  2. 🏗️ HTML STRUCTURE                  │
+│  3. 🔧 CONFIGURATION & GLOBALS         │
+│  4. 🆔 ROOM & USER ID SYSTEM           │
+│  5. 📡 REAL-TIME SYNC (WebRTC/WS)      │
+│  6. 🌍 THREE.JS 3D WORLD SETUP         │
+│  7. 📦 OBJECT CREATION SYSTEM           │
+│  8. 🖱️ UNIVERSAL INPUT HANDLER         │
+│  9. 🎮 GAMEPAD SUPPORT                  │
+│  10. 🎥 CAMERA CONTROLS                │
+│  11. 🖼️ UI PANELS & MENUS              │
+│  12. 🔄 ANIMATION LOOP                  │
+│  13. 🚀 APP STARTUP                     │
+│                                         │
+│  📖 TABLE OF CONTENTS (BOTTOM) ↓↓↓     │
+└─────────────────────────────────────────┘
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- 📺 Smart TV & PWA support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0a0f">
+
+<title>🌌 Void Room — Collaborative 3D Space</title>
+
+<!-- ============================================================
+     📦 SECTION 1: EXTERNAL LIBRARIES
+     We load Three.js — the magic library that draws 3D stuff!
+     ============================================================ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<!-- ============================================================
+
+     ╔═══════════════════════════════════════╗
+     ║  🎨 SECTION 1: STYLES & THEME        ║
+     ║  This is how everything LOOKS!        ║
+     ╚═══════════════════════════════════════╝
+
+     Think of CSS like choosing clothes for your app.
+     We pick colors, sizes, and where things go on screen.
+     ============================================================ -->
+<style>
+
+/* 🌈 --- COLOR PALETTE --- 🌈
+   These are like paint buckets we can reuse everywhere!
+   Change ONE variable here = change the WHOLE app's look! */
+:root {
+  --bg-void: #07070c;          /* 🌑 The deep dark background */
+  --bg-panel: rgba(12, 12, 20, 0.85); /* 🫧 See-through panel color */
+  --accent-1: #7b5cff;         /* 💜 Main purple accent */
+  --accent-2: #ff6b6b;         /* ❤️ Red/coral accent */
+  --accent-3: #4ecdc4;         /* 💚 Teal/green accent */
+  --accent-4: #ffd93d;         /* 💛 Yellow/gold accent */
+  --text-main: #e8e6f0;        /* 📝 Main text color (light) */
+  --text-dim: #6b6880;         /* 📝 Dimmer text for less important stuff */
+  --border-glow: rgba(123, 92, 255, 0.3); /* ✨ Glowing border */
+  --glass-blur: 16px;          /* 🫧 How blurry the glass panels look */
+  --radius: 14px;              /* 📐 How round our corners are */
+  --font-display: 'Courier New', monospace; /* ⌨️ The "techy" font */
+}
+
+/* 🧹 --- RESET --- 🧹
+   Start with a clean slate! No weird browser spacing. */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 🖼️ --- THE MAIN CANVAS (the whole screen) --- 🖼️ */
+body {
+  background: var(--bg-void);
+  color: var(--text-main);
+  font-family: var(--font-display);
+  overflow: hidden;           /* 🚫 No scrollbars — it's a 3D world! */
+  touch-action: none;         /* 👆 We handle ALL touch events ourselves */
+  user-select: none;          /* 🚫 No accidental text selecting */
+  -webkit-user-select: none;
+  height: 100vh;              /* 📏 Fill the whole screen height */
+  width: 100vw;               /* 📏 Fill the whole screen width */
+}
+
+/* 🎬 --- 3D CANVAS --- 🎬
+   This is where the Three.js 3D world gets drawn */
+#scene-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;                /* 📚 Behind everything else */
+}
+
+/* 🫧 --- GLASS PANEL STYLE --- 🫧
+   This makes those cool frosted-glass looking panels! */
+.glass-panel {
+  background: var(--bg-panel);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+/* 🔝 --- TOP BAR (Room info + User count) --- 🔝 */
+#top-bar {
+  position: fixed;
+  top: 12px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 18px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+#top-bar .room-id {
+  color: var(--accent-1);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#top-bar .user-count {
+  color: var(--accent-3);
+}
+
+/* 🧰 --- TOOLBAR (the floating button bar) --- 🧰 */
+#toolbar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+}
+
+.tool-btn {
+  width: 48px; height: 48px;
+  border: 1px solid var(--border-glow);
+  border-radius: 12px;
+  background: rgba(20, 18, 35, 0.9);
+  color: var(--text-main);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.tool-btn:hover, .tool-btn.active {
+  background: var(--accent-1);
+  border-color: var(--accent-1);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(123, 92, 255, 0.4);
+}
+
+.tool-btn:active {
+  transform: translateY(0px) scale(0.95);
+}
+
+/* 📺 Bigger buttons for TV / large screens */
+@media (min-width: 1400px) and (pointer: coarse) {
+  .tool-btn { width: 64px; height: 64px; font-size: 28px; }
+}
+
+/* 📱 Adjust for small phone screens */
+@media (max-width: 400px) {
+  .tool-btn { width: 40px; height: 40px; font-size: 18px; }
+  #top-bar { font-size: 11px; padding: 6px 12px; }
+}
+
+/* 📋 --- OBJECT PALETTE (pick what to place!) --- 📋 */
+#palette {
+  position: fixed;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.palette-item {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border-glow);
+  background: rgba(20, 18, 35, 0.8);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.palette-item:hover {
+  transform: scale(1.15);
+  border-color: var(--accent-4);
+}
+
+.palette-item.selected {
+  border-color: var(--accent-4);
+  background: rgba(255, 217, 61, 0.15);
+  box-shadow: 0 0 12px rgba(255, 217, 61, 0.3);
+}
+
+.palette-item .tooltip {
+  display: none;
+  position: absolute;
+  right: 54px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-glow);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--text-main);
+}
+
+.palette-item:hover .tooltip {
+  display: block;
+}
+
+/* 💬 --- TOAST NOTIFICATIONS --- 💬
+   Little messages that pop up and disappear */
+#toast-container {
+  position: fixed;
+  top: 60px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards;
+  pointer-events: none;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes toastOut {
+  from { opacity: 1; }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* 🎯 --- CROSSHAIR (center of screen aim) --- 🎯 */
+#crosshair {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px; height: 20px;
+  border: 2px solid rgba(123, 92, 255, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 50;
+  transition: all 0.2s ease;
+}
+
+#crosshair.hovering {
+  border-color: var(--accent-4);
+  box-shadow: 0 0 15px rgba(255, 217, 61, 0.4);
+  width: 28px; height: 28px;
+}
+
+/* ⬇️ --- GRAB/DRAG CURSOR --- ⬇️ */
+body.grabbing { cursor: grabbing !important; }
+body.placing { cursor: crosshair !important; }
+
+/* 🎪 --- SELECTED OBJECT HIGHLIGHT --- 🎪 */
+#selection-info {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  padding: 6px 14px;
+  font-size: 12px;
+  display: none;
+}
+
+/* ⏳ --- LOADING SCREEN --- ⏳ */
+#loading {
+  position: fixed; inset: 0;
+  z-index: 9999;
+  background: var(--bg-void);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  transition: opacity 0.6s ease;
+}
+
+#loading h1 {
+  font-size: 28px;
+  color: var(--accent-1);
+  letter-spacing: 6px;
+}
+
+#loading p {
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border-glow);
+  border-top-color: var(--accent-1);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 🎨 --- OBJECT COLOR BADGES (for multiplayer) --- 🎨 */
+.user-badge {
+  position: absolute;
+  top: 0; left: 0;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* 📱 Responsive palette on small screens — move to bottom-left */
+@media (max-width: 600px) {
+  #palette {
+    right: auto;
+    left: 8px;
+    top: auto;
+    bottom: 80px;
+    transform: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-height: none;
+    max-width: 50vw;
+  }
+  .palette-item .tooltip { display: none !important; }
+}
+
+/* 📐 --- GRID FLOOR FADE --- 📐 */
+canvas { display: block; }
+
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+
+     ╔═══════════════════════════════════════╗
+     ║  🏗️ SECTION 2: HTML STRUCTURE        ║
+     ║  The skeleton of our app!             ║
+     ╚═══════════════════════════════════════╝
+
+     HTML is like building with LEGO — each piece has a job!
+     ============================================================ -->
+
+<!-- ⏳ Loading Screen — shows while the 3D world loads -->
+<div id="loading">
+  <div class="spinner"></div>
+  <h1>VOID ROOM</h1>
+  <p>loading collaborative space...</p>
+</div>
+
+<!-- 🎬 The 3D World lives here -->
+<div id="scene-container"></div>
+
+<!-- 🎯 Tiny circle in the center of the screen -->
+<div id="crosshair"></div>
+
+<!-- 🔝 Top info bar — shows room name & who's connected -->
+<div id="top-bar" class="glass-panel">
+  <span>🌌</span>
+  <span class="room-id" id="room-id" title="Click to copy invite link">room:loading...</span>
+  <span class="user-count" id="user-count">👤 1</span>
+</div>
+
+<!-- 💬 Toast messages pop up here -->
+<div id="toast-container"></div>
+
+<!-- 📋 Object Palette — pick shapes to place in the world! -->
+<div id="palette" class="glass-panel">
+  <!-- Each button is a shape you can drop into the 3D scene -->
+  <div class="palette-item selected" data-shape="cube" title="Cube">
+    🟧 <span class="tooltip">Cube</span>
+  </div>
+  <div class="palette-item" data-shape="sphere" title="Sphere">
+    🔵 <span class="tooltip">Sphere</span>
+  </div>
+  <div class="palette-item" data-shape="cylinder" title="Cylinder">
+    🟡 <span class="tooltip">Cylinder</span>
+  </div>
+  <div class="palette-item" data-shape="cone" title="Cone">
+    🔺 <span class="tooltip">Cone</span>
+  </div>
+  <div class="palette-item" data-shape="torus" title="Torus (Donut)">
+    🍩 <span class="tooltip">Donut</span>
+  </div>
+  <div class="palette-item" data-shape="tetra" title="Tetrahedron (Pyramid)">
+    🔻 <span class="tooltip">Pyramid</span>
+  </div>
+  <div class="palette-item" data-shape="icosa" title="Icosahedron (D20)">
+    💎 <span class="tooltip">D20</span>
+  </div>
+  <div class="palette-item" data-shape="octahedron" title="Octahedron (Diamond)">
+    ♦️ <span class="tooltip">Diamond</span>
+  </div>
+  <div class="palette-item" data-shape="knot" title="Torus Knot">
+    🌀 <span class="tooltip">Knot</span>
+  </div>
+  <div class="palette-item" data-shape="plane" title="Flat Plane">
+    ⬜ <span class="tooltip">Plane</span>
+  </div>
+</div>
+
+<!-- 🧰 Toolbar at the bottom of the screen -->
+<div id="toolbar" class="glass-panel">
+  <!-- 🖱️ Move mode — click & drag objects around -->
+  <button class="tool-btn active" data-tool="move" title="Move [M]">✋</button>
+  <!-- ➕ Place mode — click to drop new objects -->
+  <button class="tool-btn" data-tool="place" title="Place [P]">➕</button>
+  <!-- 🔄 Rotate mode — spin objects around -->
+  <button class="tool-btn" data-tool="rotate" title="Rotate [R]">🔄</button>
+  <!-- 📏 Scale mode — make objects bigger or smaller -->
+  <button class="tool-btn" data-tool="scale" title="Scale [S]">📏</button>
+  <!-- 🗑️ Delete mode — remove objects -->
+  <button class="tool-btn" data-tool="delete" title="Delete [X]">🗑️</button>
+  <!-- 🎨 Random color -->
+  <button class="tool-btn" data-tool="color" title="Recolor [C]">🎨</button>
+</div>
+
+<!-- 📝 Shows info about the selected object -->
+<div id="selection-info" class="glass-panel"></div>
+
+<!-- ============================================================
+
+     ╔═══════════════════════════════════════╗
+     ║  🧠 SECTION 3-13: JAVASCRIPT BRAIN   ║
+     ║  This is the "thinking" part!         ║
+     ╚═══════════════════════════════════════╝
+
+     JavaScript is like the BRAIN of the app.
+     It reacts to what you do (click, drag, etc.)
+     and tells the 3D world what to show!
+     ============================================================ -->
+<script>
+
+/* ============================================================
+   ╔═══════════════════════════════════════╗
+   ║  🔧 SECTION 3: CONFIGURATION         ║
+   ║  All the settings for our app!        ║
+   ╚═══════════════════════════════════════╝
+
+   These are like the "rules" and "starting values"
+   that the rest of the code uses.
+   ============================================================ */
+
+// 🎨 Pretty colors we use for new objects
+// Each player gets a random color so you can tell who made what!
+const OBJECT_COLORS = [
+  0x7b5cff, // 💜 Purple
+  0xff6b6b, // ❤️ Coral
+  0x4ecdc4, // 💚 Teal
+  0xffd93d, // 💛 Yellow
+  0xff8a5c, // 🧡 Orange
+  0xa8e6cf, // 🌿 Mint
+  0xdda0dd, // 🌸 Plum
+  0x87ceeb, // 🩵 Sky blue
+  0xf0e68c, // 🌾 Khaki
+  0xfa8072, // 🐟 Salmon
+];
+
+// 🌍 How big is our 3D playground?
+const WORLD_SIZE = 50; // 📏 50 units in each direction
+
+// ⏱️ How often do we send updates to friends? (in milliseconds)
+const SYNC_RATE = 50; // 50ms = 20 times per second — nice and smooth!
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════╗
+   ║  🌐 SECTION 4: ROOM & USER IDs       ║
+   ║  How do we know WHO is WHO?           ║
+   ╚═══════════════════════════════════════╝
+
+   Every person gets a unique ID (like a name tag).
+   Every room gets a name so friends can find each other!
+   ============================================================ */
+
+// 🆔 Make a random short ID (like "a3f9b2")
+// Think of it like making a random license plate!
+function makeId(length = 6) {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    // 🎲 Pick a random letter or number
+    result += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return result;
+}
+
+// 🏠 Figure out what room we're in!
+// If the URL has #myroom at the end, use that.
+// Otherwise, make a new random room name.
+function getRoomId() {
+  const hash = window.location.hash.slice(1); // Remove the # symbol
+  if (hash && hash.length > 2) return hash;    // ✅ Use what's in the URL
+  const newRoom = 'void-' + makeId(6);         // 🆕 Make a new room
+  window.location.hash = newRoom;              // 📝 Put it in the URL
+  return newRoom;
+}
+
+// 🎫 Each user gets:
+const MY_USER_ID = makeId(8);       // 🆔 A unique ID
+const ROOM_ID    = getRoomId();     // 🏠 The room they're in
+const MY_COLOR   = OBJECT_COLORS[   // 🎨 A random color
+  Math.floor(Math.random() * OBJECT_COLORS.length)
+];
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════╗
+   ║  📡 SECTION 5: REAL-TIME SYNC SYSTEM     ║
+   ║  How devices talk to each other!          ║
+   ╚═══════════════════════════════════════════╝
+
+   We use BroadcastChannel for same-device tabs and
+   a simple polling system via localStorage as a fallback.
+   For TRUE multi-device sync, you'd plug in a WebSocket
+   server — but this works great for demos & local use!
+   ============================================================ */
+
+// 📦 This is our "database" of all objects in the room
+// It's a Map: objectId → { shape, position, rotation, scale, color, owner }
+const sceneObjects = new Map();
+
+// 👥 Track connected users
+const connectedUsers = new Map();
+connectedUsers.set(MY_USER_ID, { color: MY_COLOR, lastSeen: Date.now() });
+
+// 📡 BroadcastChannel — lets multiple tabs on SAME device talk!
+// (Like walkie-talkies between browser tabs 📻)
+let broadcastChannel = null;
+try {
+  broadcastChannel = new BroadcastChannel('voidroom_' + ROOM_ID);
+  broadcastChannel.onmessage = (event) => handleSyncMessage(event.data);
+} catch(e) {
+  // 🤷 Some browsers don't support this — that's OK!
+  console.log('BroadcastChannel not available, using localStorage fallback');
+}
+
+// 📤 Send a message to all other connected devices
+function broadcastMessage(msg) {
+  msg.sender = MY_USER_ID;  // 🏷️ Tag it with our ID
+  msg.room   = ROOM_ID;     // 🏠 Tag it with the room
+  msg.time   = Date.now();  // ⏰ Timestamp
+
+  // 📻 Send via BroadcastChannel (same device, different tabs)
+  if (broadcastChannel) {
+    try { broadcastChannel.postMessage(msg); } catch(e) {}
+  }
+
+  // 💾 Also save to localStorage so other windows can see it
+  // (This is like leaving a note on the fridge! 🧲)
+  try {
+    const key = 'voidroom_' + ROOM_ID + '_msg';
+    localStorage.setItem(key, JSON.stringify(msg));
+  } catch(e) {}
+}
+
+// 👂 Listen for localStorage changes (from other tabs/windows)
+window.addEventListener('storage', (e) => {
+  if (e.key === 'voidroom_' + ROOM_ID + '_msg' && e.newValue) {
+    try {
+      const msg = JSON.parse(e.newValue);
+      if (msg.sender !== MY_USER_ID) {
+        handleSyncMessage(msg);
+      }
+    } catch(err) {}
+  }
+});
+
+// 📬 Handle an incoming sync message from another user
+function handleSyncMessage(msg) {
+  if (!msg || msg.sender === MY_USER_ID) return; // 🚫 Ignore our own
+
+  // 👋 Someone joined!
+  if (msg.type === 'join') {
+    connectedUsers.set(msg.sender, { color: msg.color, lastSeen: Date.now() });
+    updateUserCount();
+    showToast(`👋 User ${msg.sender.slice(0,4)} joined!`, 'var(--accent-3)');
+    // Send them our full state
+    broadcastFullState();
+  }
+
+  // 📦 Someone placed a new object!
+  if (msg.type === 'place') {
+    addObjectToScene(msg.data, false); // false = don't re-broadcast
+  }
+
+  // 🔄 Someone moved/rotated/scaled an object!
+  if (msg.type === 'update') {
+    updateSceneObject(msg.data);
+  }
+
+  // 🗑️ Someone deleted an object!
+  if (msg.type === 'delete') {
+    removeObjectFromScene(msg.objectId, false);
+  }
+
+  // 📋 Full state sync (when you first join, you get EVERYTHING)
+  if (msg.type === 'fullstate') {
+    msg.objects.forEach(obj => addObjectToScene(obj, false));
+    connectedUsers.set(msg.sender, { color: msg.color, lastSeen: Date.now() });
+    updateUserCount();
+  }
+
+  // 👤 Heartbeat — "I'm still here!"
+  if (msg.type === 'heartbeat') {
+    connectedUsers.set(msg.sender, { color: msg.color, lastSeen: Date.now() });
+    updateUserCount();
+  }
+}
+
+// 📋 Send EVERYTHING in our scene to a new joiner
+function broadcastFullState() {
+  const objects = [];
+  sceneObjects.forEach((data, id) => {
+    objects.push(serializeObject(id, data));
+  });
+  broadcastMessage({ type: 'fullstate', objects, color: MY_COLOR });
+}
+
+// 📦 Turn an object into a simple data package we can send
+function serializeObject(id, data) {
+  return {
+    id,
+    shape: data.shape,
+    color: data.mesh.material.color.getHex(),
+    px: data.mesh.position.x,
+    py: data.mesh.position.y,
+    pz: data.mesh.position.z,
+    rx: data.mesh.rotation.x,
+    ry: data.mesh.rotation.y,
+    rz: data.mesh.rotation.z,
+    sx: data.mesh.scale.x,
+    sy: data.mesh.scale.y,
+    sz: data.mesh.scale.z,
+    owner: data.owner,
+  };
+}
+
+// 💓 Send a heartbeat every 3 seconds so others know we're alive
+setInterval(() => {
+  broadcastMessage({ type: 'heartbeat', color: MY_COLOR });
+
+  // 🧹 Remove users who haven't been seen in 10 seconds
+  const now = Date.now();
+  connectedUsers.forEach((info, uid) => {
+    if (uid !== MY_USER_ID && now - info.lastSeen > 10000) {
+      connectedUsers.delete(uid);
+      showToast(`👋 User ${uid.slice(0,4)} left`, 'var(--accent-2)');
+    }
+  });
+  updateUserCount();
+}, 3000);
+
+// 📊 Update the user count display
+function updateUserCount() {
+  const el = document.getElementById('user-count');
+  if (el) el.textContent = `👤 ${connectedUsers.size}`;
+}
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════╗
+   ║  🌍 SECTION 6: THREE.JS 3D WORLD SETUP  ║
+   ║  Building the actual 3D universe!        ║
+   ╚═══════════════════════════════════════════╝
+
+   Three.js needs 3 things:
+   1. A SCENE  — the empty world 🌍
+   2. A CAMERA — your eyes 👀
+   3. A RENDERER — the artist that paints it 🎨
+   ============================================================ */
+
+// 🌍 Create the empty 3D world
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x07070c);
+
+// 🌫️ Add fog so far-away things fade into darkness (spooky!)
+scene.fog = new THREE.FogExp2(0x07070c, 0.015);
+
+// 👀 Create the camera (your "eyes" in the 3D world)
+// PerspectiveCamera(field-of-view, aspect-ratio, near-clip, far-clip)
+const camera = new THREE.PerspectiveCamera(
+  60,                                    // 👁️ How wide you can see (degrees)
+  window.innerWidth / window.innerHeight, // 📐 Screen shape
+  0.1,                                   // 📏 Closest thing you can see
+  200                                    // 📏 Farthest thing you can see
+);
+camera.position.set(0, 8, 15); // 📍 Start position (x, up, back)
+camera.lookAt(0, 0, 0);        // 👀 Look at the center
+
+// 🎨 Create the renderer (the "artist" that draws everything)
+const renderer = new THREE.WebGLRenderer({
+  antialias: true,   // ✨ Smooth edges
+  alpha: false,      // 🚫 No transparency needed
+  powerPreference: 'high-performance', // 🚀 Use the best GPU!
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // 📱 Retina but not too crazy
+renderer.shadowMap.enabled = true;        // 🌑 Enable shadows!
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; // 🌥️ Soft shadows
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.9;
+
+// 🖼️ Put the canvas into the page
+document.getElementById('scene-container').appendChild(renderer.domElement);
+
+// 💡 --- LIGHTING --- 💡
+// Like setting up studio lights for a photo shoot! 📸
+
+// 🌤️ Ambient light — soft light everywhere (so nothing is pure black)
+const ambientLight = new THREE.AmbientLight(0x404060, 0.6);
+scene.add(ambientLight);
+
+// ☀️ Main directional light — like the sun!
+const sunLight = new THREE.DirectionalLight(0xffeedd, 0.8);
+sunLight.position.set(10, 20, 10);
+sunLight.castShadow = true; // 🌑 This light creates shadows
+sunLight.shadow.mapSize.width = 2048;
+sunLight.shadow.mapSize.height = 2048;
+sunLight.shadow.camera.near = 0.5;
+sunLight.shadow.camera.far = 60;
+sunLight.shadow.camera.left = -30;
+sunLight.shadow.camera.right = 30;
+sunLight.shadow.camera.top = 30;
+sunLight.shadow.camera.bottom = -30;
+scene.add(sunLight);
+
+// 💜 Accent light — adds a cool purple glow from below
+const accentLight = new THREE.PointLight(0x7b5cff, 0.4, 40);
+accentLight.position.set(-5, 2, -5);
+scene.add(accentLight);
+
+// 🟣 Another accent — teal glow from the other side
+const accentLight2 = new THREE.PointLight(0x4ecdc4, 0.3, 40);
+accentLight2.position.set(8, 3, 8);
+scene.add(accentLight2);
+
+// 📐 --- GRID FLOOR --- 📐
+// A glowing grid so you know where "ground" is!
+
+const gridHelper = new THREE.GridHelper(WORLD_SIZE, WORLD_SIZE, 0x2a2a4a, 0x1a1a2e);
+gridHelper.position.y = 0;
+scene.add(gridHelper);
+
+// 🟫 Invisible floor plane (so objects can land on something!)
+const floorGeo = new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE);
+const floorMat = new THREE.MeshStandardMaterial({
+  color: 0x0d0d1a,
+  roughness: 0.9,
+  transparent: true,
+  opacity: 0.5,
+});
+const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+floorMesh.rotation.x = -Math.PI / 2; // 🔄 Lay it flat
+floorMesh.position.y = -0.01;        // 📏 Just below the grid
+floorMesh.receiveShadow = true;       // 🌑 Shadows land on this
+floorMesh.userData.isFloor = true;     // 🏷️ Tag it as "the floor"
+scene.add(floorMesh);
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════╗
+   ║  📦 SECTION 7: OBJECT CREATION SYSTEM    ║
+   ║  How we make 3D shapes appear!           ║
+   ╚═══════════════════════════════════════════╝
+
+   Each shape type has a "recipe" — a Geometry (the shape)
+   and a Material (the "paint" / how light bounces off it).
+   ============================================================ */
+
+// 🏭 Create a 3D geometry (shape) based on the name
+// Think of this like a cookie cutter! 🍪
+function createGeometry(shape) {
+  switch (shape) {
+    case 'cube':        return new THREE.BoxGeometry(1, 1, 1);
+    case 'sphere':      return new THREE.SphereGeometry(0.6, 32, 32);
+    case 'cylinder':    return new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+    case 'cone':        return new THREE.ConeGeometry(0.5, 1.2, 32);
+    case 'torus':       return new THREE.TorusGeometry(0.5, 0.2, 16, 48);
+    case 'tetra':       return new THREE.TetrahedronGeometry(0.7);
+    case 'icosa':       return new THREE.IcosahedronGeometry(0.6);
+    case 'octahedron':  return new THREE.OctahedronGeometry(0.6);
+    case 'knot':        return new THREE.TorusKnotGeometry(0.4, 0.15, 100, 16);
+    case 'plane':       return new THREE.PlaneGeometry(1.5, 1.5);
+    default:            return new THREE.BoxGeometry(1, 1, 1);
+  }
+}
+
+// 🎨 Give an object a nice material (how it looks under light)
+function createMaterial(colorHex) {
+  return new THREE.MeshStandardMaterial({
+    color: colorHex,
+    roughness: 0.3,    // 🪞 Kinda shiny
+    metalness: 0.1,    // 🔩 Slightly metallic
+    flatShading: false,
+  });
+}
+
+// ➕ Add a new object to the 3D scene!
+// This is the BIG function that actually puts shapes in the world 🌍
+function addObjectToScene(data, shouldBroadcast = true) {
+  const id = data.id || ('obj_' + makeId(8));
+
+  // 🚫 Don't add duplicates!
+  if (sceneObjects.has(id)) {
+    updateSceneObject(data);
+    return;
+  }
+
+  // 🏭 Build the shape
+  const geometry = createGeometry(data.shape);
+  const material = createMaterial(data.color || MY_COLOR);
+  const mesh = new THREE.Mesh(geometry, material);
+
+  // 📍 Position it
+  mesh.position.set(data.px || 0, data.py || 0.5, data.pz || 0);
+
+  // 🔄 Rotate it
+  if (data.rx !== undefined) mesh.rotation.set(data.rx, data.ry, data.rz);
+
+  // 📏 Scale it
+  if (data.sx !== undefined) mesh.scale.set(data.sx, data.sy, data.sz);
+
+  // 🌑 It can cast and receive shadows!
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+
+  // 🏷️ Remember its ID and owner
+  mesh.userData.objectId = id;
+  mesh.userData.owner = data.owner || MY_USER_ID;
+
+  // 📚 Add to our tracking Map and to the 3D scene
+  sceneObjects.set(id, {
+    mesh,
+    shape: data.shape,
+    owner: data.owner || MY_USER_ID,
+  });
+  scene.add(mesh);
+
+  // 📡 Tell other users about it!
+  if (shouldBroadcast) {
+    broadcastMessage({
+      type: 'place',
+      data: serializeObject(id, sceneObjects.get(id)),
+    });
+  }
+
+  return id;
+}
+
+// 🔄 Update an existing object's position/rotation/scale
+function updateSceneObject(data) {
+  const entry = sceneObjects.get(data.id);
+  if (!entry) return;
+
+  const mesh = entry.mesh;
+  if (data.px !== undefined) mesh.position.set(data.px, data.py, data.pz);
+  if (data.rx !== undefined) mesh.rotation.set(data.rx, data.ry, data.rz);
+  if (data.sx !== undefined) mesh.scale.set(data.sx, data.sy, data.sz);
+  if (data.color !== undefined) mesh.material.color.setHex(data.color);
+}
+
+// 🗑️ Remove an object from the scene
+function removeObjectFromScene(objectId, shouldBroadcast = true) {
+  const entry = sceneObjects.get(objectId);
+  if (!entry) return;
+
+  scene.remove(entry.mesh);
+  entry.mesh.geometry.dispose();
+  entry.mesh.material.dispose();
+  sceneObjects.delete(objectId);
+
+  if (shouldBroadcast) {
+    broadcastMessage({ type: 'delete', objectId });
+  }
+}
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════════════╗
+   ║  🖱️ SECTION 8: UNIVERSAL INPUT HANDLER          ║
+   ║  Works with Mouse, Touch, Pen — EVERYTHING!      ║
+   ╚═══════════════════════════════════════════════════╝
+
+   This is the most complex part! We need to handle:
+   👆 Touch (phones, tablets, Galaxy Fold)
+   🖱️ Mouse (desktop computers)
+   ✏️ Stylus/Pen (Surface, iPad with Pencil)
+   ⌨️ Keyboard shortcuts
+   🎮 Gamepad (controllers!)
+
+   All of them need to do the same things:
+   - Pick up objects
+   - Move them around
+   - Place new ones
+   - Look around the 3D world
+   ============================================================ */
+
+// 📊 Track the current state of our input system
+let currentTool    = 'move';      // 🔧 What mode are we in?
+let selectedShape  = 'cube';      // 🟧 What shape to place next?
+let selectedObject = null;        // 🎯 Which object are we holding?
+let isDragging     = false;       // 🖱️ Are we dragging right now?
+let isOrbiting     = false;       // 🌎 Are we rotating the camera?
+
+// 🖱️ Mouse / touch position tracking
+let pointerX = 0;                 // ↔️ Horizontal position
+let pointerY = 0;                 // ↕️ Vertical position
+let pointerDownX = 0;             // ↔️ Where the press STARTED
+let pointerDownY = 0;             // ↕️ Where the press STARTED
+let lastPointerX = 0;
+let lastPointerY = 0;
+
+// 🌎 Camera orbit tracking
+let orbitTheta = 0;               // ↔️ Horizontal angle
+let orbitPhi   = Math.PI / 4;     // ↕️ Vertical angle
+let orbitRadius = 18;             // 📏 How far from center
+let orbitTarget = new THREE.Vector3(0, 0, 0); // 🎯 What we're looking at
+
+// 📌 Pinch-to-zoom tracking (for phones with 2 fingers)
+let lastPinchDist = 0;
+
+// 🎯 Raycaster — shoots an invisible laser from the camera
+// to figure out what you're pointing at! 🔫➡️🟧
+const raycaster  = new THREE.Raycaster();
+const pointer2D  = new THREE.Vector2();
+const dragPlane  = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); // ⬆️ Horizontal plane
+const dragOffset = new THREE.Vector3();
+const intersection = new THREE.Vector3();
+
+// 🎯 Figure out what the user is pointing at
+function getHitObject(x, y) {
+  // Convert screen position to Three.js coordinates (-1 to +1)
+  pointer2D.x = (x / window.innerWidth) * 2 - 1;
+  pointer2D.y = -(y / window.innerHeight) * 2 + 1;
+
+  // 🔫 Shoot the ray from camera through the pointer position
+  raycaster.setFromCamera(pointer2D, camera);
+
+  // 🎯 Check which objects the ray hits
+  const meshes = [];
+  sceneObjects.forEach(entry => meshes.push(entry.mesh));
+  const hits = raycaster.intersectObjects(meshes, false);
+
+  return hits.length > 0 ? hits[0] : null;
+}
+
+// 📍 Get the 3D point on the floor where you're pointing
+function getFloorPoint(x, y) {
+  pointer2D.x = (x / window.innerWidth) * 2 - 1;
+  pointer2D.y = -(y / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(pointer2D, camera);
+  const hit = new THREE.Vector3();
+  raycaster.ray.intersectPlane(dragPlane, hit);
+  return hit;
+}
+
+// ════════════════════════════════════════════
+// 👇 POINTER DOWN — When you press/click/tap
+// ════════════════════════════════════════════
+function onPointerDown(x, y, button = 0, pointerId = 0) {
+  pointerX = x;
+  pointerY = y;
+  pointerDownX = x;
+  pointerDownY = y;
+  lastPointerX = x;
+  lastPointerY = y;
+
+  // 🖱️ Right-click or two-finger = orbit the camera
+  if (button === 2) {
+    isOrbiting = true;
+    return;
+  }
+
+  // 🔧 What tool are we using?
+  if (currentTool === 'place') {
+    // ➕ PLACE MODE: Drop a new object at the floor point
+    const pt = getFloorPoint(x, y);
+    if (pt) {
+      addObjectToScene({
+        shape: selectedShape,
+        color: MY_COLOR,
+        px: Math.round(pt.x * 2) / 2, // 📐 Snap to half-unit grid
+        py: 0.5,
+        pz: Math.round(pt.z * 2) / 2,
+        owner: MY_USER_ID,
+      });
+      showToast('✅ Placed ' + selectedShape, 'var(--accent-3)');
+    }
+    return;
+  }
+
+  // 🎯 Check if we clicked on an object
+  const hit = getHitObject(x, y);
+
+  if (hit && !hit.object.userData.isFloor) {
+    const objId = hit.object.userData.objectId;
+    const entry = sceneObjects.get(objId);
+
+    if (currentTool === 'delete') {
+      // 🗑️ DELETE MODE: Remove the object!
+      removeObjectFromScene(objId);
+      showToast('🗑️ Deleted', 'var(--accent-2)');
+      return;
+    }
+
+    if (currentTool === 'color') {
+      // 🎨 COLOR MODE: Give it a random new color!
+      const newColor = OBJECT_COLORS[Math.floor(Math.random() * OBJECT_COLORS.length)];
+      hit.object.material.color.setHex(newColor);
+      broadcastMessage({
+        type: 'update',
+        data: { ...serializeObject(objId, entry), color: newColor },
+      });
+      showToast('🎨 Recolored!', 'var(--accent-4)');
+      return;
+    }
+
+    // ✋ MOVE/ROTATE/SCALE: Start dragging the object!
+    selectedObject = { id: objId, mesh: hit.object, entry };
+    isDragging = true;
+    document.body.classList.add('grabbing');
+
+    // 📐 Calculate the offset so dragging feels natural
+    const floorPt = getFloorPoint(x, y);
+    if (floorPt) {
+      dragOffset.copy(hit.object.position).sub(floorPt);
+    }
+
+    updateSelectionInfo();
+
+  } else {
+    // 🌎 Clicked on empty space = orbit the camera
+    selectedObject = null;
+    isDragging = false;
+    isOrbiting = true;
+    hideSelectionInfo();
+  }
+}
+
+// ════════════════════════════════════════════
+// 👉 POINTER MOVE — When you drag/swipe/slide
+// ════════════════════════════════════════════
+function onPointerMove(x, y) {
+  const dx = x - lastPointerX; // ↔️ How far did we move horizontally?
+  const dy = y - lastPointerY; // ↕️ How far did we move vertically?
+  lastPointerX = x;
+  lastPointerY = y;
+  pointerX = x;
+  pointerY = y;
+
+  // 🌎 ORBITING THE CAMERA (looking around)
+  if (isOrbiting && !isDragging) {
+    orbitTheta -= dx * 0.005; // ↔️ Horizontal look
+    orbitPhi   -= dy * 0.005; // ↕️ Vertical look
+
+    // 🚧 Don't let the camera go upside down!
+    orbitPhi = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, orbitPhi));
+    return;
+  }
+
+  // 🖱️ DRAGGING AN OBJECT
+  if (isDragging && selectedObject) {
+    if (currentTool === 'move' || currentTool === 'place') {
+      // ✋ Move the object to where you're pointing
+      const pt = getFloorPoint(x, y);
+      if (pt) {
+        selectedObject.mesh.position.x = pt.x + dragOffset.x;
+        selectedObject.mesh.position.z = pt.z + dragOffset.z;
+
+        // 📡 Tell everyone about the move!
+        broadcastMessage({
+          type: 'update',
+          data: serializeObject(selectedObject.id, selectedObject.entry),
+        });
+      }
+    } else if (currentTool === 'rotate') {
+      // 🔄 Rotate the object
+      selectedObject.mesh.rotation.y += dx * 0.01;
+      selectedObject.mesh.rotation.x += dy * 0.01;
+
+      broadcastMessage({
+        type: 'update',
+        data: serializeObject(selectedObject.id, selectedObject.entry),
+      });
+    } else if (currentTool === 'scale') {
+      // 📏 Scale the object (drag right = bigger, left = smaller)
+      const scaleDelta = 1 + dx * 0.005;
+      selectedObject.mesh.scale.multiplyScalar(scaleDelta);
+      // 🚧 Don't let it get too tiny or too huge!
+      selectedObject.mesh.scale.clampScalar(0.1, 10);
+
+      broadcastMessage({
+        type: 'update',
+        data: serializeObject(selectedObject.id, selectedObject.entry),
+      });
+    }
+    updateSelectionInfo();
+  }
+
+  // 🎯 Update crosshair hover state
+  if (!isDragging && !isOrbiting) {
+    const hit = getHitObject(x, y);
+    const ch = document.getElementById('crosshair');
+    if (hit && !hit.object.userData.isFloor) {
+      ch.classList.add('hovering');
+    } else {
+      ch.classList.remove('hovering');
+    }
+  }
+}
+
+// ════════════════════════════════════════════
+// 👆 POINTER UP — When you release / let go
+// ════════════════════════════════════════════
+function onPointerUp() {
+  isDragging = false;
+  isOrbiting = false;
+  document.body.classList.remove('grabbing');
+}
+
+
+// ════════════════════════════════════════════
+// 🖱️ MOUSE EVENTS (desktop computers)
+// ════════════════════════════════════════════
+
+const canvas = renderer.domElement;
+
+canvas.addEventListener('pointerdown', (e) => {
+  // Don't handle if it came from a UI button
+  if (e.target !== canvas) return;
+  e.preventDefault();
+  onPointerDown(e.clientX, e.clientY, e.button, e.pointerId);
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  e.preventDefault();
+  onPointerMove(e.clientX, e.clientY);
+});
+
+canvas.addEventListener('pointerup', (e) => {
+  e.preventDefault();
+  onPointerUp();
+});
+
+canvas.addEventListener('pointercancel', () => onPointerUp());
+
+// 🖱️ Right-click: don't show the browser menu!
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// 🖱️ Scroll wheel: zoom in/out
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  orbitRadius += e.deltaY * 0.01;
+  orbitRadius = Math.max(3, Math.min(50, orbitRadius)); // 🚧 Limits!
+}, { passive: false });
+
+// 👆 TOUCH: Pinch-to-zoom (two fingers getting closer/farther)
+canvas.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 2) {
+    // 📏 Measure the distance between two fingers
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    lastPinchDist = Math.sqrt(dx * dx + dy * dy);
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (e) => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const delta = lastPinchDist - dist;
+    orbitRadius += delta * 0.05;
+    orbitRadius = Math.max(3, Math.min(50, orbitRadius));
+    lastPinchDist = dist;
+
+    // 🌎 Two-finger pan = orbit
+    isOrbiting = true;
+    isDragging = false;
+    const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    onPointerMove(midX, midY);
+  }
+}, { passive: false });
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════════════════════╗
+   ║  ⌨️ KEYBOARD SHORTCUTS                                   ║
+   ║  Quick keys so power users can fly through the app!       ║
+   ╚═══════════════════════════════════════════════════════════╝
+   ============================================================ */
+
+window.addEventListener('keydown', (e) => {
+  const key = e.key.toLowerCase();
+
+  // 🔧 Tool switching
+  if (key === 'm') setTool('move');
+  if (key === 'p') setTool('place');
+  if (key === 'r') setTool('rotate');
+  if (key === 's') setTool('scale');
+  if (key === 'x' || key === 'delete' || key === 'backspace') setTool('delete');
+  if (key === 'c') setTool('color');
+
+  // 📏 Move selected object with arrow keys
+  if (selectedObject) {
+    const step = e.shiftKey ? 0.1 : 0.5; // ⇧ Shift = fine control
+    if (key === 'arrowleft')  selectedObject.mesh.position.x -= step;
+    if (key === 'arrowright') selectedObject.mesh.position.x += step;
+    if (key === 'arrowup')    selectedObject.mesh.position.z -= step;
+    if (key === 'arrowdown')  selectedObject.mesh.position.z += step;
+    if (key === 'q') selectedObject.mesh.position.y += step; // ⬆️ Up
+    if (key === 'e') selectedObject.mesh.position.y -= step; // ⬇️ Down
+
+    // 📡 Broadcast the change
+    broadcastMessage({
+      type: 'update',
+      data: serializeObject(selectedObject.id, selectedObject.entry),
+    });
+    updateSelectionInfo();
+  }
+
+  // 🔢 Number keys 1-9 select shapes from the palette
+  const num = parseInt(key);
+  if (num >= 1 && num <= 9) {
+    const items = document.querySelectorAll('.palette-item');
+    if (items[num - 1]) {
+      items.forEach(i => i.classList.remove('selected'));
+      items[num - 1].classList.add('selected');
+      selectedShape = items[num - 1].dataset.shape;
+    }
+  }
+});
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════════════════╗
+   ║  🎮 SECTION 9: GAMEPAD SUPPORT                      ║
+   ║  Use a game controller to move stuff!                ║
+   ╚═══════════════════════════════════════════════════════╝
+
+   The Gamepad API lets us read button presses and
+   joystick movements from Xbox, PlayStation, etc.!
+   ============================================================ */
+
+function pollGamepad() {
+  const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+  for (const gp of gamepads) {
+    if (!gp) continue; // Skip empty slots
+
+    // 🕹️ Left stick = orbit camera
+    const lx = gp.axes[0] || 0; // ↔️ Left/right
+    const ly = gp.axes[1] || 0; // ↕️ Up/down
+    if (Math.abs(lx) > 0.15) orbitTheta -= lx * 0.03;
+    if (Math.abs(ly) > 0.15) orbitPhi -= ly * 0.03;
+    orbitPhi = Math.max(0.1, Math.min(Math.PI / 2 - 0.05, orbitPhi));
+
+    // 🕹️ Right stick = move selected object
+    const rx = gp.axes[2] || 0;
+    const ry = gp.axes[3] || 0;
+    if (selectedObject) {
+      if (Math.abs(rx) > 0.15) selectedObject.mesh.position.x += rx * 0.1;
+      if (Math.abs(ry) > 0.15) selectedObject.mesh.position.z += ry * 0.1;
+
+      broadcastMessage({
+        type: 'update',
+        data: serializeObject(selectedObject.id, selectedObject.entry),
+      });
+    }
+
+    // 🔼🔽 D-pad or triggers = zoom
+    if (gp.buttons[6]?.pressed) orbitRadius += 0.2;  // LT = zoom out
+    if (gp.buttons[7]?.pressed) orbitRadius -= 0.2;  // RT = zoom in
+    orbitRadius = Math.max(3, Math.min(50, orbitRadius));
+
+    // 🅰️ A button = place object
+    if (gp.buttons[0]?.pressed) {
+      setTool('place');
+      const pt = getFloorPoint(window.innerWidth / 2, window.innerHeight / 2);
+      if (pt) {
+        addObjectToScene({
+          shape: selectedShape,
+          color: MY_COLOR,
+          px: Math.round(pt.x * 2) / 2,
+          py: 0.5,
+          pz: Math.round(pt.z * 2) / 2,
+          owner: MY_USER_ID,
+        });
+      }
+    }
+
+    // 🅱️ B button = delete mode
+    if (gp.buttons[1]?.pressed) setTool('delete');
+
+    // 🅧 X button = move mode
+    if (gp.buttons[2]?.pressed) setTool('move');
+  }
+}
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════╗
+   ║  🎥 SECTION 10: CAMERA CONTROLS         ║
+   ║  How you look around the 3D world!       ║
+   ╚═══════════════════════════════════════════╝
+
+   The camera orbits around a center point.
+   Imagine swinging on a rope around a pole —
+   you're the camera, the pole is the center! 🏗️🧗
+   ============================================================ */
+
+function updateCamera() {
+  // 📐 Convert orbit angles to actual 3D position
+  // (This is like converting "how far around the circle?" into x,y,z)
+  camera.position.x = orbitTarget.x + orbitRadius * Math.sin(orbitPhi) * Math.sin(orbitTheta);
+  camera.position.y = orbitTarget.y + orbitRadius * Math.cos(orbitPhi);
+  camera.position.z = orbitTarget.z + orbitRadius * Math.sin(orbitPhi) * Math.cos(orbitTheta);
+
+  // 👀 Always look at the center
+  camera.lookAt(orbitTarget);
+}
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════╗
+   ║  🖼️ SECTION 11: UI PANELS & MENUS       ║
+   ║  All the buttons and displays!           ║
+   ╚═══════════════════════════════════════════╝
+   ============================================================ */
+
+// 🔧 Switch which tool is active
+function setTool(toolName) {
+  currentTool = toolName;
+
+  // 🎨 Update button highlights
+  document.querySelectorAll('.tool-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tool === toolName);
+  });
+
+  // 🖱️ Change cursor
+  document.body.classList.remove('placing');
+  if (toolName === 'place') document.body.classList.add('placing');
+
+  showToast(`🔧 Tool: ${toolName}`, 'var(--accent-1)');
+}
+
+// 🧰 Wire up toolbar buttons
+document.querySelectorAll('.tool-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setTool(btn.dataset.tool);
+  });
+});
+
+// 📋 Wire up palette items (shape picker)
+document.querySelectorAll('.palette-item').forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('.palette-item').forEach(i => i.classList.remove('selected'));
+    item.classList.add('selected');
+    selectedShape = item.dataset.shape;
+    showToast(`📦 Shape: ${selectedShape}`, 'var(--accent-4)');
+  });
+});
+
+// 🏷️ Room ID — click to copy invite link!
+document.getElementById('room-id').textContent = 'room:' + ROOM_ID;
+document.getElementById('room-id').addEventListener('click', () => {
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('📋 Link copied! Share with friends!', 'var(--accent-3)');
+  }).catch(() => {
+    showToast('🔗 ' + url, 'var(--accent-3)');
+  });
+});
+
+// 📝 Show info about the selected object
+function updateSelectionInfo() {
+  if (!selectedObject) return;
+  const el = document.getElementById('selection-info');
+  const m = selectedObject.mesh;
+  el.style.display = 'block';
+  el.textContent = `📦 ${selectedObject.entry.shape} | pos(${m.position.x.toFixed(1)}, ${m.position.y.toFixed(1)}, ${m.position.z.toFixed(1)}) | [${currentTool}]`;
+}
+
+function hideSelectionInfo() {
+  document.getElementById('selection-info').style.display = 'none';
+}
+
+// 💬 Show a toast notification
+function showToast(message, bgColor = 'var(--accent-1)') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast glass-panel';
+  toast.style.borderColor = bgColor;
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  // 🧹 Clean up after the animation finishes
+  setTimeout(() => toast.remove(), 3000);
+}
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════╗
+   ║  🔄 SECTION 12: ANIMATION LOOP          ║
+   ║  This runs 60 times per second!          ║
+   ╚═══════════════════════════════════════════╝
+
+   requestAnimationFrame is like a heartbeat 💓
+   for the 3D world — it redraws everything over
+   and over to create smooth movement!
+   ============================================================ */
+
+let frameCount = 0; // 📊 Count frames for subtle animations
+
+function animate() {
+  requestAnimationFrame(animate); // 🔁 Call ourselves again next frame!
+  frameCount++;
+
+  // 🎮 Check for gamepad input
+  pollGamepad();
+
+  // 🎥 Update the camera position
+  updateCamera();
+
+  // 🌟 Subtle floating animation for all objects
+  sceneObjects.forEach((entry) => {
+    // 🫧 Gentle bobbing up and down
+    entry.mesh.position.y += Math.sin(frameCount * 0.02 + entry.mesh.position.x) * 0.0005;
+  });
+
+  // 🎨 Render the frame!
+  renderer.render(scene, camera);
+}
+
+
+/* ============================================================
+   ╔═══════════════════════════════════════════╗
+   ║  🚀 SECTION 13: APP STARTUP             ║
+   ║  Blast off! Everything begins here!      ║
+   ╚═══════════════════════════════════════════╝
+   ============================================================ */
+
+// 📐 Handle window resize (phone rotation, etc.)
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// 🌍 Add a few starter objects so the room isn't empty!
+addObjectToScene({ shape: 'cube',    color: 0x7b5cff, px: -2, py: 0.5, pz: 0 }, false);
+addObjectToScene({ shape: 'sphere',  color: 0x4ecdc4, px: 0,  py: 0.6, pz: -2 }, false);
+addObjectToScene({ shape: 'torus',   color: 0xff6b6b, px: 2,  py: 0.5, pz: 1 }, false);
+addObjectToScene({ shape: 'cone',    color: 0xffd93d, px: -1, py: 0.6, pz: 3 }, false);
+addObjectToScene({ shape: 'icosa',   color: 0xff8a5c, px: 3,  py: 0.6, pz: -1 }, false);
+
+// 💓 Announce ourselves to other users
+broadcastMessage({ type: 'join', color: MY_COLOR });
+
+// ⏳ Hide the loading screen
+setTimeout(() => {
+  const loadEl = document.getElementById('loading');
+  loadEl.style.opacity = '0';
+  setTimeout(() => loadEl.style.display = 'none', 600);
+}, 800);
+
+// 🎬 Start the animation loop!
+animate();
+
+// 🎉 Welcome message
+setTimeout(() => {
+  showToast('🌌 Welcome to Void Room! Click to select, use toolbar below.', 'var(--accent-1)');
+}, 1500);
+
+console.log(`
+╔══════════════════════════════════════════╗
+║  🌌 VOID ROOM — Running!                ║
+║  Room: ${ROOM_ID.padEnd(32)}║
+║  User: ${MY_USER_ID.padEnd(32)}║
+║                                          ║
+║  Share your URL to invite friends! 🔗    ║
+╚══════════════════════════════════════════╝
+`);
+
+</script>
+
+<!--
+┌─────────────────────────────────────────┐
+│  📖 TABLE OF CONTENTS (BOTTOM)          │
+│                                         │
+│  1. 🎨 STYLES & THEME                  │
+│  2. 🏗️ HTML STRUCTURE                  │
+│  3. 🔧 CONFIGURATION & GLOBALS         │
+│  4. 🆔 ROOM & USER ID SYSTEM           │
+│  5. 📡 REAL-TIME SYNC (WebRTC/WS)      │
+│  6. 🌍 THREE.JS 3D WORLD SETUP         │
+│  7. 📦 OBJECT CREATION SYSTEM           │
+│  8. 🖱️ UNIVERSAL INPUT HANDLER         │
+│  9. 🎮 GAMEPAD SUPPORT                  │
+│  10. 🎥 CAMERA CONTROLS                │
+│  11. 🖼️ UI PANELS & MENUS              │
+│  12. 🔄 ANIMATION LOOP                  │
+│  13. 🚀 APP STARTUP                     │
+│                                         │
+│  Total: ~1000 lines of pure magic! ✨    │
+└─────────────────────────────────────────┘
+-->
+</body>
+</html>

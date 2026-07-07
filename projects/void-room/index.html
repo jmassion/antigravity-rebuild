@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   🌌  V O I D   R O O M  —  C O M B I N E D   E D I T I O N  🌌          ║
+║                                                                              ║
+║   Two-in-one: 🎮 3D Collaborative Space + 📖 Device Setup Dashboard        ║
+║                                                                              ║
+║   Works on: 🍎 Apple · 🪟 Windows · 🤖 Android · 📺 Smart TVs            ║
+║   Input:    🖱️ Mouse · 👆 Touch · ⌨️ Keyboard · 🎮 Gamepad · ✏️ Pen     ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────┐
+│  📖 TABLE OF CONTENTS (TOP)                                 │
+│                                                              │
+│  PART A — 🚀 SHELL (this outer page)                        │
+│    A1. 🎨 Shell Styles & Tab Navigation                     │
+│    A2. 🏗️ Shell HTML (tab bar + iframe containers)          │
+│    A3. 🔧 Shell JavaScript (tab switching logic)            │
+│                                                              │
+│  PART B — 🎮 3D COLLABORATIVE SPACE (embedded)              │
+│    B1. 🎨 3D App Styles & Theme                             │
+│    B2. 🏗️ 3D App HTML Structure                             │
+│    B3. 🔧 Config & Globals                                  │
+│    B4. 🆔 Room & User ID System                             │
+│    B5. 📡 Real-Time Sync                                    │
+│    B6. 🌍 Three.js 3D World Setup                           │
+│    B7. 📦 Object Creation System                             │
+│    B8. 🖱️ Universal Input Handler                           │
+│    B9. 🎮 Gamepad Support                                   │
+│    B10. 🎥 Camera Controls                                  │
+│    B11. 🖼️ UI Panels & Menus                                │
+│    B12. 🔄 Animation Loop                                    │
+│    B13. 🚀 3D App Startup                                   │
+│                                                              │
+│  PART C — 📖 DEVICE SETUP DASHBOARD (embedded)              │
+│    C1. 🎨 Dashboard Styles & Fonts                          │
+│    C2. 🏗️ Dashboard HTML Layout                             │
+│    C3. 📱 All Device Data (26 devices, 8 categories)        │
+│    C4. 🔧 Hosting Guide                                     │
+│    C5. ✨ Search, Filter & Interactivity                     │
+│    C6. 🚀 Dashboard Startup                                 │
+│                                                              │
+│  📖 TABLE OF CONTENTS (BOTTOM) ↓↓↓                         │
+└──────────────────────────────────────────────────────────────┘
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#060610">
+<title>🌌 Void Room — 3D Space + Device Guide</title>
+
+<!-- ════════════════════════════════════════════════════════════
+
+     ╔═══════════════════════════════════════════════════════╗
+     ║  A1. 🎨 SHELL STYLES & TAB NAVIGATION               ║
+     ║  The outer frame that holds everything together!      ║
+     ╚═══════════════════════════════════════════════════════╝
+
+     Think of this like a picture frame 🖼️ — it holds
+     two different "pictures" (the 3D app and the dashboard)
+     and lets you switch between them with tabs!
+     ════════════════════════════════════════════════════════════ -->
+<style>
+
+/* 🎨 --- SHELL COLOR PALETTE --- 🎨 */
+:root {
+  --shell-bg: #060610;
+  --shell-surface: #0d0d1c;
+  --shell-border: rgba(100, 80, 200, 0.2);
+  --shell-accent: #8b6cff;
+  --shell-accent2: #ff5ea0;
+  --shell-text: #eae8f4;
+  --shell-text-dim: #6b6880;
+}
+
+/* 🧹 Clean slate */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+/* 📄 The whole page */
+body {
+  background: var(--shell-bg);
+  font-family: 'Courier New', monospace;
+  overflow: hidden;      /* 🚫 No outer scrolling — each tab handles its own */
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 🔝 --- TAB BAR --- 🔝
+   The navigation strip at the top of the page
+   with two tabs: "3D Space" and "Device Guide" */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  height: 46px;
+  min-height: 46px;
+  background: var(--shell-surface);
+  border-bottom: 1px solid var(--shell-border);
+  padding: 0 8px;
+  z-index: 9999;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* 🌌 The logo / brand in the tab bar */
+.tab-bar .logo {
+  font-size: 13px;
+  letter-spacing: 3px;
+  font-weight: 700;
+  color: var(--shell-accent);
+  padding: 0 12px 0 8px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* 🏷️ Individual tab buttons */
+.tab-btn {
+  padding: 8px 20px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--shell-text-dim);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.tab-btn:hover {
+  color: var(--shell-text);
+  background: rgba(139, 108, 255, 0.08);
+}
+
+/* ✨ The ACTIVE tab — highlighted with a glow */
+.tab-btn.active {
+  color: #fff;
+  background: rgba(139, 108, 255, 0.15);
+  border-color: rgba(139, 108, 255, 0.3);
+  box-shadow: 0 0 12px rgba(139, 108, 255, 0.1);
+}
+
+/* 📱 Smaller tabs on tiny phone screens */
+@media (max-width: 420px) {
+  .tab-btn { padding: 6px 12px; font-size: 11px; }
+  .tab-bar .logo { font-size: 11px; letter-spacing: 2px; padding: 0 6px; }
+  .tab-bar { height: 40px; min-height: 40px; }
+}
+
+/* 📺 The content area — fills everything below the tab bar */
+.tab-content {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 🖼️ Each tab's iframe — fills the whole content area */
+.tab-frame {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: var(--shell-bg);
+  /* 🙈 Hidden by default */
+  display: none;
+}
+
+/* 👀 The ACTIVE tab's iframe — visible! */
+.tab-frame.active {
+  display: block;
+}
+
+</style>
+</head>
+
+<!-- ════════════════════════════════════════════════════════════
+
+     ╔═══════════════════════════════════════════════════════╗
+     ║  A2. 🏗️ SHELL HTML                                   ║
+     ║  The tab bar + two iframe slots for our content       ║
+     ╚═══════════════════════════════════════════════════════╝
+
+     ════════════════════════════════════════════════════════════ -->
+<body>
+
+  <!-- 🔝 Tab navigation bar -->
+  <nav class="tab-bar">
+    <span class="logo">🌌 VOID ROOM</span>
+    <button class="tab-btn active" data-tab="space">🎮 3D Space</button>
+    <button class="tab-btn" data-tab="guide">📖 Device Guide</button>
+  </nav>
+
+  <!-- 📺 Content area — holds both iframes -->
+  <div class="tab-content">
+
+    <!-- 🎮 Tab 1: The 3D Collaborative Space
+         We use srcdoc="" to embed a full HTML page inside an iframe
+         without needing a separate file! Think of it like a
+         page-inside-a-page 📄📄 -->
+    <iframe class="tab-frame active" id="frame-space" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+
+    <!-- 📖 Tab 2: The Device Setup Dashboard -->
+    <iframe class="tab-frame" id="frame-guide" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+
+  </div>
+
+
+<!-- ════════════════════════════════════════════════════════════
+
+     ╔═══════════════════════════════════════════════════════╗
+     ║  A3. 🔧 SHELL JAVASCRIPT                             ║
+     ║  Tab switching + loading each embedded page           ║
+     ╚═══════════════════════════════════════════════════════╝
+
+     ════════════════════════════════════════════════════════════ -->
+<script>
+
+/* ============================================================
+   🔧 TAB SWITCHING LOGIC
+   When you click a tab, we:
+   1. Remove "active" from all tabs & frames
+   2. Add "active" to the clicked tab & its frame
+   3. Lazy-load the iframe content on first view
+   ============================================================ */
+
+// 🏷️ Track if each frame has been loaded yet
+const loaded = { space: false, guide: false };
+
+// 👆 Wire up tab buttons
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tabName = btn.dataset.tab;
+
+    // 🎨 Update button highlights
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // 📺 Show the right frame, hide the other
+    document.querySelectorAll('.tab-frame').forEach(f => f.classList.remove('active'));
+    document.getElementById('frame-' + tabName).classList.add('active');
+
+    // 🚀 Lazy-load content on first view
+    if (!loaded[tabName]) {
+      loadTab(tabName);
+      loaded[tabName] = true;
+    }
+  });
+});
+
+// 🚀 Load the 3D space on initial page load
+loadTab('space');
+loaded.space = true;
+
+
+/* ============================================================
+   📄 LOAD TAB CONTENT
+   We write the full HTML for each tab into its iframe
+   using srcdoc. This keeps them perfectly isolated —
+   the 3D app's "overflow:hidden" doesn't affect the
+   dashboard's scrolling, etc.
+   ============================================================ */
+function loadTab(tabName) {
+  const frame = document.getElementById('frame-' + tabName);
+
+  if (tabName === 'space') {
+    frame.srcdoc = SPACE_HTML;
+  } else if (tabName === 'guide') {
+    frame.srcdoc = GUIDE_HTML;
+  }
+}
+
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║                                                                       ║
+   ║  PART B — 🎮 THE 3D COLLABORATIVE SPACE                             ║
+   ║  (stored as a template literal string, injected into iframe)          ║
+   ║                                                                       ║
+   ║  This is the EXACT same code from void-room.html, wrapped            ║
+   ║  in backticks so we can inject it into the iframe's srcdoc!          ║
+   ║                                                                       ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+const SPACE_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Void Room 3D</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>
+<style>
+/* ═══════════════════════════════════════
+   🎨 B1. 3D APP STYLES
+   ═══════════════════════════════════════ */
+:root{--bg-void:#07070c;--bg-panel:rgba(12,12,20,0.85);--accent-1:#7b5cff;--accent-2:#ff6b6b;--accent-3:#4ecdc4;--accent-4:#ffd93d;--text-main:#e8e6f0;--text-dim:#6b6880;--border-glow:rgba(123,92,255,0.3);--glass-blur:16px;--radius:14px;--font-display:'Courier New',monospace}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg-void);color:var(--text-main);font-family:var(--font-display);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;height:100vh;width:100vw}
+#scene-container{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+.glass-panel{background:var(--bg-panel);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border:1px solid var(--border-glow);border-radius:var(--radius);padding:12px}
+#top-bar{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:12px;padding:8px 18px;font-size:13px;letter-spacing:1px;white-space:nowrap}
+#top-bar .room-id{color:var(--accent-1);font-weight:bold;cursor:pointer}
+#top-bar .user-count{color:var(--accent-3)}
+#toolbar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:flex;gap:6px;padding:8px 12px}
+.tool-btn{width:48px;height:48px;border:1px solid var(--border-glow);border-radius:12px;background:rgba(20,18,35,0.9);color:var(--text-main);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease}
+.tool-btn:hover,.tool-btn.active{background:var(--accent-1);border-color:var(--accent-1);transform:translateY(-3px);box-shadow:0 6px 20px rgba(123,92,255,0.4)}
+.tool-btn:active{transform:translateY(0px) scale(0.95)}
+@media(min-width:1400px) and (pointer:coarse){.tool-btn{width:64px;height:64px;font-size:28px}}
+@media(max-width:400px){.tool-btn{width:40px;height:40px;font-size:18px}#top-bar{font-size:11px;padding:6px 12px}}
+#palette{position:fixed;right:12px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:6px;padding:10px;max-height:70vh;overflow-y:auto}
+.palette-item{width:44px;height:44px;border-radius:10px;border:1px solid var(--border-glow);background:rgba(20,18,35,0.8);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s ease;position:relative}
+.palette-item:hover{transform:scale(1.15);border-color:var(--accent-4)}
+.palette-item.selected{border-color:var(--accent-4);background:rgba(255,217,61,0.15);box-shadow:0 0 12px rgba(255,217,61,0.3)}
+.palette-item .tooltip{display:none;position:absolute;right:54px;background:var(--bg-panel);border:1px solid var(--border-glow);border-radius:8px;padding:4px 10px;font-size:11px;white-space:nowrap;color:var(--text-main)}
+.palette-item:hover .tooltip{display:block}
+#toast-container{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{padding:8px 18px;border-radius:10px;font-size:12px;letter-spacing:0.5px;animation:toastIn 0.3s ease,toastOut 0.3s ease 2.5s forwards;pointer-events:none}
+@keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
+#crosshair{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border:2px solid rgba(123,92,255,0.4);border-radius:50%;pointer-events:none;z-index:50;transition:all 0.2s ease}
+#crosshair.hovering{border-color:var(--accent-4);box-shadow:0 0 15px rgba(255,217,61,0.4);width:28px;height:28px}
+body.grabbing{cursor:grabbing!important}body.placing{cursor:crosshair!important}
+#selection-info{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:100;padding:6px 14px;font-size:12px;display:none}
+#loading{position:fixed;inset:0;z-index:9999;background:var(--bg-void);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity 0.6s ease}
+#loading h1{font-size:28px;color:var(--accent-1);letter-spacing:6px}
+#loading p{font-size:13px;color:var(--text-dim);letter-spacing:2px}
+.spinner{width:40px;height:40px;border:3px solid var(--border-glow);border-top-color:var(--accent-1);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:600px){#palette{right:auto;left:8px;top:auto;bottom:80px;transform:none;flex-direction:row;flex-wrap:wrap;max-height:none;max-width:50vw}.palette-item .tooltip{display:none!important}}
+canvas{display:block}
+</style>
+</head>
+<body>
+<!-- ═══════════════════════════════════════
+     🏗️ B2. 3D APP HTML
+     ═══════════════════════════════════════ -->
+<div id="loading"><div class="spinner"></div><h1>VOID ROOM</h1><p>loading collaborative space...</p></div>
+<div id="scene-container"></div>
+<div id="crosshair"></div>
+<div id="top-bar" class="glass-panel"><span>🌌</span><span class="room-id" id="room-id" title="Click to copy invite link">room:loading...</span><span class="user-count" id="user-count">👤 1</span></div>
+<div id="toast-container"></div>
+<div id="palette" class="glass-panel">
+  <div class="palette-item selected" data-shape="cube">🟧<span class="tooltip">Cube</span></div>
+  <div class="palette-item" data-shape="sphere">🔵<span class="tooltip">Sphere</span></div>
+  <div class="palette-item" data-shape="cylinder">🟡<span class="tooltip">Cylinder</span></div>
+  <div class="palette-item" data-shape="cone">🔺<span class="tooltip">Cone</span></div>
+  <div class="palette-item" data-shape="torus">🍩<span class="tooltip">Donut</span></div>
+  <div class="palette-item" data-shape="tetra">🔻<span class="tooltip">Pyramid</span></div>
+  <div class="palette-item" data-shape="icosa">💎<span class="tooltip">D20</span></div>
+  <div class="palette-item" data-shape="octahedron">♦️<span class="tooltip">Diamond</span></div>
+  <div class="palette-item" data-shape="knot">🌀<span class="tooltip">Knot</span></div>
+  <div class="palette-item" data-shape="plane">⬜<span class="tooltip">Plane</span></div>
+</div>
+<div id="toolbar" class="glass-panel">
+  <button class="tool-btn active" data-tool="move" title="Move [M]">✋</button>
+  <button class="tool-btn" data-tool="place" title="Place [P]">➕</button>
+  <button class="tool-btn" data-tool="rotate" title="Rotate [R]">🔄</button>
+  <button class="tool-btn" data-tool="scale" title="Scale [S]">📏</button>
+  <button class="tool-btn" data-tool="delete" title="Delete [X]">🗑️</button>
+  <button class="tool-btn" data-tool="color" title="Recolor [C]">🎨</button>
+</div>
+<div id="selection-info" class="glass-panel"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   B3-B13. 🧠 3D APP JAVASCRIPT
+   Full collaborative 3D space engine
+   ═══════════════════════════════════════════════════════════ */
+
+// 🎨 B3. CONFIG
+const OBJECT_COLORS=[0x7b5cff,0xff6b6b,0x4ecdc4,0xffd93d,0xff8a5c,0xa8e6cf,0xdda0dd,0x87ceeb,0xf0e68c,0xfa8072];
+const WORLD_SIZE=50;
+const SYNC_RATE=50;
+
+// 🆔 B4. ROOM & USER IDs
+function makeId(n=6){const c='abcdefghijklmnopqrstuvwxyz0123456789';let r='';for(let i=0;i<n;i++)r+=c[Math.floor(Math.random()*c.length)];return r}
+function getRoomId(){
+  // 🏠 Check the TOP-LEVEL window's hash (not the iframe's)
+  try{
+    const h=window.top.location.hash.slice(1);
+    if(h&&h.length>2)return h;
+  }catch(e){}
+  const h=window.location.hash.slice(1);
+  if(h&&h.length>2)return h;
+  const nr='void-'+makeId(6);
+  try{window.top.location.hash=nr}catch(e){window.location.hash=nr}
+  return nr;
+}
+const MY_USER_ID=makeId(8);
+const ROOM_ID=getRoomId();
+const MY_COLOR=OBJECT_COLORS[Math.floor(Math.random()*OBJECT_COLORS.length)];
+
+// 📡 B5. REAL-TIME SYNC
+const sceneObjects=new Map();
+const connectedUsers=new Map();
+connectedUsers.set(MY_USER_ID,{color:MY_COLOR,lastSeen:Date.now()});
+let broadcastChannel=null;
+try{broadcastChannel=new BroadcastChannel('voidroom_'+ROOM_ID);broadcastChannel.onmessage=(e)=>handleSyncMessage(e.data)}catch(e){}
+function broadcastMessage(msg){msg.sender=MY_USER_ID;msg.room=ROOM_ID;msg.time=Date.now();if(broadcastChannel)try{broadcastChannel.postMessage(msg)}catch(e){}try{localStorage.setItem('voidroom_'+ROOM_ID+'_msg',JSON.stringify(msg))}catch(e){}}
+window.addEventListener('storage',(e)=>{if(e.key==='voidroom_'+ROOM_ID+'_msg'&&e.newValue)try{const m=JSON.parse(e.newValue);if(m.sender!==MY_USER_ID)handleSyncMessage(m)}catch(e){}});
+function handleSyncMessage(msg){if(!msg||msg.sender===MY_USER_ID)return;if(msg.type==='join'){connectedUsers.set(msg.sender,{color:msg.color,lastSeen:Date.now()});updateUserCount();showToast('👋 User '+msg.sender.slice(0,4)+' joined!','var(--accent-3)');broadcastFullState()}if(msg.type==='place')addObjectToScene(msg.data,false);if(msg.type==='update')updateSceneObject(msg.data);if(msg.type==='delete')removeObjectFromScene(msg.objectId,false);if(msg.type==='fullstate'){msg.objects.forEach(o=>addObjectToScene(o,false));connectedUsers.set(msg.sender,{color:msg.color,lastSeen:Date.now()});updateUserCount()}if(msg.type==='heartbeat'){connectedUsers.set(msg.sender,{color:msg.color,lastSeen:Date.now()});updateUserCount()}}
+function broadcastFullState(){const o=[];sceneObjects.forEach((d,id)=>o.push(serializeObject(id,d)));broadcastMessage({type:'fullstate',objects:o,color:MY_COLOR})}
+function serializeObject(id,d){return{id,shape:d.shape,color:d.mesh.material.color.getHex(),px:d.mesh.position.x,py:d.mesh.position.y,pz:d.mesh.position.z,rx:d.mesh.rotation.x,ry:d.mesh.rotation.y,rz:d.mesh.rotation.z,sx:d.mesh.scale.x,sy:d.mesh.scale.y,sz:d.mesh.scale.z,owner:d.owner}}
+setInterval(()=>{broadcastMessage({type:'heartbeat',color:MY_COLOR});const now=Date.now();connectedUsers.forEach((info,uid)=>{if(uid!==MY_USER_ID&&now-info.lastSeen>10000){connectedUsers.delete(uid);showToast('👋 User '+uid.slice(0,4)+' left','var(--accent-2)')}});updateUserCount()},3000);
+function updateUserCount(){const el=document.getElementById('user-count');if(el)el.textContent='👤 '+connectedUsers.size}
+
+// 🌍 B6. THREE.JS WORLD
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x07070c);scene.fog=new THREE.FogExp2(0x07070c,0.015);
+const camera=new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,0.1,200);camera.position.set(0,8,15);camera.lookAt(0,0,0);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setSize(window.innerWidth,window.innerHeight);renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=0.9;
+document.getElementById('scene-container').appendChild(renderer.domElement);
+const ambientLight=new THREE.AmbientLight(0x404060,0.6);scene.add(ambientLight);
+const sunLight=new THREE.DirectionalLight(0xffeedd,0.8);sunLight.position.set(10,20,10);sunLight.castShadow=true;sunLight.shadow.mapSize.width=2048;sunLight.shadow.mapSize.height=2048;sunLight.shadow.camera.near=0.5;sunLight.shadow.camera.far=60;sunLight.shadow.camera.left=-30;sunLight.shadow.camera.right=30;sunLight.shadow.camera.top=30;sunLight.shadow.camera.bottom=-30;scene.add(sunLight);
+scene.add(new THREE.PointLight(0x7b5cff,0.4,40));scene.add(new THREE.PointLight(0x4ecdc4,0.3,40));
+const gridHelper=new THREE.GridHelper(WORLD_SIZE,WORLD_SIZE,0x2a2a4a,0x1a1a2e);scene.add(gridHelper);
+const floorGeo=new THREE.PlaneGeometry(WORLD_SIZE,WORLD_SIZE);const floorMat=new THREE.MeshStandardMaterial({color:0x0d0d1a,roughness:0.9,transparent:true,opacity:0.5});const floorMesh=new THREE.Mesh(floorGeo,floorMat);floorMesh.rotation.x=-Math.PI/2;floorMesh.position.y=-0.01;floorMesh.receiveShadow=true;floorMesh.userData.isFloor=true;scene.add(floorMesh);
+
+// 📦 B7. OBJECT CREATION
+function createGeometry(s){switch(s){case'cube':return new THREE.BoxGeometry(1,1,1);case'sphere':return new THREE.SphereGeometry(0.6,32,32);case'cylinder':return new THREE.CylinderGeometry(0.5,0.5,1,32);case'cone':return new THREE.ConeGeometry(0.5,1.2,32);case'torus':return new THREE.TorusGeometry(0.5,0.2,16,48);case'tetra':return new THREE.TetrahedronGeometry(0.7);case'icosa':return new THREE.IcosahedronGeometry(0.6);case'octahedron':return new THREE.OctahedronGeometry(0.6);case'knot':return new THREE.TorusKnotGeometry(0.4,0.15,100,16);case'plane':return new THREE.PlaneGeometry(1.5,1.5);default:return new THREE.BoxGeometry(1,1,1)}}
+function createMaterial(c){return new THREE.MeshStandardMaterial({color:c,roughness:0.3,metalness:0.1})}
+function addObjectToScene(data,shouldBroadcast=true){const id=data.id||('obj_'+makeId(8));if(sceneObjects.has(id)){updateSceneObject(data);return}const g=createGeometry(data.shape);const m=createMaterial(data.color||MY_COLOR);const mesh=new THREE.Mesh(g,m);mesh.position.set(data.px||0,data.py||0.5,data.pz||0);if(data.rx!==undefined)mesh.rotation.set(data.rx,data.ry,data.rz);if(data.sx!==undefined)mesh.scale.set(data.sx,data.sy,data.sz);mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData.objectId=id;mesh.userData.owner=data.owner||MY_USER_ID;sceneObjects.set(id,{mesh,shape:data.shape,owner:data.owner||MY_USER_ID});scene.add(mesh);if(shouldBroadcast)broadcastMessage({type:'place',data:serializeObject(id,sceneObjects.get(id))});return id}
+function updateSceneObject(data){const e=sceneObjects.get(data.id);if(!e)return;if(data.px!==undefined)e.mesh.position.set(data.px,data.py,data.pz);if(data.rx!==undefined)e.mesh.rotation.set(data.rx,data.ry,data.rz);if(data.sx!==undefined)e.mesh.scale.set(data.sx,data.sy,data.sz);if(data.color!==undefined)e.mesh.material.color.setHex(data.color)}
+function removeObjectFromScene(objectId,shouldBroadcast=true){const e=sceneObjects.get(objectId);if(!e)return;scene.remove(e.mesh);e.mesh.geometry.dispose();e.mesh.material.dispose();sceneObjects.delete(objectId);if(shouldBroadcast)broadcastMessage({type:'delete',objectId})}
+
+// 🖱️ B8. UNIVERSAL INPUT
+let currentTool='move',selectedShape='cube',selectedObject=null,isDragging=false,isOrbiting=false;
+let pointerX=0,pointerY=0,pointerDownX=0,pointerDownY=0,lastPointerX=0,lastPointerY=0;
+let orbitTheta=0,orbitPhi=Math.PI/4,orbitRadius=18,orbitTarget=new THREE.Vector3(0,0,0);
+let lastPinchDist=0;
+const raycaster=new THREE.Raycaster(),pointer2D=new THREE.Vector2(),dragPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0),dragOffset=new THREE.Vector3(),intersection=new THREE.Vector3();
+function getHitObject(x,y){pointer2D.x=(x/window.innerWidth)*2-1;pointer2D.y=-(y/window.innerHeight)*2+1;raycaster.setFromCamera(pointer2D,camera);const meshes=[];sceneObjects.forEach(e=>meshes.push(e.mesh));return raycaster.intersectObjects(meshes,false)[0]||null}
+function getFloorPoint(x,y){pointer2D.x=(x/window.innerWidth)*2-1;pointer2D.y=-(y/window.innerHeight)*2+1;raycaster.setFromCamera(pointer2D,camera);const h=new THREE.Vector3();raycaster.ray.intersectPlane(dragPlane,h);return h}
+function onPointerDown(x,y,button=0){pointerX=x;pointerY=y;pointerDownX=x;pointerDownY=y;lastPointerX=x;lastPointerY=y;if(button===2){isOrbiting=true;return}if(currentTool==='place'){const pt=getFloorPoint(x,y);if(pt){addObjectToScene({shape:selectedShape,color:MY_COLOR,px:Math.round(pt.x*2)/2,py:0.5,pz:Math.round(pt.z*2)/2,owner:MY_USER_ID});showToast('✅ Placed '+selectedShape,'var(--accent-3)')}return}const hit=getHitObject(x,y);if(hit&&!hit.object.userData.isFloor){const objId=hit.object.userData.objectId;const entry=sceneObjects.get(objId);if(currentTool==='delete'){removeObjectFromScene(objId);showToast('🗑️ Deleted','var(--accent-2)');return}if(currentTool==='color'){const nc=OBJECT_COLORS[Math.floor(Math.random()*OBJECT_COLORS.length)];hit.object.material.color.setHex(nc);broadcastMessage({type:'update',data:{...serializeObject(objId,entry),color:nc}});showToast('🎨 Recolored!','var(--accent-4)');return}selectedObject={id:objId,mesh:hit.object,entry};isDragging=true;document.body.classList.add('grabbing');const fp=getFloorPoint(x,y);if(fp)dragOffset.copy(hit.object.position).sub(fp);updateSelectionInfo()}else{selectedObject=null;isDragging=false;isOrbiting=true;hideSelectionInfo()}}
+function onPointerMove(x,y){const dx=x-lastPointerX,dy=y-lastPointerY;lastPointerX=x;lastPointerY=y;pointerX=x;pointerY=y;if(isOrbiting&&!isDragging){orbitTheta-=dx*0.005;orbitPhi-=dy*0.005;orbitPhi=Math.max(0.1,Math.min(Math.PI/2-0.05,orbitPhi));return}if(isDragging&&selectedObject){if(currentTool==='move'||currentTool==='place'){const pt=getFloorPoint(x,y);if(pt){selectedObject.mesh.position.x=pt.x+dragOffset.x;selectedObject.mesh.position.z=pt.z+dragOffset.z;broadcastMessage({type:'update',data:serializeObject(selectedObject.id,selectedObject.entry)})}}else if(currentTool==='rotate'){selectedObject.mesh.rotation.y+=dx*0.01;selectedObject.mesh.rotation.x+=dy*0.01;broadcastMessage({type:'update',data:serializeObject(selectedObject.id,selectedObject.entry)})}else if(currentTool==='scale'){const sd=1+dx*0.005;selectedObject.mesh.scale.multiplyScalar(sd);selectedObject.mesh.scale.clampScalar(0.1,10);broadcastMessage({type:'update',data:serializeObject(selectedObject.id,selectedObject.entry)})}updateSelectionInfo()}if(!isDragging&&!isOrbiting){const hit=getHitObject(x,y);const ch=document.getElementById('crosshair');if(hit&&!hit.object.userData.isFloor)ch.classList.add('hovering');else ch.classList.remove('hovering')}}
+function onPointerUp(){isDragging=false;isOrbiting=false;document.body.classList.remove('grabbing')}
+const canvas=renderer.domElement;
+canvas.addEventListener('pointerdown',(e)=>{if(e.target!==canvas)return;e.preventDefault();onPointerDown(e.clientX,e.clientY,e.button)});
+canvas.addEventListener('pointermove',(e)=>{e.preventDefault();onPointerMove(e.clientX,e.clientY)});
+canvas.addEventListener('pointerup',(e)=>{e.preventDefault();onPointerUp()});
+canvas.addEventListener('pointercancel',()=>onPointerUp());
+canvas.addEventListener('contextmenu',(e)=>e.preventDefault());
+canvas.addEventListener('wheel',(e)=>{e.preventDefault();orbitRadius+=e.deltaY*0.01;orbitRadius=Math.max(3,Math.min(50,orbitRadius))},{passive:false});
+canvas.addEventListener('touchstart',(e)=>{if(e.touches.length===2){const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;lastPinchDist=Math.sqrt(dx*dx+dy*dy)}},{passive:false});
+canvas.addEventListener('touchmove',(e)=>{if(e.touches.length===2){e.preventDefault();const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY,dist=Math.sqrt(dx*dx+dy*dy),delta=lastPinchDist-dist;orbitRadius+=delta*0.05;orbitRadius=Math.max(3,Math.min(50,orbitRadius));lastPinchDist=dist;isOrbiting=true;isDragging=false;onPointerMove((e.touches[0].clientX+e.touches[1].clientX)/2,(e.touches[0].clientY+e.touches[1].clientY)/2)}},{passive:false});
+
+// ⌨️ KEYBOARD
+window.addEventListener('keydown',(e)=>{const k=e.key.toLowerCase();if(k==='m')setTool('move');if(k==='p')setTool('place');if(k==='r')setTool('rotate');if(k==='s')setTool('scale');if(k==='x'||k==='delete'||k==='backspace')setTool('delete');if(k==='c')setTool('color');if(selectedObject){const step=e.shiftKey?0.1:0.5;if(k==='arrowleft')selectedObject.mesh.position.x-=step;if(k==='arrowright')selectedObject.mesh.position.x+=step;if(k==='arrowup')selectedObject.mesh.position.z-=step;if(k==='arrowdown')selectedObject.mesh.position.z+=step;if(k==='q')selectedObject.mesh.position.y+=step;if(k==='e')selectedObject.mesh.position.y-=step;broadcastMessage({type:'update',data:serializeObject(selectedObject.id,selectedObject.entry)});updateSelectionInfo()}const num=parseInt(k);if(num>=1&&num<=9){const items=document.querySelectorAll('.palette-item');if(items[num-1]){items.forEach(i=>i.classList.remove('selected'));items[num-1].classList.add('selected');selectedShape=items[num-1].dataset.shape}}});
+
+// 🎮 B9. GAMEPAD
+function pollGamepad(){const gps=navigator.getGamepads?navigator.getGamepads():[];for(const gp of gps){if(!gp)continue;const lx=gp.axes[0]||0,ly=gp.axes[1]||0;if(Math.abs(lx)>0.15)orbitTheta-=lx*0.03;if(Math.abs(ly)>0.15)orbitPhi-=ly*0.03;orbitPhi=Math.max(0.1,Math.min(Math.PI/2-0.05,orbitPhi));const rx=gp.axes[2]||0,ry=gp.axes[3]||0;if(selectedObject){if(Math.abs(rx)>0.15)selectedObject.mesh.position.x+=rx*0.1;if(Math.abs(ry)>0.15)selectedObject.mesh.position.z+=ry*0.1;broadcastMessage({type:'update',data:serializeObject(selectedObject.id,selectedObject.entry)})}if(gp.buttons[6]&&gp.buttons[6].pressed)orbitRadius+=0.2;if(gp.buttons[7]&&gp.buttons[7].pressed)orbitRadius-=0.2;orbitRadius=Math.max(3,Math.min(50,orbitRadius))}}
+
+// 🎥 B10. CAMERA
+function updateCamera(){camera.position.x=orbitTarget.x+orbitRadius*Math.sin(orbitPhi)*Math.sin(orbitTheta);camera.position.y=orbitTarget.y+orbitRadius*Math.cos(orbitPhi);camera.position.z=orbitTarget.z+orbitRadius*Math.sin(orbitPhi)*Math.cos(orbitTheta);camera.lookAt(orbitTarget)}
+
+// 🖼️ B11. UI
+function setTool(t){currentTool=t;document.querySelectorAll('.tool-btn').forEach(b=>b.classList.toggle('active',b.dataset.tool===t));document.body.classList.remove('placing');if(t==='place')document.body.classList.add('placing');showToast('🔧 Tool: '+t,'var(--accent-1)')}
+document.querySelectorAll('.tool-btn').forEach(b=>b.addEventListener('click',(e)=>{e.stopPropagation();setTool(b.dataset.tool)}));
+document.querySelectorAll('.palette-item').forEach(item=>item.addEventListener('click',(e)=>{e.stopPropagation();document.querySelectorAll('.palette-item').forEach(i=>i.classList.remove('selected'));item.classList.add('selected');selectedShape=item.dataset.shape;showToast('📦 Shape: '+selectedShape,'var(--accent-4)')}));
+document.getElementById('room-id').textContent='room:'+ROOM_ID;
+document.getElementById('room-id').addEventListener('click',()=>{const url=window.top?window.top.location.href:window.location.href;navigator.clipboard.writeText(url).then(()=>showToast('📋 Link copied! Share with friends!','var(--accent-3)')).catch(()=>showToast('🔗 '+url,'var(--accent-3)'))});
+function updateSelectionInfo(){if(!selectedObject)return;const el=document.getElementById('selection-info');const m=selectedObject.mesh;el.style.display='block';el.textContent='📦 '+selectedObject.entry.shape+' | pos('+m.position.x.toFixed(1)+', '+m.position.y.toFixed(1)+', '+m.position.z.toFixed(1)+') | ['+currentTool+']'}
+function hideSelectionInfo(){document.getElementById('selection-info').style.display='none'}
+function showToast(message,bgColor='var(--accent-1)'){const c=document.getElementById('toast-container');const t=document.createElement('div');t.className='toast glass-panel';t.style.borderColor=bgColor;t.textContent=message;c.appendChild(t);setTimeout(()=>t.remove(),3000)}
+
+// 🔄 B12. ANIMATION LOOP
+let frameCount=0;
+function animate(){requestAnimationFrame(animate);frameCount++;pollGamepad();updateCamera();sceneObjects.forEach(e=>{e.mesh.position.y+=Math.sin(frameCount*0.02+e.mesh.position.x)*0.0005});renderer.render(scene,camera)}
+
+// 🚀 B13. STARTUP
+window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight)});
+addObjectToScene({shape:'cube',color:0x7b5cff,px:-2,py:0.5,pz:0},false);
+addObjectToScene({shape:'sphere',color:0x4ecdc4,px:0,py:0.6,pz:-2},false);
+addObjectToScene({shape:'torus',color:0xff6b6b,px:2,py:0.5,pz:1},false);
+addObjectToScene({shape:'cone',color:0xffd93d,px:-1,py:0.6,pz:3},false);
+addObjectToScene({shape:'icosa',color:0xff8a5c,px:3,py:0.6,pz:-1},false);
+broadcastMessage({type:'join',color:MY_COLOR});
+setTimeout(()=>{const l=document.getElementById('loading');l.style.opacity='0';setTimeout(()=>l.style.display='none',600)},800);
+animate();
+setTimeout(()=>showToast('🌌 Welcome to Void Room! Click to select, use toolbar below.','var(--accent-1)'),1500);
+<\/script>
+</body></html>`;
+
+
+/* ╔═══════════════════════════════════════════════════════════════════════╗
+   ║                                                                       ║
+   ║  PART C — 📖 THE DEVICE SETUP DASHBOARD                             ║
+   ║  (stored as a template literal string, injected into iframe)          ║
+   ║                                                                       ║
+   ╚═══════════════════════════════════════════════════════════════════════╝ */
+
+const GUIDE_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Device Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   🎨 C1. DASHBOARD STYLES
+   ═══════════════════════════════════════ */
+:root{--bg-deep:#060610;--bg-card:#0d0d1c;--bg-card-hover:#12122a;--surface-1:#1a1a35;--surface-2:#242448;--border:rgba(100,80,200,0.15);--border-hover:rgba(140,120,255,0.35);--accent-purple:#8b6cff;--accent-pink:#ff5ea0;--accent-teal:#3dd9c6;--accent-amber:#f5b731;--accent-blue:#4d9fff;--accent-green:#44d97e;--text-1:#eae8f4;--text-2:#9994b8;--text-3:#5c5776;--radius-sm:10px;--radius-md:16px;--radius-lg:24px;--font-body:'DM Sans',system-ui,sans-serif;--font-mono:'JetBrains Mono','Courier New',monospace}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg-deep);color:var(--text-1);font-family:var(--font-body);line-height:1.6;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 20%,rgba(139,108,255,0.06)0%,transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(255,94,160,0.04)0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(61,217,198,0.03)0%,transparent 40%);z-index:0;animation:bgDrift 20s ease-in-out infinite alternate;pointer-events:none}
+@keyframes bgDrift{0%{transform:translate(0,0) rotate(0deg)}100%{transform:translate(-3%,2%) rotate(2deg)}}
+.container{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:40px 24px 80px}
+.hero{text-align:center;padding:32px 0 30px}
+.hero-icon{font-size:56px;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.hero h1{font-family:var(--font-mono);font-size:clamp(28px,5vw,48px);font-weight:700;letter-spacing:4px;background:linear-gradient(135deg,var(--accent-purple),var(--accent-pink),var(--accent-teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--text-2);font-size:16px;margin-top:10px;max-width:600px;margin-inline:auto}
+.search-bar{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap;justify-content:center}
+.search-input{flex:1;min-width:240px;max-width:400px;padding:12px 18px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-card);color:var(--text-1);font-family:var(--font-body);font-size:15px;outline:none;transition:border-color 0.3s}
+.search-input:focus{border-color:var(--accent-purple)}.search-input::placeholder{color:var(--text-3)}
+.filter-chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:36px}
+.chip{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all 0.2s ease;white-space:nowrap}
+.chip:hover{border-color:var(--accent-purple);color:var(--text-1)}
+.chip.active{background:var(--accent-purple);border-color:var(--accent-purple);color:#fff}
+.category-section{margin-bottom:48px}
+.category-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.category-header .cat-icon{font-size:28px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:var(--surface-1)}
+.category-header h2{font-family:var(--font-mono);font-size:20px;font-weight:700;letter-spacing:1px}
+.category-header .cat-count{margin-left:auto;font-size:12px;color:var(--text-3);font-family:var(--font-mono)}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+@media(max-width:400px){.cards-grid{grid-template-columns:1fr}}
+.device-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;transition:all 0.3s ease;cursor:pointer;opacity:0;animation:cardIn 0.4s ease forwards}
+.device-card:hover{border-color:var(--border-hover);background:var(--bg-card-hover);transform:translateY(-2px);box-shadow:0 8px 32px rgba(139,108,255,0.08)}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.card-header{display:flex;align-items:center;gap:12px;padding:16px 18px 12px}
+.card-header .device-icon{font-size:28px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:var(--surface-1);flex-shrink:0}
+.card-header .device-name{font-weight:700;font-size:16px}
+.card-header .device-sub{font-size:12px;color:var(--text-2);margin-top:1px}
+.difficulty-badge{margin-left:auto;padding:3px 10px;border-radius:12px;font-size:10px;font-family:var(--font-mono);font-weight:700;letter-spacing:0.5px;text-transform:uppercase;flex-shrink:0}
+.difficulty-badge.easy{background:rgba(68,217,126,0.12);color:var(--accent-green);border:1px solid rgba(68,217,126,0.25)}
+.difficulty-badge.medium{background:rgba(245,183,49,0.12);color:var(--accent-amber);border:1px solid rgba(245,183,49,0.25)}
+.difficulty-badge.hard{background:rgba(255,94,160,0.12);color:var(--accent-pink);border:1px solid rgba(255,94,160,0.25)}
+.difficulty-badge.hackery{background:rgba(139,108,255,0.12);color:var(--accent-purple);border:1px solid rgba(139,108,255,0.25)}
+.card-body{padding:0 18px 16px;display:none}
+.device-card.expanded .card-body{display:block;animation:slideDown 0.3s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.method-tag{display:inline-block;padding:4px 12px;border-radius:8px;font-size:11px;font-family:var(--font-mono);font-weight:700;letter-spacing:0.5px;margin-bottom:14px}
+.method-tag.browser{background:rgba(77,159,255,0.12);color:var(--accent-blue);border:1px solid rgba(77,159,255,0.2)}
+.method-tag.mirror{background:rgba(139,108,255,0.12);color:var(--accent-purple);border:1px solid rgba(139,108,255,0.2)}
+.method-tag.sideload{background:rgba(245,183,49,0.12);color:var(--accent-amber);border:1px solid rgba(245,183,49,0.2)}
+.method-tag.app{background:rgba(68,217,126,0.12);color:var(--accent-green);border:1px solid rgba(68,217,126,0.2)}
+.method-tag.voice{background:rgba(255,94,160,0.12);color:var(--accent-pink);border:1px solid rgba(255,94,160,0.2)}
+.method-tag.cast{background:rgba(61,217,198,0.12);color:var(--accent-teal);border:1px solid rgba(61,217,198,0.2)}
+.method-tag.hdmi{background:rgba(255,255,255,0.06);color:var(--text-2);border:1px solid rgba(255,255,255,0.1)}
+.steps{list-style:none;counter-reset:step-counter}
+.steps li{counter-increment:step-counter;position:relative;padding-left:36px;margin-bottom:10px;font-size:14px;color:var(--text-2);line-height:1.55}
+.steps li::before{content:counter(step-counter);position:absolute;left:0;top:1px;width:24px;height:24px;border-radius:8px;background:var(--surface-1);color:var(--accent-purple);font-family:var(--font-mono);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.steps li strong{color:var(--text-1)}
+.steps li code{background:var(--surface-1);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);font-size:12px;color:var(--accent-teal)}
+.tip-box{margin-top:14px;padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;line-height:1.5}
+.tip-box.info{background:rgba(77,159,255,0.08);border-left:3px solid var(--accent-blue);color:var(--text-2)}
+.tip-box.warn{background:rgba(245,183,49,0.08);border-left:3px solid var(--accent-amber);color:var(--text-2)}
+.tip-box.success{background:rgba(68,217,126,0.08);border-left:3px solid var(--accent-green);color:var(--text-2)}
+.expand-arrow{margin-left:8px;font-size:12px;color:var(--text-3);transition:transform 0.3s}
+.device-card.expanded .expand-arrow{transform:rotate(180deg)}
+.hosting-section{margin-top:56px;padding:32px;border-radius:var(--radius-lg);background:var(--bg-card);border:1px solid var(--border)}
+.hosting-section h2{font-family:var(--font-mono);font-size:22px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.hosting-section>p{color:var(--text-2);font-size:14px;margin-bottom:16px}
+.hosting-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.hosting-option{padding:16px;border-radius:var(--radius-md);background:var(--surface-1);border:1px solid var(--border);transition:border-color 0.2s}
+.hosting-option:hover{border-color:var(--border-hover)}
+.hosting-option h3{font-size:15px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.hosting-option p{font-size:13px;color:var(--text-2);margin:0}
+.hosting-option code{display:block;margin-top:8px;padding:8px 12px;border-radius:8px;background:var(--bg-deep);font-family:var(--font-mono);font-size:12px;color:var(--accent-teal);overflow-x:auto;white-space:pre}
+.footer{text-align:center;padding:40px 0 20px;color:var(--text-3);font-size:12px;font-family:var(--font-mono)}
+.category-section.hidden{display:none}.device-card.hidden{display:none}
+.no-results{text-align:center;padding:48px 20px;color:var(--text-3);font-size:15px;display:none}.no-results.visible{display:block}
+@media(max-width:500px){.container{padding:20px 12px 60px}.hosting-section{padding:20px}.card-header{padding:12px 14px 10px}.card-body{padding:0 14px 14px}}
+</style>
+</head>
+<body>
+<!-- ═══════════════════════════════════════
+     🏗️ C2. DASHBOARD HTML
+     ═══════════════════════════════════════ -->
+<div class="container">
+<header class="hero"><span class="hero-icon">🌌</span><h1>VOID ROOM</h1><p>How to access your collaborative 3D space from every device you own — and some you didn't think possible.</p></header>
+<div class="search-bar"><input type="text" class="search-input" id="search" placeholder="🔍  Search devices... (e.g. Fire Stick, Apple Watch)"></div>
+<div class="filter-chips" id="filter-chips">
+<button class="chip active" data-filter="all">All Devices</button>
+<button class="chip" data-filter="apple">🍎 Apple</button>
+<button class="chip" data-filter="windows">🪟 Windows</button>
+<button class="chip" data-filter="android">🤖 Android</button>
+<button class="chip" data-filter="tv">📺 Smart TVs</button>
+<button class="chip" data-filter="amazon">🔥 Amazon/Fire</button>
+<button class="chip" data-filter="wearable">⌚ Wearables</button>
+<button class="chip" data-filter="console">🎮 Consoles</button>
+<button class="chip" data-filter="diy">🖥️ DIY/Other</button>
+</div>
+<main id="device-sections"></main>
+<div class="no-results" id="no-results">No devices match your search. Try a different term!</div>
+<section class="hosting-section">
+<h2>🚀 Step Zero: Host Void Room Online</h2>
+<p>Before ANY device can access Void Room, you need it hosted at a URL. It's a single HTML file — here are the easiest ways to get it online for free:</p>
+<div class="hosting-grid">
+<div class="hosting-option"><h3>⚡ Netlify Drop</h3><p>Drag and drop the HTML file. Live in seconds. Free.</p><code>1. Go to app.netlify.com/drop
+2. Drag this HTML file onto it
+3. Get your URL instantly!</code></div>
+<div class="hosting-option"><h3>🔺 Vercel</h3><p>Push to GitHub, auto-deploys. Free tier is generous.</p><code>npm i -g vercel
+vercel deploy --prod</code></div>
+<div class="hosting-option"><h3>📄 GitHub Pages</h3><p>Free hosting from a GitHub repo.</p><code>1. Create repo, push HTML file
+2. Settings → Pages → main branch
+3. Live at username.github.io/repo</code></div>
+<div class="hosting-option"><h3>🌊 DigitalOcean</h3><p>Your existing droplet! Serve with nginx or Python.</p><code>cd /var/www/html
+python3 -m http.server 8080</code></div>
+<div class="hosting-option"><h3>☁️ Cloudflare Pages</h3><p>Blazing fast global CDN. Free tier.</p><code>1. dash.cloudflare.com → Pages
+2. Upload this HTML file
+3. Instant global deployment</code></div>
+<div class="hosting-option"><h3>🏠 Local Network</h3><p>For home-only use on all your devices.</p><code># From the folder with the file:
+python3 -m http.server 8080
+# Open http://YOUR-IP:8080</code></div>
+</div>
+</section>
+<footer class="footer">VOID ROOM — universal collaborative 3D space<br>works on everything with a screen (and some things without one)</footer>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   📱 C3. ALL DEVICE DATA (26 devices across 8 categories)
+   ═══════════════════════════════════════════════════════════ */
+const ALL_DEVICES=[
+{name:"iPhone",icon:"📱",sub:"Safari — just open the URL",category:"apple",difficulty:"easy",method:"Built-in Browser",methodClass:"browser",steps:["Open <strong>Safari</strong> (or Chrome, Firefox — any browser works)","Type in your Void Room URL (e.g. <code>yourdomain.com/void-room</code>)","Tap <strong>Share → Add to Home Screen</strong> to make it feel like a native app","The app will open fullscreen — no browser bars!","Touch controls: <strong>one finger</strong> = interact, <strong>two fingers</strong> = orbit camera, <strong>pinch</strong> = zoom"],tip:"💡 Adding to Home Screen makes it a PWA — it launches fullscreen like a real app!",tipType:"success"},
+{name:"iPad",icon:"📲",sub:"Safari or any browser — touch + Apple Pencil",category:"apple",difficulty:"easy",method:"Built-in Browser",methodClass:"browser",steps:["Open <strong>Safari</strong> on your iPad","Navigate to your Void Room URL","Apple Pencil supported: use it for precise object placement!","Add to Home Screen for a fullscreen app experience"],tip:"💡 iPad + Apple Pencil = the best mobile creation experience.",tipType:"info"},
+{name:"Mac (Desktop/Laptop)",icon:"💻",sub:"Any browser — full mouse + keyboard",category:"apple",difficulty:"easy",method:"Built-in Browser",methodClass:"browser",steps:["Open <strong>Safari, Chrome, Firefox, or Arc</strong>","Navigate to your Void Room URL","Full keyboard shortcuts: <strong>M</strong>=Move, <strong>P</strong>=Place, <strong>R</strong>=Rotate, <strong>S</strong>=Scale, <strong>X</strong>=Delete","Right-click + drag = orbit. Scroll = zoom. Keys <strong>1-9</strong> switch shapes"],tip:"💡 This is the power-user experience with all shortcuts and mouse precision.",tipType:"success"},
+{name:"Apple TV",icon:"📺",sub:"AirPlay mirror from iPhone/Mac",category:"apple",difficulty:"medium",method:"AirPlay Mirror",methodClass:"mirror",steps:["Apple TV does <strong>not have a web browser</strong>","On iPhone/iPad: <strong>Control Center → Screen Mirroring</strong> → select Apple TV","Open Void Room in Safari on your phone — it appears on TV!","On Mac: <strong>System Settings → Displays → AirPlay Display</strong>","Control from your phone/Mac while viewing on the big screen"],tip:"⚠️ Slight AirPlay delay. For lag-free TV, use a Fire Stick or HDMI mini PC instead.",tipType:"warn"},
+{name:"Apple Watch",icon:"⌚",sub:"Hidden WebKit browser — very limited",category:"wearable",difficulty:"hackery",method:"Hidden Browser",methodClass:"browser",steps:["Apple Watch has a <strong>hidden browser</strong> (WebKit built into watchOS)","On your <strong>iPhone</strong>, send yourself an iMessage with your Void Room URL","On your <strong>Apple Watch</strong>, open Messages and tap the link","Or say <strong>\\"Hey Siri, search for [your URL]\\"</strong>","Or install <strong>µBrowser</strong> (\\$1) or <strong>Watch Browser</strong> (free) for a URL bar"],tip:"⚠️ The watch won't run WebGL/Three.js — best used as a future <strong>remote control</strong> companion.",tipType:"warn"},
+{name:"Apple Vision Pro",icon:"🥽",sub:"Safari in spatial computing — 3D in 3D!",category:"apple",difficulty:"easy",method:"Built-in Browser",methodClass:"browser",steps:["Open <strong>Safari</strong> in visionOS","Navigate to your Void Room URL","The 3D scene renders inside a floating browser window","Use <strong>eye tracking + pinch gestures</strong> to interact","Resize the window to make the 3D scene as large as you want"],tip:"💡 A native visionOS WebXR version would let you step INSIDE the scene!",tipType:"success"},
+{name:"Windows PC / Laptop",icon:"🖥️",sub:"Any browser — full power user experience",category:"windows",difficulty:"easy",method:"Built-in Browser",methodClass:"browser",steps:["Open <strong>Chrome, Edge, Firefox, or Brave</strong>","Navigate to your Void Room URL","All keyboard shortcuts + mouse + scroll wheel supported","In Chrome/Edge: click <strong>⋮ → Install as app</strong> for standalone window","Gamepad support — plug in an Xbox controller!"],tip:"💡 Install as PWA for the cleanest experience — no browser UI.",tipType:"success"},
+{name:"Surface / 2-in-1 Tablet",icon:"📋",sub:"Touch + pen + keyboard — best of everything",category:"windows",difficulty:"easy",method:"Built-in Browser",methodClass:"browser",steps:["Open <strong>Edge</strong> (or any browser)","Navigate to your Void Room URL","Use <strong>Surface Pen</strong> for precision placement","Switch between touch (orbit) and pen (place/move) seamlessly"],tip:"💡 Surface combines every input type — mouse, touch, pen, keyboard.",tipType:"info"},
+{name:"Xbox (Console)",icon:"🎮",sub:"Edge browser built-in + controller support",category:"console",difficulty:"medium",method:"Built-in Browser",methodClass:"browser",steps:["Open <strong>Microsoft Edge</strong> from Xbox home or Store","Navigate to your Void Room URL","<strong>Xbox controller</strong> has built-in gamepad support!","Left stick = orbit, Right stick = move objects, Triggers = zoom","Connect a <strong>USB keyboard + mouse</strong> for full control"],tip:"💡 Xbox supports mouse and keyboard over USB for the best experience.",tipType:"info"},
+{name:"Android Phone",icon:"📱",sub:"Chrome or any browser — touch native",category:"android",difficulty:"easy",method:"Built-in Browser",methodClass:"browser",steps:["Open <strong>Chrome</strong> (or Firefox, Brave, Samsung Internet)","Navigate to your Void Room URL","Tap <strong>⋮ → Add to Home Screen</strong> for PWA mode","Touch: one finger = interact, two fingers = orbit, pinch = zoom","Works great on Galaxy Fold in both modes!"],tip:"💡 On Galaxy Fold, unfold for building, fold for controlling!",tipType:"success"},
+{name:"Android Tablet",icon:"📲",sub:"Big screen + touch — great creative canvas",category:"android",difficulty:"easy",method:"Built-in Browser",methodClass:"browser",steps:["Open <strong>Chrome</strong>","Navigate to your Void Room URL","S Pen or any stylus for precision","Use <strong>Samsung DeX</strong> for desktop-like mouse experience"],tip:"💡 Samsung DeX mode gives you a desktop with mouse cursor.",tipType:"info"},
+{name:"Chromebook",icon:"💻",sub:"Chrome browser — it's literally Chrome OS",category:"android",difficulty:"easy",method:"Built-in Browser",methodClass:"browser",steps:["Open <strong>Chrome</strong> (it's the whole OS!)","Navigate to your Void Room URL","All keyboard shortcuts and trackpad gestures work","Click <strong>⋮ → Install as app</strong> for standalone window"],tip:"💡 Cheapest way to get full keyboard+mouse Void Room.",tipType:"success"},
+{name:"Samsung Smart TV (Tizen)",icon:"📺",sub:"Built-in Samsung Internet browser",category:"tv",difficulty:"medium",method:"Built-in Browser",methodClass:"browser",steps:["Press <strong>Home</strong> on your Samsung remote","Navigate to <strong>Apps → Samsung Internet</strong> (globe icon / \\"Web\\")","Use the remote's <strong>directional pad</strong> as a cursor","Type your Void Room URL using on-screen keyboard","Navigate with <strong>D-pad + Select button</strong>"],tip:"⚠️ Smart TV browsers are slow with WebGL. A <strong>Fire Stick</strong> or <strong>mini PC via HDMI</strong> is much better.",tipType:"warn"},
+{name:"LG Smart TV (webOS)",icon:"📺",sub:"Built-in LG browser",category:"tv",difficulty:"medium",method:"Built-in Browser",methodClass:"browser",steps:["Press <strong>Home</strong> on your LG Magic Remote","Find <strong>Web Browser</strong> in the bottom app bar","Navigate to your Void Room URL","The Magic Remote has <strong>pointer mode</strong> — wave it like a Wii remote!","Bookmark the URL for quick access"],tip:"💡 LG's Magic Remote pointer is great — it works like a mouse in the air!",tipType:"info"},
+{name:"Android TV / Google TV",icon:"📺",sub:"Sideload Chrome or use TV browser",category:"tv",difficulty:"medium",method:"Sideload Browser",methodClass:"sideload",steps:["<strong>Settings → Security → Unknown Sources → ON</strong>","Install <strong>Downloader</strong> from Google Play Store","Use Downloader's browser or sideload Chrome APK","Open browser and navigate to your Void Room URL","Connect a <strong>Bluetooth mouse</strong> for best interaction"],tip:"💡 Bluetooth mouse + keyboard transforms Android TV into a full desktop.",tipType:"info"},
+{name:"Roku TV",icon:"📺",sub:"No native browser — mirror or cast",category:"tv",difficulty:"hard",method:"Screen Mirror",methodClass:"mirror",steps:["Roku has <strong>NO built-in web browser</strong>","<strong>From Phone:</strong> Screen Cast / Smart View / Miracast → select Roku","<strong>From Windows:</strong> Press <strong>Win+K</strong> → select Roku TV","<strong>Best method:</strong> Plug in a Fire Stick or Chromecast via HDMI","Control from your phone/computer, view on TV"],tip:"⚠️ Roku is the most limited platform. An HDMI dongle is the best workaround.",tipType:"warn"},
+{name:"Fire TV Stick / Fire TV Cube",icon:"🔥",sub:"Silk browser — best cheap TV solution",category:"amazon",difficulty:"easy",method:"Silk Browser",methodClass:"browser",steps:["Say <strong>\\"Alexa, open Silk Browser\\"</strong> — it launches instantly!","Or: <strong>Find → Search</strong> → type \\"Silk Browser\\"","If not installed, download free from <strong>Amazon Appstore</strong>","Navigate to your Void Room URL","Use <strong>remote D-pad</strong> as cursor or pair a <strong>Bluetooth mouse</strong>","Bookmark: press <strong>☰ Menu</strong> → Bookmark"],tip:"💡 At ~\\$25-30, the Fire Stick is the cheapest way to get Void Room on ANY TV. Pair a Bluetooth mouse!",tipType:"success"},
+{name:"Amazon Fire Tablet",icon:"🔥",sub:"Silk browser — full touch support",category:"amazon",difficulty:"easy",method:"Silk Browser",methodClass:"browser",steps:["Open <strong>Silk Browser</strong> (pre-installed)","Navigate to your Void Room URL","Full touch: one finger = interact, two fingers = orbit, pinch = zoom","Add to home screen: <strong>☰ → Add to Home</strong>"],tip:"💡 Fire Tablets at \\$50-100 make great dedicated Void Room devices.",tipType:"success"},
+{name:"Echo Show (5/8/10/15)",icon:"🔊",sub:"Silk browser built in — voice + touch",category:"amazon",difficulty:"medium",method:"Voice + Browser",methodClass:"voice",steps:["Say <strong>\\"Alexa, open Silk\\"</strong>","Tap the URL bar and type your Void Room URL","The touchscreen gives you direct interaction","Echo Show 10's <strong>rotating screen</strong> follows you!","Echo Show 15 (wall-mounted) = permanent 15\\" display"],tip:"💡 Echo Show 15 on a wall = amazing always-on 3D scene. Echo Show 10's rotation is uniquely immersive.",tipType:"info"},
+{name:"Echo (Speaker Only)",icon:"🔈",sub:"No screen! Use as voice controller (advanced)",category:"amazon",difficulty:"hackery",method:"Voice Command (Advanced)",methodClass:"voice",steps:["Echo speakers <strong>have no screen</strong>","<strong>What IS possible:</strong> build a custom Alexa Skill that controls Void Room","The skill sends API commands: \\"Alexa, place a red cube at position 5\\"","Requires: <strong>Alexa Developer Account</strong> + <strong>Lambda</strong> + <strong>WebSocket bridge</strong>","Think of it as a <strong>voice remote</strong> for screens running elsewhere"],tip:"⚠️ Advanced project! Requires backend development, not just \\"open a URL\\".",tipType:"warn"},
+{name:"Wear OS (Pixel Watch, Galaxy Watch 4+)",icon:"⌚",sub:"Limited browser — better as remote",category:"wearable",difficulty:"hackery",method:"Sideload Browser",methodClass:"sideload",steps:["Wear OS has no built-in browser","Enable <strong>Developer Options</strong>, connect via <strong>adb</strong>","Sideload a browser APK: <code>adb install browser.apk</code>","The tiny screen makes 3D impractical","Best approach: build a <strong>companion Wear OS remote control app</strong>"],tip:"⚠️ Like Apple Watch — real value is as a <strong>remote control</strong>, not a viewer.",tipType:"warn"},
+{name:"Samsung Galaxy Watch",icon:"⌚",sub:"Samsung Internet on Tizen/Wear OS",category:"wearable",difficulty:"hackery",method:"Built-in Browser",methodClass:"browser",steps:["Watch 4+: follows <strong>Wear OS</strong> instructions above","Older (Watch 3-): install <strong>Samsung Internet</strong> from Galaxy Store","Navigate using the rotating bezel","Screen too small for 3D — best as <strong>notification receiver</strong>"],tip:"💡 The rotating bezel could map to object rotation in a companion app!",tipType:"info"},
+{name:"PlayStation 4 / PS5",icon:"🎮",sub:"Built-in web browser",category:"console",difficulty:"medium",method:"Built-in Browser",methodClass:"browser",steps:["Open the <strong>Web Browser</strong> (PS4: Library; PS5: via message links)","Navigate to your Void Room URL","PS controller <strong>touchpad</strong> acts as mouse","Use <strong>analog sticks</strong> for scrolling","Send yourself a message with the URL via PlayStation app"],tip:"💡 PS5 browser is hidden — send yourself a message with the URL, then open it on console.",tipType:"info"},
+{name:"Nintendo Switch",icon:"🎮",sub:"Hidden DNS-based browser trick",category:"console",difficulty:"hard",method:"DNS Exploit Browser",methodClass:"sideload",steps:["Switch has <strong>no official browser</strong>","<strong>Settings → Internet → DNS Settings → Manual</strong>","Set Primary DNS: <strong>045.055.142.122</strong>","Run <strong>Connection Test</strong> — browser page appears!","Navigate to your Void Room URL","Touch screen works in handheld mode"],tip:"⚠️ Uses third-party DNS redirect — may be patched at any time.",tipType:"warn"},
+{name:"Raspberry Pi",icon:"🍓",sub:"Chromium kiosk mode — perfect dedicated display",category:"diy",difficulty:"medium",method:"Kiosk Browser",methodClass:"app",steps:["Flash <strong>Raspberry Pi OS</strong>","Install Chromium: <code>sudo apt install chromium-browser</code>","Launch kiosk: <code>chromium-browser --kiosk YOUR-URL</code>","Auto-start on boot via <code>~/.config/autostart/</code>","Connect any HDMI display + mouse/keyboard/touchscreen"],tip:"💡 Pi + touchscreen = ultimate dedicated Void Room device. ~\\$50-80 total.",tipType:"success"},
+{name:"Smart Fridge (Samsung Family Hub)",icon:"🧊",sub:"Built-in browser on the fridge!",category:"diy",difficulty:"medium",method:"Built-in Browser",methodClass:"browser",steps:["Samsung Family Hub has a <strong>Tizen touchscreen</strong>","Swipe right to the <strong>App screen</strong>","Find <strong>Internet / Web Browser</strong>","Navigate to your Void Room URL","Full touchscreen interaction on a 21.5\\" display!"],tip:"💡 Yes, this really works. Manipulate 3D objects on your fridge while making a sandwich. 🥪",tipType:"success"},
+{name:"Projector",icon:"📽️",sub:"HDMI from any device — biggest canvas!",category:"diy",difficulty:"easy",method:"HDMI / Wireless Cast",methodClass:"hdmi",steps:["<strong>HDMI:</strong> Connect any laptop to the projector","<strong>Smart Projector:</strong> Use built-in Android TV browser","<strong>Fire Stick:</strong> Plug into projector's HDMI port","<strong>Wireless:</strong> Chromecast or AirPlay from phone/laptop","Turn off lights for maximum immersion 🌑"],tip:"💡 Projector + dark room = the most immersive experience possible!",tipType:"success"},
+{name:"Meta Quest (VR Headset)",icon:"🥽",sub:"Meta Quest Browser — WebXR capable!",category:"diy",difficulty:"easy",method:"Built-in Browser",methodClass:"browser",steps:["Open <strong>Meta Quest Browser</strong>","Navigate to your Void Room URL","3D renders on a virtual screen in front of you","Use <strong>hand tracking or controllers</strong>","Future: add <strong>WebXR</strong> for true VR immersion!"],tip:"💡 WebXR would let you step INSIDE the 3D scene with hand controls!",tipType:"info"},
+{name:"Steam Deck",icon:"🎮",sub:"Full Linux desktop — Chrome/Firefox",category:"diy",difficulty:"easy",method:"Desktop Browser",methodClass:"browser",steps:["Switch to <strong>Desktop Mode</strong>: hold Power → Switch to Desktop","Open <strong>Firefox</strong> (pre-installed) or install Chrome","Navigate to your Void Room URL","<strong>Touchscreen</strong> and <strong>trackpads</strong> both work","Built-in <strong>gamepad</strong> controls map perfectly!"],tip:"💡 Steam Deck = portable Linux PC with built-in gamepad. Perfect match!",tipType:"success"}
+];
+
+/* ═══════════════════════════════════════════════════
+   ✨ C5. SEARCH, FILTER & INTERACTIVITY
+   ═══════════════════════════════════════════════════ */
+const CATEGORY_INFO={apple:{name:"Apple Devices",icon:"🍎"},windows:{name:"Windows Devices",icon:"🪟"},android:{name:"Android & Chrome OS",icon:"🤖"},tv:{name:"Smart TVs",icon:"📺"},amazon:{name:"Amazon / Fire",icon:"🔥"},wearable:{name:"Wearables",icon:"⌚"},console:{name:"Game Consoles",icon:"🎮"},diy:{name:"DIY & Other",icon:"🖥️"}};
+function renderAllDevices(){const container=document.getElementById('device-sections');container.innerHTML='';const grouped={};ALL_DEVICES.forEach(d=>{if(!grouped[d.category])grouped[d.category]=[];grouped[d.category].push(d)});['apple','windows','android','tv','amazon','wearable','console','diy'].forEach(catKey=>{const devices=grouped[catKey];if(!devices)return;const info=CATEGORY_INFO[catKey];const section=document.createElement('div');section.className='category-section';section.dataset.category=catKey;section.innerHTML='<div class="category-header"><div class="cat-icon">'+info.icon+'</div><h2>'+info.name+'</h2><span class="cat-count">'+devices.length+' device'+(devices.length>1?'s':'')+'</span></div><div class="cards-grid"></div>';const grid=section.querySelector('.cards-grid');devices.forEach((device,i)=>{const card=document.createElement('div');card.className='device-card';card.style.animationDelay=i*0.06+'s';card.dataset.searchText=(device.name+' '+device.sub+' '+device.category+' '+device.method).toLowerCase();const stepsHtml=device.steps.map(s=>'<li>'+s+'</li>').join('');const tipHtml=device.tip?'<div class="tip-box '+device.tipType+'">'+device.tip+'</div>':'';card.innerHTML='<div class="card-header"><div class="device-icon">'+device.icon+'</div><div><div class="device-name">'+device.name+'</div><div class="device-sub">'+device.sub+'</div></div><span class="difficulty-badge '+device.difficulty+'">'+device.difficulty+'</span><span class="expand-arrow">▼</span></div><div class="card-body"><span class="method-tag '+device.methodClass+'">'+device.method+'</span><ol class="steps">'+stepsHtml+'</ol>'+tipHtml+'</div>';card.addEventListener('click',()=>card.classList.toggle('expanded'));grid.appendChild(card)});container.appendChild(section)})}
+document.getElementById('search').addEventListener('input',(e)=>{const q=e.target.value.toLowerCase().trim();let any=false;document.querySelectorAll('.device-card').forEach(c=>{const m=!q||c.dataset.searchText.includes(q);c.classList.toggle('hidden',!m);if(m)any=true});document.querySelectorAll('.category-section').forEach(s=>{s.classList.toggle('hidden',!s.querySelector('.device-card:not(.hidden)'))});document.getElementById('no-results').classList.toggle('visible',!any);document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));document.querySelector('.chip[data-filter="all"]').classList.add('active')});
+document.querySelectorAll('.chip').forEach(chip=>{chip.addEventListener('click',()=>{document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');const f=chip.dataset.filter;document.getElementById('search').value='';document.getElementById('no-results').classList.remove('visible');document.querySelectorAll('.category-section').forEach(s=>{s.classList.toggle('hidden',f!=='all'&&s.dataset.category!==f)});document.querySelectorAll('.device-card').forEach(c=>c.classList.remove('hidden'))})});
+
+// 🚀 C6. STARTUP
+renderAllDevices();
+<\/script>
+</body></html>`;
+
+</script>
+
+<!--
+┌──────────────────────────────────────────────────────────────┐
+│  📖 TABLE OF CONTENTS (BOTTOM)                              │
+│                                                              │
+│  PART A — 🚀 SHELL                                          │
+│    A1. 🎨 Shell Styles & Tab Navigation                     │
+│    A2. 🏗️ Shell HTML (tab bar + iframe containers)          │
+│    A3. 🔧 Shell JavaScript (tab switching + content loading) │
+│                                                              │
+│  PART B — 🎮 3D COLLABORATIVE SPACE (embedded in iframe)    │
+│    B1-B2.  Styles + HTML                                    │
+│    B3-B5.  Config, IDs, Sync                                │
+│    B6-B7.  Three.js World + Object System                   │
+│    B8-B9.  Input Handler + Gamepad                          │
+│    B10-B11. Camera + UI                                     │
+│    B12-B13. Animation Loop + Startup                        │
+│                                                              │
+│  PART C — 📖 DEVICE SETUP DASHBOARD (embedded in iframe)    │
+│    C1-C2.  Styles + HTML                                    │
+│    C3.     26 Devices across 8 Categories                   │
+│    C4.     Hosting Guide (6 free options)                   │
+│    C5-C6.  Search/Filter + Startup                          │
+│                                                              │
+│  One file. Every device. Infinite possibilities. 🌌          │
+└──────────────────────────────────────────────────────────────┘
+-->
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "touch": false,
+  "pen": false,
+  "keyboard": false,
+  "mouse": false,
+  "gamepad": false,
+  "voice": false,
+  "gesture": false
+}

@@ -1,0 +1,7 @@
+{
+  "debugMode": false,
+  "usbDebugging": false,
+  "showFPS": false,
+  "verboseLogging": false,
+  "mockData": true
+}

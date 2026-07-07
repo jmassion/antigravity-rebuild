@@ -1,0 +1,11 @@
+{
+  "icon": "Laptop",
+  "tags": [
+    "laptop",
+    "windows",
+    "macos",
+    "linux",
+    "chromeos"
+  ],
+  "description": "Laptop device settings"
+}

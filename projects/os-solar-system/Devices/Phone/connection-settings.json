@@ -1,0 +1,7 @@
+{
+  "wifi": true,
+  "bluetooth": true,
+  "cellular": false,
+  "nfc": false,
+  "usb": true
+}

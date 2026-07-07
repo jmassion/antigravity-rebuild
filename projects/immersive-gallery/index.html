@@ -1,0 +1,4145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Immersive Gallery</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { overflow: hidden; background: #0a0a12; font-family: 'Inter', system-ui, sans-serif; }
+        canvas { display: block; }
+
+        /* ============================================
+           🎬 LOADING SCREEN
+           ============================================ */
+        #loadScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0a0a12;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 2000; transition: opacity 0.8s ease;
+        }
+        .loader-ring {
+            width: 48px; height: 48px;
+            border: 2px solid rgba(102,126,234,0.15);
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-text { color: rgba(255,255,255,0.3); font-size: 0.75rem; letter-spacing: 3px; font-weight: 300; }
+
+        /* ============================================
+           HOME SCREEN - Mode selection overlay
+           ============================================ */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: transparent;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        #overlay.ready { opacity: 1; }
+        #overlay h1 {
+            font-size: 3rem; color: rgba(255,255,255,0.9);
+            margin-bottom: 4px; letter-spacing: 6px; font-weight: 200;
+            text-transform: uppercase;
+            text-shadow: 0 0 40px rgba(102,126,234,0.3);
+        }
+        #overlay .subtitle {
+            font-size: 0.85rem; color: rgba(255,255,255,0.35); margin-bottom: 50px;
+            letter-spacing: 2px; font-weight: 300;
+        }
+
+        .mode-picker { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; max-width: 960px; }
+        .mode-card {
+            width: 210px; padding: 30px 20px;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            text-align: center; cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden;
+        }
+        .mode-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        }
+        .mode-card:hover {
+            border-color: rgba(102,126,234,0.35);
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 25px 60px rgba(102,126,234,0.15), 0 0 0 1px rgba(102,126,234,0.1);
+            background: rgba(255,255,255,0.07);
+        }
+        .mode-card .icon { font-size: 2.6rem; margin-bottom: 16px; display: block; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
+        .mode-card h3 { color: rgba(255,255,255,0.85); font-size: 0.95rem; font-weight: 500; margin-bottom: 8px; }
+        .mode-card p { color: rgba(255,255,255,0.3); font-size: 0.72rem; line-height: 1.6; font-weight: 300; }
+        .mode-card .badge {
+            position: absolute; top: 10px; right: 10px;
+            background: linear-gradient(135deg, rgba(102,126,234,0.8), rgba(118,75,162,0.8));
+            color: rgba(255,255,255,0.9); font-size: 0.55rem; padding: 3px 9px;
+            border-radius: 10px; font-weight: 600; letter-spacing: 0.5px;
+        }
+
+        /* ============================================
+           GLASS UI COMPONENTS
+           ============================================ */
+        .glass {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .glass-light {
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        #hud {
+            position: fixed; bottom: 20px; left: 20px;
+            color: rgba(255,255,255,0.25); font-size: 0.72rem;
+            z-index: 100; pointer-events: none; line-height: 1.8;
+            display: none; font-weight: 300; letter-spacing: 0.3px;
+        }
+
+        #backBtn {
+            position: fixed; top: 20px; left: 20px;
+            padding: 10px 20px; border-radius: 12px;
+            color: rgba(255,255,255,0.6); font-size: 0.75rem; cursor: pointer;
+            z-index: 200; display: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif; font-weight: 400;
+        }
+        #backBtn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); }
+
+        #crosshair {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px; height: 24px;
+            border: 1.5px solid rgba(255,255,255,0.15);
+            border-radius: 50%;
+            z-index: 100; pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: none;
+        }
+        #crosshair::after {
+            content: ''; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px; height: 2px; background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+        }
+        #crosshair.hovering {
+            border-color: #667eea; width: 32px; height: 32px;
+            box-shadow: 0 0 25px rgba(102,126,234,0.4), inset 0 0 10px rgba(102,126,234,0.15);
+        }
+        #crosshair.hovering::after { background: #667eea; width: 3px; height: 3px; }
+
+        #info-panel {
+            position: fixed; top: 50%; right: -440px;
+            transform: translateY(-50%);
+            width: 380px; padding: 36px;
+            background: rgba(15,15,25,0.85);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-left: 2px solid rgba(102,126,234,0.4);
+            border-radius: 20px 0 0 20px;
+            color: #fff; z-index: 300;
+            transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -10px 0 50px rgba(0,0,0,0.3);
+        }
+        #info-panel.visible { right: 0; }
+        #info-panel h2 { color: #8fa4f0; margin-bottom: 6px; font-size: 1.25rem; font-weight: 500; }
+        #info-panel .panel-icon { font-size: 2.4rem; margin-bottom: 10px; display: block; }
+        #info-panel p { color: rgba(255,255,255,0.5); line-height: 1.75; margin-bottom: 20px; font-size: 0.85rem; font-weight: 300; }
+        #info-panel .close-btn {
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none; border-radius: 24px;
+            color: #fff; cursor: pointer; font-size: 0.8rem;
+            transition: all 0.3s; font-family: 'Inter', sans-serif;
+            font-weight: 500; letter-spacing: 0.5px;
+            box-shadow: 0 4px 20px rgba(102,126,234,0.35);
+        }
+        #info-panel .close-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(102,126,234,0.5); }
+
+        #minimap {
+            position: fixed; top: 20px; right: 20px;
+            width: 120px; height: 120px;
+            border-radius: 14px; z-index: 100;
+            pointer-events: none; display: none;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+            opacity: 0.8;
+        }
+        #minimap canvas { border-radius: 14px; }
+
+        #card-hud {
+            position: fixed; bottom: 35px; left: 50%;
+            transform: translateX(-50%);
+            display: none; gap: 12px; align-items: center; z-index: 150;
+        }
+        #card-hud .nav-btn {
+            width: 48px; height: 48px;
+            border-radius: 50%; font-size: 1.1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: rgba(255,255,255,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        #card-hud .nav-btn:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            color: #fff; border-color: transparent !important;
+            transform: scale(1.1); box-shadow: 0 6px 25px rgba(102,126,234,0.4);
+        }
+        #card-counter {
+            border-radius: 24px; padding: 10px 24px;
+            font-size: 0.8rem; color: rgba(255,255,255,0.45);
+            font-weight: 400; letter-spacing: 1px;
+        }
+
+        #carouselStylePicker {
+            position: fixed; top: 20px; left: 50%;
+            transform: translateX(-50%);
+            display: none; gap: 4px; align-items: center; z-index: 200;
+            border-radius: 14px; padding: 5px 6px;
+        }
+        .style-btn {
+            padding: 7px 14px; background: transparent; border: none; border-radius: 10px;
+            color: rgba(255,255,255,0.35); font-size: 0.7rem; cursor: pointer;
+            transition: all 0.25s; font-family: 'Inter', sans-serif; font-weight: 500;
+        }
+        .style-btn:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6); }
+        .style-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff; box-shadow: 0 2px 12px rgba(102,126,234,0.35);
+        }
+
+        #wireframeBtn {
+            position: fixed; top: 20px; left: 165px;
+            padding: 10px 18px; border-radius: 12px;
+            color: rgba(255,255,255,0.45); font-size: 0.75rem; cursor: pointer;
+            z-index: 200; display: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif; font-weight: 400;
+        }
+        #wireframeBtn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); }
+        #wireframeBtn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff; border-color: transparent !important;
+            box-shadow: 0 4px 18px rgba(102,126,234,0.35);
+        }
+
+        /* Mode label in top-center */
+        #modeLabel {
+            position: fixed; top: 22px; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.12); font-size: 0.65rem; font-weight: 500;
+            letter-spacing: 4px; text-transform: uppercase;
+            z-index: 150; pointer-events: none; display: none;
+        }
+
+        /* ============================================
+           3D OS MODE — Status bar + app window
+           ============================================ */
+        #osStatusBar {
+            position: fixed; top: 0; left: 0; right: 0; height: 32px;
+            background: rgba(8,8,15,0.75);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: none; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 180; font-size: 0.7rem; color: rgba(255,255,255,0.5);
+        }
+        #osStatusBar .os-left { display: flex; gap: 16px; align-items: center; }
+        #osStatusBar .os-right { display: flex; gap: 12px; align-items: center; }
+        #osStatusBar .os-logo { font-weight: 600; color: rgba(102,126,234,0.8); letter-spacing: 2px; font-size: 0.65rem; }
+        #osStatusBar .os-indicator { width: 6px; height: 6px; border-radius: 50%; background: #43e97b; }
+        #osStatusBar .os-time { font-weight: 400; color: rgba(255,255,255,0.6); letter-spacing: 1px; }
+
+        #osAppWindow {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 420px; padding: 0; border-radius: 16px; overflow: hidden;
+            background: rgba(12,12,22,0.92);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.08);
+            z-index: 250; display: none;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(102,126,234,0.1);
+            animation: windowPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes windowPop {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        #osAppWindow .win-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        #osAppWindow .win-header .win-title {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.85rem; color: rgba(255,255,255,0.8); font-weight: 500;
+        }
+        #osAppWindow .win-header .win-title .win-icon { font-size: 1.3rem; }
+        #osAppWindow .win-close {
+            width: 26px; height: 26px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
+            cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        #osAppWindow .win-close:hover { background: rgba(245,87,108,0.3); color: #f5576c; }
+        #osAppWindow .win-body { padding: 20px 18px 24px; }
+        #osAppWindow .win-body p { color: rgba(255,255,255,0.45); font-size: 0.8rem; line-height: 1.7; font-weight: 300; }
+        #osAppWindow .win-body .app-feature {
+            display: flex; gap: 10px; align-items: center; padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        #osAppWindow .win-body .app-feature .feat-dot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        }
+        #osAppWindow .win-body .app-feature span { color: rgba(255,255,255,0.5); font-size: 0.78rem; font-weight: 300; }
+
+        #osDockLabel {
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: rgba(8,8,15,0.85); backdrop-filter: blur(15px);
+            padding: 6px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6); font-size: 0.72rem; font-weight: 400;
+            z-index: 170; display: none; pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        /* ============================================
+           DEVICE LAB MODE — Multi-device testing
+           ============================================ */
+        #deviceLabUI {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: none; gap: 6px; align-items: center; z-index: 180;
+            border-radius: 14px; padding: 5px 8px;
+            background: rgba(8,8,15,0.75); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.06);
+            flex-wrap: wrap; justify-content: center; max-width: 700px;
+        }
+        .dl-app-btn {
+            padding: 5px 10px; border: none; border-radius: 8px;
+            background: transparent; color: rgba(255,255,255,0.4);
+            font-size: 0.62rem; cursor: pointer; font-family: 'Inter', sans-serif;
+            font-weight: 400; transition: all 0.25s; white-space: nowrap;
+        }
+        .dl-app-btn:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); }
+        .dl-app-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff; box-shadow: 0 2px 10px rgba(102,126,234,0.3);
+        }
+        #dlDeviceInfo {
+            position: fixed; top: 40px; left: 50%; transform: translateX(-50%);
+            background: rgba(8,8,15,0.8); backdrop-filter: blur(15px);
+            padding: 8px 20px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.55); font-size: 0.75rem; font-weight: 400;
+            z-index: 180; display: none; text-align: center;
+            letter-spacing: 0.5px;
+        }
+        #voiceBtn {
+            position: fixed; bottom: 70px; right: 20px;
+            width: 52px; height: 52px; border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none; color: #fff; font-size: 1.3rem;
+            cursor: pointer; z-index: 200; display: none;
+            box-shadow: 0 4px 25px rgba(102,126,234,0.4);
+            transition: all 0.3s;
+        }
+        #voiceBtn:hover { transform: scale(1.1); box-shadow: 0 6px 35px rgba(102,126,234,0.6); }
+        #voiceBtn.listening {
+            animation: voicePulse 1.2s ease-in-out infinite;
+            background: linear-gradient(135deg, #f5576c, #ff6b6b);
+            box-shadow: 0 4px 25px rgba(245,87,108,0.5);
+        }
+        @keyframes voicePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245,87,108,0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(245,87,108,0); }
+        }
+        #voiceTranscript {
+            position: fixed; bottom: 130px; right: 20px;
+            max-width: 280px; padding: 10px 16px; border-radius: 12px;
+            background: rgba(8,8,15,0.85); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6); font-size: 0.75rem;
+            z-index: 200; display: none; line-height: 1.6;
+        }
+
+        /* ============================================
+           STORYBOARD MODE — Full-page scrollable
+           ============================================ */
+        #storyboardContainer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow-y: auto; overflow-x: hidden;
+            z-index: 500; display: none;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(102,126,234,0.3) transparent;
+        }
+        #storyboardContainer::-webkit-scrollbar { width: 6px; }
+        #storyboardContainer::-webkit-scrollbar-track { background: transparent; }
+        #storyboardContainer::-webkit-scrollbar-thumb { background: rgba(102,126,234,0.3); border-radius: 3px; }
+
+        .sb-section {
+            width: 100%; min-height: 260px; padding: 28px 0 28px 30px;
+            position: relative; overflow: hidden;
+        }
+        .sb-section::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.5; z-index: 0; pointer-events: none;
+        }
+        .sb-section-title {
+            font-family: 'Inter', sans-serif; font-size: 1.15rem; font-weight: 700;
+            color: rgba(255,255,255,0.85); text-transform: uppercase;
+            letter-spacing: 3px; margin-bottom: 18px;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+            position: relative; z-index: 2;
+        }
+        .sb-carousel-track {
+            display: flex; gap: 18px; align-items: center;
+            overflow-x: auto; overflow-y: hidden;
+            padding: 10px 40px 18px 0;
+            position: relative; z-index: 2;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            scroll-behavior: smooth;
+        }
+        .sb-carousel-track::-webkit-scrollbar { display: none; }
+
+        .sb-frame {
+            flex-shrink: 0;
+            width: 180px; height: 130px;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(15,15,25,0.6);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            overflow: hidden;
+        }
+        .sb-frame::before {
+            content: ''; position: absolute; inset: 0;
+            border-radius: 10px;
+            border: 1.5px solid rgba(255,255,255,0.12);
+            transition: all 0.4s;
+            z-index: 3; pointer-events: none;
+        }
+        .sb-frame::after {
+            content: ''; position: absolute; inset: -3px;
+            border-radius: 13px;
+            opacity: 0; transition: opacity 0.4s;
+            z-index: 1; pointer-events: none;
+        }
+        .sb-frame:hover {
+            transform: translateY(-8px) scale(1.06);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+        .sb-frame:hover::before {
+            border-color: rgba(255,255,255,0.35);
+        }
+        .sb-frame:hover::after { opacity: 1; }
+        .sb-frame .frame-img {
+            width: 100%; height: 100%; object-fit: cover;
+            border-radius: 10px; display: block;
+            position: relative; z-index: 2;
+        }
+        .sb-frame .frame-placeholder {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.15); font-size: 2rem;
+            position: relative; z-index: 2;
+        }
+        .sb-frame .frame-placeholder small {
+            font-size: 0.55rem; margin-top: 4px;
+            color: rgba(255,255,255,0.12); letter-spacing: 1px; font-weight: 300;
+        }
+        .sb-frame .frame-number {
+            position: absolute; bottom: 6px; left: 8px;
+            font-size: 0.65rem; color: rgba(255,255,255,0.35);
+            font-weight: 600; z-index: 4;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+        }
+        .sb-frame .frame-caption {
+            position: absolute; bottom: -22px; left: 0; right: 0;
+            text-align: center; font-size: 0.6rem;
+            color: rgba(255,255,255,0.4); font-weight: 300;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            padding: 0 4px;
+        }
+        /* Depth fade: frames further right get fainter */
+        .sb-frame.depth-1 { opacity: 0.85; transform: scale(0.96); }
+        .sb-frame.depth-2 { opacity: 0.55; transform: scale(0.90); }
+        .sb-frame.depth-3 { opacity: 0.30; transform: scale(0.84); }
+
+        #sbBackBtn {
+            position: fixed; top: 12px; left: 12px;
+            padding: 8px 18px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6); font-size: 0.75rem; cursor: pointer;
+            z-index: 600; display: none;
+            transition: all 0.3s; font-family: 'Inter', sans-serif; font-weight: 400;
+        }
+        #sbBackBtn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); }
+
+        #sbSectionNav {
+            position: fixed; right: 14px; top: 50%; transform: translateY(-50%);
+            display: none; flex-direction: column; gap: 8px;
+            z-index: 600;
+        }
+        .sb-nav-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: rgba(255,255,255,0.15); border: none; cursor: pointer;
+            transition: all 0.3s; padding: 0;
+        }
+        .sb-nav-dot:hover { background: rgba(255,255,255,0.35); transform: scale(1.3); }
+        .sb-nav-dot.active { background: rgba(102,126,234,0.8); transform: scale(1.4); box-shadow: 0 0 8px rgba(102,126,234,0.5); }
+
+        /* Hidden file input for uploading */
+        #sbFileInput { display: none; }
+
+        /* ============================================
+           STORYBOARD V2 — Enhanced with lightbox zoom + clouds
+           ============================================ */
+        #sb2Container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow-y: auto; overflow-x: hidden;
+            z-index: 500; display: none;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(102,126,234,0.3) transparent;
+        }
+        #sb2Container::-webkit-scrollbar { width: 6px; }
+        #sb2Container::-webkit-scrollbar-track { background: transparent; }
+        #sb2Container::-webkit-scrollbar-thumb { background: rgba(102,126,234,0.3); border-radius: 3px; }
+
+        .sb2-section {
+            width: 100%; min-height: 300px; padding: 32px 0 40px 30px;
+            position: relative; overflow: hidden;
+        }
+        .sb2-cloud-bg {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0; pointer-events: none;
+            background-size: cover; background-position: center;
+            opacity: 0.5; transition: transform 0.1s linear;
+        }
+        .sb2-section-title {
+            font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 700;
+            color: rgba(255,255,255,0.9); text-transform: uppercase;
+            letter-spacing: 3px; margin-bottom: 14px;
+            text-shadow: 0 2px 25px rgba(0,0,0,0.6);
+            position: relative; z-index: 2;
+        }
+        .sb2-section-title .section-num {
+            font-size: 0.65rem; color: rgba(102,126,234,0.6);
+            font-weight: 400; display: block; margin-bottom: 2px;
+        }
+        .sb2-batch-btn {
+            position: relative; z-index: 3; display: inline-block;
+            margin-bottom: 14px; padding: 5px 14px; border: none;
+            border-radius: 8px; font-size: 0.65rem; font-family: 'Inter', sans-serif;
+            background: rgba(102,126,234,0.25); color: rgba(255,255,255,0.6);
+            cursor: pointer; transition: all 0.3s; letter-spacing: 1px;
+        }
+        .sb2-batch-btn:hover { background: rgba(102,126,234,0.45); color: #fff; }
+        .sb2-track {
+            display: flex; gap: 16px; align-items: center;
+            overflow-x: auto; overflow-y: hidden;
+            padding: 10px 40px 24px 0;
+            position: relative; z-index: 2;
+            scrollbar-width: none; -ms-overflow-style: none;
+            scroll-behavior: smooth;
+        }
+        .sb2-track::-webkit-scrollbar { display: none; }
+        .sb2-frame {
+            flex-shrink: 0; width: 200px; height: 140px;
+            border-radius: 12px; position: relative; cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(15,15,25,0.5); backdrop-filter: blur(8px);
+            overflow: hidden; transform-origin: center center;
+        }
+        .sb2-frame::before {
+            content: ''; position: absolute; inset: 0;
+            border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.1);
+            transition: all 0.4s; z-index: 3; pointer-events: none;
+        }
+        .sb2-frame::after {
+            content: ''; position: absolute; inset: -4px;
+            border-radius: 16px; opacity: 0; transition: opacity 0.4s;
+            z-index: 1; pointer-events: none;
+        }
+        .sb2-frame:hover { transform: translateY(-6px) scale(1.04); }
+        .sb2-frame:hover::before { border-color: rgba(255,255,255,0.3); }
+        .sb2-frame:hover::after { opacity: 1; }
+        .sb2-frame .frame-img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; position: relative; z-index: 2; }
+        .sb2-frame .frame-placeholder {
+            width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.15); font-size: 2rem; position: relative; z-index: 2;
+        }
+        .sb2-frame .frame-placeholder small { font-size: 0.55rem; margin-top: 4px; color: rgba(255,255,255,0.12); letter-spacing: 1px; }
+        .sb2-frame .frame-number { position: absolute; bottom: 6px; left: 8px; font-size: 0.65rem; color: rgba(255,255,255,0.35); font-weight: 600; z-index: 4; }
+        .sb2-frame.zoomed {
+            position: fixed !important; z-index: 800 !important;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.8);
+        }
+        .sb2-zoom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5,5,10,0.85); z-index: 700;
+            opacity: 0; transition: opacity 0.4s; pointer-events: none;
+        }
+        .sb2-zoom-overlay.active { opacity: 1; pointer-events: all; }
+        #sb2BackBtn {
+            position: fixed; top: 12px; left: 12px;
+            padding: 8px 18px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6); font-size: 0.75rem; cursor: pointer;
+            z-index: 600; display: none; transition: all 0.3s;
+            font-family: 'Inter', sans-serif; font-weight: 400;
+        }
+        #sb2BackBtn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); }
+        #sb2Nav {
+            position: fixed; right: 14px; top: 50%; transform: translateY(-50%);
+            display: none; flex-direction: column; gap: 8px; z-index: 600;
+        }
+        .sb2-nav-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: rgba(255,255,255,0.15); border: none; cursor: pointer;
+            transition: all 0.3s; padding: 0;
+        }
+        .sb2-nav-dot.active { background: rgba(102,126,234,0.8); transform: scale(1.4); box-shadow: 0 0 8px rgba(102,126,234,0.5); }
+        #sb2FileInput { display: none; }
+        #sb2BatchInput { display: none; }
+
+        /* ============================================
+           ONBOARDING / MIGRATION MODE
+           ============================================ */
+        #onboardContainer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 500; display: none;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0b14 0%, #0f0a1a 100%);
+        }
+        .ob-conveyor-wrap {
+            position: absolute; top: 50%; left: 0; right: 0;
+            transform: translateY(-50%);
+            display: flex; align-items: center;
+            overflow-x: auto; overflow-y: hidden;
+            padding: 60px 40px; gap: 30px;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+        }
+        .ob-conveyor-wrap::-webkit-scrollbar { display: none; }
+        .ob-step {
+            flex-shrink: 0; width: 280px; min-height: 340px;
+            border-radius: 20px; padding: 30px 24px;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.08);
+            position: relative; cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+        .ob-step::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            border-radius: 20px 20px 0 0; opacity: 0.7;
+        }
+        .ob-step:hover {
+            transform: translateY(-12px) scale(1.03);
+            border-color: rgba(102,126,234,0.3);
+            box-shadow: 0 25px 70px rgba(102,126,234,0.12);
+        }
+        .ob-step.active { border-color: rgba(102,126,234,0.5); box-shadow: 0 0 40px rgba(102,126,234,0.15); }
+        .ob-step.completed { opacity: 0.7; }
+        .ob-step.completed::after {
+            content: '✓'; position: absolute; top: 12px; right: 12px;
+            font-size: 1.2rem; color: #43e97b;
+        }
+        .ob-step-num {
+            font-size: 0.6rem; letter-spacing: 3px; color: rgba(102,126,234,0.6);
+            margin-bottom: 14px; font-weight: 600;
+        }
+        .ob-step-icon { font-size: 3rem; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
+        .ob-step-title { font-size: 1rem; font-weight: 600; color: rgba(255,255,255,0.85); margin-bottom: 8px; }
+        .ob-step-desc { font-size: 0.72rem; color: rgba(255,255,255,0.35); line-height: 1.7; font-weight: 300; margin-bottom: 16px; }
+        .ob-step-btn {
+            padding: 8px 22px; border-radius: 10px; border: none;
+            font-size: 0.7rem; font-family: 'Inter', sans-serif;
+            cursor: pointer; transition: all 0.3s; letter-spacing: 1px;
+            font-weight: 500;
+        }
+        .ob-step-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+        .ob-step-btn.primary:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(102,126,234,0.4); }
+        .ob-step-btn.secondary {
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .ob-conveyor-line {
+            position: absolute; top: 50%; left: 40px; right: 40px;
+            height: 2px; background: rgba(102,126,234,0.1);
+            z-index: 0; pointer-events: none;
+        }
+        .ob-conveyor-line .progress {
+            height: 100%; background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 1px; transition: width 0.6s ease;
+            box-shadow: 0 0 12px rgba(102,126,234,0.4);
+        }
+        .ob-header {
+            position: absolute; top: 20px; left: 0; right: 0;
+            text-align: center; z-index: 2;
+        }
+        .ob-header h2 {
+            font-size: 1.3rem; font-weight: 200; letter-spacing: 6px;
+            color: rgba(255,255,255,0.8); text-transform: uppercase;
+            text-shadow: 0 0 30px rgba(102,126,234,0.3);
+        }
+        .ob-header p { font-size: 0.7rem; color: rgba(255,255,255,0.3); letter-spacing: 2px; margin-top: 4px; }
+        .ob-progress-bar {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 300px; height: 4px; border-radius: 2px;
+            background: rgba(255,255,255,0.05); z-index: 2;
+        }
+        .ob-progress-bar .fill {
+            height: 100%; border-radius: 2px;
+            background: linear-gradient(90deg, #667eea, #43e97b);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(67,233,123,0.3);
+        }
+        .ob-progress-text {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            font-size: 0.6rem; color: rgba(255,255,255,0.25); letter-spacing: 2px;
+        }
+        .ob-info-btn {
+            position: absolute; top: 10px; right: 10px;
+            width: 24px; height: 24px; border-radius: 50%;
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.4); font-size: 0.7rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; font-family: 'Inter', sans-serif; font-weight: 600;
+        }
+        .ob-info-btn:hover { background: rgba(102,126,234,0.3); color: #fff; border-color: rgba(102,126,234,0.5); }
+        #obInfoModal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5,5,10,0.9); z-index: 700;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        #obInfoModal.active { display: flex; }
+        .ob-info-content {
+            width: 560px; max-width: 90vw; max-height: 80vh;
+            border-radius: 20px; padding: 30px;
+            background: rgba(15,15,25,0.95); border: 1px solid rgba(255,255,255,0.1);
+            overflow-y: auto; position: relative;
+            scrollbar-width: thin; scrollbar-color: rgba(102,126,234,0.3) transparent;
+        }
+        .ob-info-content::-webkit-scrollbar { width: 4px; }
+        .ob-info-content::-webkit-scrollbar-thumb { background: rgba(102,126,234,0.3); border-radius: 2px; }
+        .ob-info-close {
+            position: absolute; top: 12px; right: 14px;
+            background: none; border: none; color: rgba(255,255,255,0.4);
+            font-size: 1.2rem; cursor: pointer; transition: color 0.3s;
+        }
+        .ob-info-close:hover { color: #fff; }
+        .ob-info-content h3 { font-size: 1.1rem; color: rgba(255,255,255,0.9); margin-bottom: 20px; font-weight: 600; }
+        .ob-info-content h4 { font-size: 0.75rem; color: rgba(102,126,234,0.8); letter-spacing: 2px; margin: 16px 0 8px; font-weight: 600; text-transform: uppercase; }
+        .ob-api-row {
+            padding: 8px 12px; border-radius: 8px; margin-bottom: 6px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.7rem; color: rgba(255,255,255,0.6); line-height: 1.6;
+        }
+        .ob-api-row strong { color: rgba(255,255,255,0.85); font-weight: 600; }
+        .ob-api-row .api-tag {
+            display: inline-block; padding: 1px 6px; border-radius: 4px;
+            background: rgba(102,126,234,0.15); color: rgba(102,126,234,0.8);
+            font-size: 0.6rem; margin-left: 6px; font-weight: 500;
+        }
+        .ob-api-row .api-price {
+            display: inline-block; padding: 1px 6px; border-radius: 4px;
+            background: rgba(67,233,123,0.1); color: rgba(67,233,123,0.7);
+            font-size: 0.6rem; margin-left: 4px;
+        }
+        .ob-api-row a { color: rgba(102,126,234,0.7); text-decoration: none; font-size: 0.6rem; }
+        .ob-api-row a:hover { color: #667eea; text-decoration: underline; }
+        .ob-endpoint { font-family: monospace; font-size: 0.62rem; color: rgba(255,255,255,0.45); display: block; margin-top: 2px; }
+        .ob-dev-step {
+            padding: 4px 0; font-size: 0.68rem; color: rgba(255,255,255,0.5);
+            border-bottom: 1px solid rgba(255,255,255,0.03); line-height: 1.6;
+        }
+        .ob-dev-step::before { content: '→ '; color: rgba(102,126,234,0.5); }
+        #obBackBtn {
+            position: fixed; top: 12px; left: 12px;
+            padding: 8px 18px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6); font-size: 0.75rem; cursor: pointer;
+            z-index: 600; display: none; transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        #obBackBtn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); }
+
+        /* Fade animation for transitions */
+        #transitionOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0a0a12; z-index: 900; opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        #transitionOverlay.active { opacity: 1; pointer-events: all; }
+    </style>
+</head>
+<body>
+
+<!-- Loading screen -->
+<div id="loadScreen">
+    <div class="loader-ring"></div>
+    <div class="loader-text">LOADING</div>
+</div>
+
+<!-- Transition overlay for mode switches -->
+<div id="transitionOverlay"></div>
+
+<!-- HOME SCREEN -->
+<div id="overlay">
+    <h1>IMMERSIVE GALLERY</h1>
+    <p class="subtitle">Choose your experience</p>
+    <div class="mode-picker">
+        <div class="mode-card glass" id="modeGallery">
+            <span class="badge">WASD</span>
+            <span class="icon">🏛️</span>
+            <h3>Walk-Through</h3>
+            <p>First-person 3D exploration. Walk around and interact with floating objects.</p>
+        </div>
+        <div class="mode-card glass" id="modeCards">
+            <span class="badge">5 STYLES</span>
+            <span class="icon">🃏</span>
+            <h3>Card Carousel</h3>
+            <p>Browse 3D cards in multiple carousel styles. Drag to spin, click to flip.</p>
+        </div>
+        <div class="mode-card glass" id="modeLogo">
+            <span class="badge">3D</span>
+            <span class="icon">✦</span>
+            <h3>Virtuos Studios</h3>
+            <p>Interactive 3D metallic winged-V logo. Drag to orbit around it.</p>
+        </div>
+        <div class="mode-card glass" id="modeOS">
+            <span class="badge">NEW</span>
+            <span class="icon">🖥️</span>
+            <h3>3D Operating System</h3>
+            <p>A futuristic 3D desktop with dock, apps, and windows. Click apps to open.</p>
+        </div>
+        <div class="mode-card glass" id="modeDeviceLab">
+            <span class="badge">VOICE</span>
+            <span class="icon">📱💻🖥️</span>
+            <h3>Device Lab</h3>
+            <p>Test apps across phone, laptop, TV, watch, AR/VR, console & more. Voice-enabled.</p>
+        </div>
+        <div class="mode-card glass" id="modeStoryboard">
+            <span class="badge">SCROLL</span>
+            <span class="icon">🎬</span>
+            <h3>Storyboard</h3>
+            <p>7 cinematic sections with glowing frame carousels. Click frames to upload images.</p>
+        </div>
+        <div class="mode-card glass" id="modeStoryboard2">
+            <span class="badge">V2</span>
+            <span class="icon">☁️🎬</span>
+            <h3>Storyboard V2</h3>
+            <p>Enhanced storyboard with zoom animation, batch upload, cloud parallax backgrounds.</p>
+        </div>
+        <div class="mode-card glass" id="modeOnboard">
+            <span class="badge">MIGRATE</span>
+            <span class="icon">🚀📲</span>
+            <h3>Onboarding</h3>
+            <p>3D assembly line to migrate your phone, texts, emails & files into VirtuOS.</p>
+        </div>
+    </div>
+</div>
+
+<button id="backBtn" class="glass">← Back</button>
+<button id="wireframeBtn" class="glass">◇ Wireframe</button>
+<div id="modeLabel"></div>
+
+<div id="hud">
+    WASD — Move &nbsp;&nbsp; Mouse — Look &nbsp;&nbsp; Click — Interact<br>
+    SPACE — Jump &nbsp;&nbsp; F — Wireframe &nbsp;&nbsp; ESC — Release
+</div>
+<div id="crosshair"></div>
+<div id="minimap" class="glass"><canvas id="minimapCanvas" width="120" height="120"></canvas></div>
+
+<div id="carouselStylePicker" class="glass">
+    <button class="style-btn active" data-style="ring">Ring</button>
+    <button class="style-btn" data-style="coverflow">Coverflow</button>
+    <button class="style-btn" data-style="stack">Stack</button>
+    <button class="style-btn" data-style="helix">Helix</button>
+    <button class="style-btn" data-style="wave">Wave</button>
+</div>
+
+<div id="card-hud">
+    <button class="nav-btn glass" id="prevCard">◀</button>
+    <span id="card-counter" class="glass">1 / 9</span>
+    <button class="nav-btn glass" id="nextCard">▶</button>
+</div>
+
+<!-- DEVICE LAB MODE UI -->
+<div id="deviceLabUI"></div>
+<div id="dlDeviceInfo"></div>
+<button id="voiceBtn">🎤</button>
+<div id="voiceTranscript"></div>
+
+<!-- STORYBOARD MODE UI -->
+<div id="storyboardContainer"></div>
+<button id="sbBackBtn">← Back</button>
+<div id="sbSectionNav"></div>
+<input type="file" id="sbFileInput" accept="image/*">
+
+<!-- STORYBOARD V2 UI -->
+<div id="sb2Container"></div>
+<div class="sb2-zoom-overlay" id="sb2ZoomOverlay"></div>
+<button id="sb2BackBtn">← Back</button>
+<div id="sb2Nav"></div>
+<input type="file" id="sb2FileInput" accept="image/*">
+<input type="file" id="sb2BatchInput" accept="image/*" multiple>
+
+<!-- ONBOARDING / MIGRATION UI -->
+<div id="onboardContainer"></div>
+<button id="obBackBtn">← Back</button>
+<div id="obInfoModal"><div class="ob-info-content" id="obInfoContent"></div></div>
+
+<!-- 3D OS Mode UI -->
+<div id="osStatusBar">
+    <div class="os-left">
+        <span class="os-logo">◈ VERTEX OS</span>
+        <span style="color:rgba(255,255,255,0.2)">|</span>
+        <span>File</span><span>Edit</span><span>View</span><span>Window</span><span>Help</span>
+    </div>
+    <div class="os-right">
+        <span class="os-indicator"></span>
+        <span>Wi-Fi</span>
+        <span>🔋 94%</span>
+        <span class="os-time" id="osTime">12:00</span>
+    </div>
+</div>
+
+<div id="osAppWindow">
+    <div class="win-header">
+        <div class="win-title"><span class="win-icon" id="winIcon">📱</span><span id="winTitle">App</span></div>
+        <button class="win-close" id="winClose">✕</button>
+    </div>
+    <div class="win-body" id="winBody"><p>Loading...</p></div>
+</div>
+
+<div id="osDockLabel">App Name</div>
+
+<div id="info-panel">
+    <span class="panel-icon" id="panel-icon"></span>
+    <h2 id="panel-title">Object</h2>
+    <p id="panel-desc">Description</p>
+    <button class="close-btn" id="closePanel">CLOSE</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+// ╔══════════════════════════════════════════════════════════════╗
+// ║                                                              ║
+// ║   TABLE OF CONTENTS                                          ║
+// ║                                                              ║
+// ║   1.  SETUP & GLOBALS          — Scene, camera, renderer     ║
+// ║   2.  SHARED DATA              — Info used by all modes      ║
+// ║   3.  ENVIRONMENT MAP          — Fake reflections!           ║
+// ║   4.  LIGHTING                 — Premium multi-light rig     ║
+// ║   5.  HOME SCREEN ANIMATION   — 3D background behind menu   ║
+// ║   6.  GALLERY MODE             — Walk-through 3D space       ║
+// ║       6a. Environment          — Reflective floor, pillars   ║
+// ║       6b. Interactive Objects   — Floating 3D shapes         ║
+// ║       6c. Particles            — Soft floating dots          ║
+// ║       6d. Player Controls      — WASD + mouse look           ║
+// ║       6e. Raycaster            — Click detection + glow      ║
+// ║       6f. Minimap              — Top-down view               ║
+// ║   7.  CARD MODE                — 3D playing cards            ║
+// ║       7a. Card Creation        — Build the 3D cards          ║
+// ║       7b. Carousel Styles      — Ring, Coverflow, Stack...   ║
+// ║       7c. Card Navigation      — Flip, browse, drag          ║
+// ║       7d. Card Animations      — Smooth transitions          ║
+// ║   8.  VIRTUOS LOGO MODE       — 3D metallic winged-V logo   ║
+// ║       8a. Logo Geometry        — Wings + V + crown + text    ║
+// ║       8b. Logo Animation       — Orbit, glow, particles      ║
+// ║  8.5  3D OPERATING SYSTEM     — Futuristic 3D desktop!      ║
+// ║       8.5a OS Apps & Dock     — App icons in curved dock     ║
+// ║       8.5b OS Desktop         — Monitor, widgets, particles  ║
+// ║       8.5c OS Interactions    — Hover, click, open apps      ║
+// ║  8.6  STORYBOARD MODE        — 7 scrollable sections!       ║
+// ║       8.6a Section Data      — Titles, frames, colors       ║
+// ║       8.6b Frame Carousels   — Glowing glass frames         ║
+// ║       8.6c Image Upload      — Click frame → upload pic     ║
+// ║  8.7  DEVICE LAB MODE       — Multi-device testing!        ║
+// ║       8.7a Device Models    — 12 device types in 3D        ║
+// ║       8.7b Screen Rendering — App UI on each screen        ║
+// ║       8.7c Voice Control    — Speech recognition + output  ║
+// ║  8.8  STORYBOARD V2         — Zoom, batch, cloud parallax ║
+// ║  8.9  ONBOARDING MODE       — Migration assembly line     ║
+// ║   9.  WIREFRAME TOGGLE        — See-through skeleton view    ║
+// ║  10.  MODE SWITCHING           — Smooth transitions          ║
+// ║  11.  POST-PROCESSING          — Bloom glow effect           ║
+// ║  12.  ANIMATION LOOP           — Runs everything             ║
+// ║  13.  EVENT LISTENERS          — All input handling          ║
+// ║  14.  START                    — Kick everything off!        ║
+// ║                                                              ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 1: SETUP & GLOBALS                                   │
+// │  🌍 The 3D world — dark cinematic base                        │
+// └──────────────────────────────────────────────────────────────┘
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x08080f);
+scene.fog = new THREE.FogExp2(0x08080f, 0.018);
+
+const camera = new THREE.PerspectiveCamera(
+    65, window.innerWidth / window.innerHeight, 0.1, 250
+);
+
+const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: "high-performance",
+    alpha: false
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = false;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+renderer.outputEncoding = THREE.sRGBEncoding;
+document.body.appendChild(renderer.domElement);
+
+const clock = new THREE.Clock();
+let currentMode = "none";
+let wireframeOn = false;
+
+const interactiveObjects = [];
+const allAnimatedObjects = [];
+const cardObjects = [];
+let frameCount = 0;
+
+// 🎨 Saved background colors per mode (for smooth transitions)
+const BG_COLORS = {
+    home:    new THREE.Color(0x08080f),
+    gallery: new THREE.Color(0x0a0b14),
+    cards:   new THREE.Color(0x0a0b12),
+    logo:    new THREE.Color(0x0c0810),
+    os:      new THREE.Color(0x060810),
+    devicelab: new THREE.Color(0x060a10),
+    wire:    new THREE.Color(0x04040a)
+};
+
+const playerState = {
+    velocity: new THREE.Vector3(0, 0, 0),
+    onGround: true, height: 1.7, speed: 4.5,
+    jumpForce: 7, gravity: -18,
+    mouseSensitivity: 0.0015,
+    euler: new THREE.Euler(0, 0, 0, 'YXZ'),
+    isLocked: false
+};
+const keys = { w: false, a: false, s: false, d: false, space: false };
+
+const cardState = {
+    currentIndex: 0, style: 'ring',
+    isFlipped: false, flipAngle: 0, targetFlipAngle: 0,
+    dragStartX: 0, isDragging: false, dragMomentum: 0
+};
+
+const logoObjects = [];
+let logoGroup = null, logoParticles = null;
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 2: SHARED DATA                                       │
+// │  📋 Info for each interactive element                         │
+// └──────────────────────────────────────────────────────────────┘
+
+const ITEMS = [
+    { title: "Portfolio Gallery",   icon: "🖼️",  color: 0x667eea, desc: "Browse a curated collection of creative works, designs, and projects that showcase innovation and artistry." },
+    { title: "About Me",           icon: "👤",  color: 0x764ba2, desc: "The story behind the creator — a journey through technology, art, and the curiosity of what's possible in 3D web design." },
+    { title: "Skills & Tech",      icon: "⚡",  color: 0xf5576c, desc: "Three.js, WebGL, GLSL Shaders, React, Node.js, Blender — a full toolkit for immersive digital experiences." },
+    { title: "Contact",            icon: "✉️",  color: 0x43e97b, desc: "Let's connect! Whether it's a project idea, collaboration, or chat about 3D web experiences." },
+    { title: "Projects",           icon: "🚀",  color: 0xf6d365, desc: "Featured projects showcasing interactive 3D experiences, immersive web apps, and creative coding experiments." },
+    { title: "Blog & Thoughts",    icon: "📝",  color: 0x4facfe, desc: "Articles and tutorials on 3D web development, creative coding, shader programming, and immersive design." },
+    { title: "Experiments",        icon: "🧪",  color: 0xe88ded, desc: "Wild creative experiments pushing boundaries — shaders, physics, AI-art, and beyond!" },
+    { title: "Resources",          icon: "📚",  color: 0x38f9d7, desc: "Curated tools, libraries, tutorials, and assets for building your own 3D web experiences from scratch." },
+    { title: "Services",           icon: "💼",  color: 0xfda085, desc: "Professional 3D web development, interactive installations, virtual galleries, and immersive brand experiences." }
+];
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 3: ENVIRONMENT MAP                                   │
+// │  🌈 Fake environment cubemap for metallic reflections!        │
+// │  We generate it procedurally — no external images needed!     │
+// └──────────────────────────────────────────────────────────────┘
+
+function generateEnvMap() {
+    // 🎨 Create a tiny cubemap from 6 canvases (one per face)
+    // This gives all metallic objects subtle colorful reflections!
+    const size = 128;
+    const faces = [];
+
+    // 🌈 Colors for each face of the cube (subtle gradients)
+    const faceColors = [
+        ['#1a1040', '#0a1835'],  // +X: dark purple-blue
+        ['#0a1835', '#1a1040'],  // -X: blue-purple
+        ['#101530', '#0a0a20'],  // +Y: dark top (sky)
+        ['#050510', '#080812'],  // -Y: very dark (ground)
+        ['#151030', '#0a1530'],  // +Z: purple
+        ['#0a1530', '#151030'],  // -Z: blue-purple
+    ];
+
+    for (let i = 0; i < 6; i++) {
+        const canvas = document.createElement('canvas');
+        canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext('2d');
+
+        // 🌫️ Gradient for each face
+        const grad = ctx.createLinearGradient(0, 0, 0, size);
+        grad.addColorStop(0, faceColors[i][0]);
+        grad.addColorStop(1, faceColors[i][1]);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, size, size);
+
+        // ✨ Add some "stars" / bright spots
+        for (let s = 0; s < 15; s++) {
+            const x = Math.random() * size;
+            const y = Math.random() * size;
+            const r = 0.5 + Math.random() * 1.5;
+            const bright = 0.05 + Math.random() * 0.15;
+            ctx.fillStyle = `rgba(180,200,255,${bright})`;
+            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+        }
+
+        faces.push(canvas);
+    }
+
+    // 📦 Build the CubeTexture from our 6 canvases
+    const cubeTexture = new THREE.CubeTexture(faces);
+    cubeTexture.needsUpdate = true;
+    return cubeTexture;
+}
+
+let envMap = null;
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 4: LIGHTING                                          │
+// │  ☀️ Premium multi-light rig with colored accents              │
+// └──────────────────────────────────────────────────────────────┘
+
+function createLighting() {
+    scene.add(new THREE.AmbientLight(0x8090b0, 0.25));
+
+    const mainLight = new THREE.DirectionalLight(0xfff0e0, 0.5);
+    mainLight.position.set(10, 25, 15);
+    scene.add(mainLight);
+
+    // 🔵 Cool blue from left
+    const blueAccent = new THREE.PointLight(0x4466cc, 0.7, 60);
+    blueAccent.position.set(-18, 10, -8);
+    scene.add(blueAccent);
+
+    // 🟣 Purple from right
+    const purpleAccent = new THREE.PointLight(0x8844aa, 0.5, 60);
+    purpleAccent.position.set(18, 10, 8);
+    scene.add(purpleAccent);
+
+    // 🌊 Hemisphere: cool sky, warm ground reflection
+    scene.add(new THREE.HemisphereLight(0x2244aa, 0x221111, 0.3));
+
+    // ✨ Rim light from behind
+    const rimLight = new THREE.DirectionalLight(0x6644aa, 0.25);
+    rimLight.position.set(-8, 12, -20);
+    scene.add(rimLight);
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 5: HOME SCREEN ANIMATION                             │
+// │  🌌 Animated floating geometry behind the home screen         │
+// │  Gives the "wow" factor as soon as you open the page!         │
+// └──────────────────────────────────────────────────────────────┘
+
+const homeObjects = [];
+
+function createHomeAnimation() {
+    // ✨ Create lots of small floating geometric shapes
+    const shapes = [
+        new THREE.IcosahedronGeometry(0.3, 0),
+        new THREE.OctahedronGeometry(0.25, 0),
+        new THREE.TetrahedronGeometry(0.3, 0),
+        new THREE.BoxGeometry(0.35, 0.35, 0.35),
+        new THREE.TorusGeometry(0.25, 0.08, 6, 12),
+    ];
+
+    const colors = [0x667eea, 0x764ba2, 0x4facfe, 0xe88ded, 0x38f9d7, 0xf5576c, 0xf6d365];
+
+    for (let i = 0; i < 60; i++) {
+        const geo = shapes[i % shapes.length];
+        const color = colors[i % colors.length];
+        const mat = new THREE.MeshStandardMaterial({
+            color: color,
+            roughness: 0.2,
+            metalness: 0.7,
+            emissive: color,
+            emissiveIntensity: 0.15,
+            envMap: envMap,
+            envMapIntensity: 0.5,
+            transparent: true,
+            opacity: 0.35 + Math.random() * 0.25
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+
+        // 🎲 Scatter around the scene
+        mesh.position.set(
+            (Math.random() - 0.5) * 40,
+            Math.random() * 15 - 3,
+            (Math.random() - 0.5) * 40 - 10
+        );
+        mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+
+        mesh.userData.homeAnim = {
+            rotSpeed: 0.002 + Math.random() * 0.006,
+            floatSpeed: 0.2 + Math.random() * 0.4,
+            floatOffset: Math.random() * Math.PI * 2,
+            floatAmp: 0.3 + Math.random() * 0.6,
+            baseY: mesh.position.y
+        };
+
+        scene.add(mesh);
+        homeObjects.push(mesh);
+    }
+
+    // 🌌 Starfield particles for the home background
+    const starCount = 800;
+    const starPos = new Float32Array(starCount * 3);
+    const starColors = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+        const i3 = i * 3;
+        starPos[i3]     = (Math.random() - 0.5) * 100;
+        starPos[i3 + 1] = Math.random() * 40 - 10;
+        starPos[i3 + 2] = (Math.random() - 0.5) * 100;
+        const b = 0.3 + Math.random() * 0.5;
+        starColors[i3] = b * 0.7; starColors[i3+1] = b * 0.75; starColors[i3+2] = b;
+    }
+    const starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+    const starMat = new THREE.PointsMaterial({
+        size: 0.08, vertexColors: true, transparent: true,
+        opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false
+    });
+    const stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+    homeObjects.push(stars);
+}
+
+function updateHomeAnimation(elapsed) {
+    homeObjects.forEach(obj => {
+        if (obj.userData.homeAnim) {
+            const a = obj.userData.homeAnim;
+            obj.rotation.x += a.rotSpeed;
+            obj.rotation.y += a.rotSpeed * 1.3;
+            obj.position.y = a.baseY + Math.sin(elapsed * a.floatSpeed + a.floatOffset) * a.floatAmp;
+        }
+        // Stars just slowly rotate
+        if (obj.isPoints) {
+            obj.rotation.y = elapsed * 0.01;
+        }
+    });
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 6a: GALLERY MODE — ENVIRONMENT                       │
+// │  🏛️ Reflective floor, glowing grid, elegant pillars          │
+// └──────────────────────────────────────────────────────────────┘
+
+const galleryOnlyObjects = [];
+
+function createEnvironment() {
+    // 🪞 Reflective dark floor
+    const floorGeo = new THREE.PlaneGeometry(80, 80);
+    const floorMat = new THREE.MeshStandardMaterial({
+        color: 0x0c0e18,
+        roughness: 0.25,
+        metalness: 0.6,
+        envMap: envMap,
+        envMapIntensity: 0.4
+    });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+    galleryOnlyObjects.push(floor);
+
+    // 📐 Glowing grid on the floor
+    const grid = new THREE.GridHelper(80, 40, 0x1a2040, 0x121830);
+    grid.position.y = 0.01;
+    grid.material.opacity = 0.3;
+    grid.material.transparent = true;
+    scene.add(grid);
+    galleryOnlyObjects.push(grid);
+
+    // 🏛️ Pillars with glowing ring toppers
+    const pillarPos = [[-14,0,-14],[14,0,-14],[-14,0,14],[14,0,14],[-14,0,0],[14,0,0]];
+    pillarPos.forEach((pos, idx) => {
+        const pGeo = new THREE.CylinderGeometry(0.15, 0.22, 9, 8);
+        const pMat = new THREE.MeshStandardMaterial({
+            color: 0x181c30, roughness: 0.2, metalness: 0.7,
+            envMap: envMap, envMapIntensity: 0.5
+        });
+        const pillar = new THREE.Mesh(pGeo, pMat);
+        pillar.position.set(pos[0], 4.5, pos[2]);
+        scene.add(pillar);
+        galleryOnlyObjects.push(pillar);
+
+        // 💎 Glowing ring
+        const color = ITEMS[idx % ITEMS.length].color;
+        const rGeo = new THREE.TorusGeometry(0.45, 0.035, 8, 24);
+        const rMat = new THREE.MeshBasicMaterial({
+            color: color, transparent: true, opacity: 0.5
+        });
+        const ring = new THREE.Mesh(rGeo, rMat);
+        ring.position.set(pos[0], 9.2, pos[2]);
+        ring.rotation.x = Math.PI / 2;
+        ring.userData.floatOffset = idx * 1.2;
+        scene.add(ring);
+        galleryOnlyObjects.push(ring);
+        allAnimatedObjects.push(ring);
+
+        // 💡 Pillar accent light
+        const pLight = new THREE.PointLight(color, 0.3, 8);
+        pLight.position.set(pos[0], 9.5, pos[2]);
+        scene.add(pLight);
+        galleryOnlyObjects.push(pLight);
+    });
+
+    // 🌊 Ground glow circles
+    [[-6,0,-6],[6,0,-6],[0,0,0],[-6,0,6],[6,0,6]].forEach((pos, i) => {
+        const cGeo = new THREE.CircleGeometry(3.5, 32);
+        const cMat = new THREE.MeshBasicMaterial({
+            color: ITEMS[i*2 % ITEMS.length].color, transparent: true, opacity: 0.04
+        });
+        const circle = new THREE.Mesh(cGeo, cMat);
+        circle.rotation.x = -Math.PI / 2;
+        circle.position.set(pos[0], 0.02, pos[2]);
+        scene.add(circle);
+        galleryOnlyObjects.push(circle);
+    });
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 6b: GALLERY MODE — INTERACTIVE OBJECTS               │
+// │  🎯 Floating 3D shapes with metallic materials + hover glow  │
+// └──────────────────────────────────────────────────────────────┘
+
+const GALLERY_GEOMETRIES = [
+    new THREE.BoxGeometry(1.3, 1.3, 1.3),
+    new THREE.TorusKnotGeometry(0.7, 0.25, 48, 8),
+    new THREE.IcosahedronGeometry(0.9, 0),
+    new THREE.OctahedronGeometry(0.9, 0),
+    new THREE.DodecahedronGeometry(0.9, 0),
+    new THREE.SphereGeometry(0.8, 20, 20),
+    new THREE.TorusGeometry(0.7, 0.3, 12, 24),
+    new THREE.ConeGeometry(0.7, 1.4, 6),
+    new THREE.CylinderGeometry(0.45, 0.7, 1.3, 8)
+];
+
+const GALLERY_POSITIONS = [
+    [-6,2.5,-6], [6,2.5,-6], [0,2.5,-10], [-6,2.5,6], [6,2.5,6],
+    [0,2.5,0], [-3,3.2,-2], [3,2.5,-2], [0,2.5,7]
+];
+
+function createGalleryObjects() {
+    ITEMS.forEach((item, i) => {
+        const mat = new THREE.MeshStandardMaterial({
+            color: item.color, roughness: 0.2, metalness: 0.65,
+            emissive: item.color, emissiveIntensity: 0.1,
+            transparent: true, opacity: 0.92,
+            envMap: envMap, envMapIntensity: 0.8
+        });
+        const mesh = new THREE.Mesh(GALLERY_GEOMETRIES[i], mat);
+        const p = GALLERY_POSITIONS[i];
+        mesh.position.set(p[0], p[1], p[2]);
+
+        mesh.userData = {
+            title: item.title, description: item.desc, icon: item.icon,
+            isInteractive: true,
+            floatOffset: Math.random() * Math.PI * 2,
+            floatSpeed: 0.3 + Math.random() * 0.2,
+            rotationSpeed: 0.004 + Math.random() * 0.004,
+            baseY: p[1], baseEmissive: 0.1, targetEmissive: 0.1
+        };
+        scene.add(mesh);
+        interactiveObjects.push(mesh);
+        allAnimatedObjects.push(mesh);
+        galleryOnlyObjects.push(mesh);
+
+        // 💡 Colored point light
+        const light = new THREE.PointLight(item.color, 0.4, 8);
+        light.position.copy(mesh.position);
+        scene.add(light);
+        galleryOnlyObjects.push(light);
+
+        // 🏷️ Label
+        const canvas = document.createElement('canvas');
+        canvas.width = 300; canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        ctx.font = '400 24px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'rgba(180,190,220,0.55)';
+        ctx.fillText(item.title, 150, 42);
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.minFilter = THREE.LinearFilter;
+        const sprite = new THREE.Sprite(
+            new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.55 })
+        );
+        sprite.position.set(p[0], p[1] + 2, p[2]);
+        sprite.scale.set(3.2, 0.7, 1);
+        scene.add(sprite);
+        galleryOnlyObjects.push(sprite);
+        mesh.userData.label = sprite;
+    });
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 6c: GALLERY MODE — PARTICLES                         │
+// │  ✨ Soft floating motes with additive blending                │
+// └──────────────────────────────────────────────────────────────┘
+
+let particleSystem = null;
+function createParticles() {
+    const count = 500;
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+        const i3 = i * 3;
+        positions[i3] = (Math.random()-0.5)*60;
+        positions[i3+1] = Math.random()*12;
+        positions[i3+2] = (Math.random()-0.5)*60;
+        const c = Math.random();
+        if (c<0.3)      { colors[i3]=0.3; colors[i3+1]=0.4; colors[i3+2]=0.85; }
+        else if (c<0.6) { colors[i3]=0.4; colors[i3+1]=0.25; colors[i3+2]=0.6; }
+        else if (c<0.8) { colors[i3]=0.8; colors[i3+1]=0.4; colors[i3+2]=0.75; }
+        else             { colors[i3]=0.25; colors[i3+1]=0.7; colors[i3+2]=0.6; }
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    const mat = new THREE.PointsMaterial({
+        size: 0.08, vertexColors: true, transparent: true,
+        opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false
+    });
+    particleSystem = new THREE.Points(geo, mat);
+    scene.add(particleSystem);
+    galleryOnlyObjects.push(particleSystem);
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 6d: GALLERY MODE — PLAYER CONTROLS                   │
+// │  🧈 Buttery-smooth WASD + mouse look with lerp               │
+// └──────────────────────────────────────────────────────────────┘
+
+function onMouseMove(event) {
+    if (currentMode === 'gallery' && playerState.isLocked) {
+        const mx = event.movementX * playerState.mouseSensitivity;
+        const my = event.movementY * playerState.mouseSensitivity;
+        playerState.euler.setFromQuaternion(camera.quaternion);
+        playerState.euler.y -= mx;
+        playerState.euler.x -= my;
+        playerState.euler.x = Math.max(-Math.PI/2.2, Math.min(Math.PI/2.2, playerState.euler.x));
+        camera.quaternion.setFromEuler(playerState.euler);
+    }
+}
+
+function updateGalleryMovement(delta) {
+    if (!playerState.isLocked) return;
+    const forward = new THREE.Vector3();
+    camera.getWorldDirection(forward);
+    forward.y = 0; forward.normalize();
+    const right = new THREE.Vector3();
+    right.crossVectors(forward, new THREE.Vector3(0,1,0));
+
+    const target = new THREE.Vector3(0,0,0);
+    if (keys.w) target.addScaledVector(forward, playerState.speed);
+    if (keys.s) target.addScaledVector(forward, -playerState.speed);
+    if (keys.a) target.addScaledVector(right, -playerState.speed);
+    if (keys.d) target.addScaledVector(right, playerState.speed);
+
+    playerState.velocity.x += (target.x - playerState.velocity.x) * 0.08;
+    playerState.velocity.z += (target.z - playerState.velocity.z) * 0.08;
+    camera.position.x += playerState.velocity.x * delta;
+    camera.position.z += playerState.velocity.z * delta;
+
+    if (keys.space && playerState.onGround) {
+        playerState.velocity.y = playerState.jumpForce;
+        playerState.onGround = false;
+    }
+    playerState.velocity.y += playerState.gravity * delta;
+    camera.position.y += playerState.velocity.y * delta;
+    if (camera.position.y < playerState.height) {
+        camera.position.y = playerState.height;
+        playerState.velocity.y = 0;
+        playerState.onGround = true;
+    }
+    const b = 30;
+    camera.position.x = Math.max(-b, Math.min(b, camera.position.x));
+    camera.position.z = Math.max(-b, Math.min(b, camera.position.z));
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 6e: GALLERY MODE — RAYCASTER + GLOW                  │
+// │  🎯 Smooth emissive glow-up when you look at an object       │
+// └──────────────────────────────────────────────────────────────┘
+
+const raycaster = new THREE.Raycaster();
+raycaster.far = 30;
+let currentHovered = null;
+
+function updateGalleryRaycaster() {
+    if (!playerState.isLocked) return;
+    frameCount++;
+    if (frameCount % 3 !== 0) return;
+
+    raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+    const hits = raycaster.intersectObjects(interactiveObjects);
+    const crosshair = document.getElementById('crosshair');
+
+    if (hits.length > 0) {
+        const hit = hits[0].object;
+        if (currentHovered !== hit) {
+            if (currentHovered) currentHovered.userData.targetEmissive = 0.1;
+            currentHovered = hit;
+            currentHovered.userData.targetEmissive = 0.55;
+        }
+        crosshair.classList.add('hovering');
+    } else {
+        if (currentHovered) { currentHovered.userData.targetEmissive = 0.1; currentHovered = null; }
+        crosshair.classList.remove('hovering');
+    }
+
+    // 🧈 Smooth emissive interpolation for ALL objects
+    interactiveObjects.forEach(obj => {
+        const curr = obj.material.emissiveIntensity;
+        const target = obj.userData.targetEmissive;
+        obj.material.emissiveIntensity += (target - curr) * 0.12;
+    });
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 6f: GALLERY MODE — MINIMAP                           │
+// │  🗺️ Sleek dark minimap                                        │
+// └──────────────────────────────────────────────────────────────┘
+
+const minimapCtx = document.getElementById('minimapCanvas').getContext('2d');
+function updateMinimap() {
+    const ctx = minimapCtx; const w=120, h=120, sc=2.5;
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = 'rgba(10,12,20,0.85)'; ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle = 'rgba(102,126,234,0.15)';
+    ctx.strokeRect(10,10,w-20,h-20);
+
+    interactiveObjects.forEach(obj => {
+        ctx.fillStyle = '#' + obj.material.color.getHexString();
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        ctx.arc(w/2+obj.position.x/sc, h/2+obj.position.z/sc, 2, 0, Math.PI*2);
+        ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    const dir = new THREE.Vector3(); camera.getWorldDirection(dir);
+    ctx.fillStyle = '#667eea';
+    ctx.save();
+    ctx.translate(w/2+camera.position.x/sc, h/2+camera.position.z/sc);
+    ctx.rotate(Math.atan2(dir.x, dir.z));
+    ctx.beginPath(); ctx.moveTo(0,-5); ctx.lineTo(-3,3); ctx.lineTo(3,3);
+    ctx.closePath(); ctx.fill(); ctx.restore();
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 7a: CARD MODE — CARD CREATION                        │
+// │  🃏 Premium 3D cards with gradient textures                   │
+// └──────────────────────────────────────────────────────────────┘
+
+const cardOnlyObjects = [];
+
+function createCardTexture(item, side) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 400; canvas.height = 560;
+    const ctx = canvas.getContext('2d');
+    const color = new THREE.Color(item.color);
+    const hex = '#' + color.getHexString();
+
+    if (side === 'front') {
+        // 🖤 Dark card with colored header
+        ctx.fillStyle = '#12121e';
+        ctx.fillRect(0, 0, 400, 560);
+
+        // Colored header gradient
+        const hGrad = ctx.createLinearGradient(0, 0, 400, 200);
+        hGrad.addColorStop(0, hex);
+        const darker = new THREE.Color(item.color).multiplyScalar(0.6);
+        hGrad.addColorStop(1, '#' + darker.getHexString());
+        ctx.fillStyle = hGrad;
+        ctx.fillRect(0, 0, 400, 190);
+
+        // Fade
+        const fade = ctx.createLinearGradient(0, 160, 0, 240);
+        fade.addColorStop(0, hex + '99');
+        fade.addColorStop(1, 'rgba(18,18,30,0)');
+        ctx.fillStyle = fade;
+        ctx.fillRect(0, 160, 400, 80);
+
+        // Icon
+        ctx.font = '72px serif'; ctx.textAlign = 'center';
+        ctx.fillText(item.icon, 200, 125);
+
+        // Title
+        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        ctx.font = '600 26px Inter, sans-serif';
+        ctx.fillText(item.title, 200, 310);
+
+        // Line
+        const lineGrad = ctx.createLinearGradient(100, 0, 300, 0);
+        lineGrad.addColorStop(0, 'transparent');
+        lineGrad.addColorStop(0.3, hex + '80');
+        lineGrad.addColorStop(0.7, hex + '80');
+        lineGrad.addColorStop(1, 'transparent');
+        ctx.strokeStyle = lineGrad; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(100, 340); ctx.lineTo(300, 340); ctx.stroke();
+
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.font = '300 13px Inter, sans-serif';
+        ctx.fillText('Click to explore', 200, 380);
+
+        // Corner accents
+        ctx.strokeStyle = hex + '40'; ctx.lineWidth = 1;
+        [[16,16,36,16,16,36],[364,16,384,16,384,36],[16,544,36,544,16,524],[364,544,384,544,384,524]].forEach(c => {
+            ctx.beginPath(); ctx.moveTo(c[0],c[1]); ctx.lineTo(c[2],c[3]); ctx.moveTo(c[0],c[1]); ctx.lineTo(c[4],c[5]); ctx.stroke();
+        });
+    } else {
+        ctx.fillStyle = '#0f0f1a';
+        ctx.fillRect(0, 0, 400, 560);
+
+        // Accent bar
+        const barG = ctx.createLinearGradient(0,0,0,560);
+        barG.addColorStop(0, hex); barG.addColorStop(1, '#' + new THREE.Color(item.color).multiplyScalar(0.4).getHexString());
+        ctx.fillStyle = barG;
+        ctx.fillRect(0, 0, 4, 560);
+
+        ctx.font = '32px serif'; ctx.textAlign = 'center'; ctx.fillText(item.icon, 200, 60);
+        ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = '500 22px Inter, sans-serif'; ctx.fillText(item.title, 200, 105);
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(40, 125); ctx.lineTo(360, 125); ctx.stroke();
+
+        ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '300 15px Inter, sans-serif'; ctx.textAlign = 'left';
+        const words = item.desc.split(' '); let line = '', y = 165;
+        words.forEach(word => {
+            const test = line + word + ' ';
+            if (ctx.measureText(test).width > 330) { ctx.fillText(line.trim(), 28, y); line = word + ' '; y += 24; } else { line = test; }
+        });
+        ctx.fillText(line.trim(), 28, y);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.font = '300 12px Inter, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('← → browse  •  click to flip', 200, 535);
+    }
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1; ctx.strokeRect(0.5, 0.5, 399, 559);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    return texture;
+}
+
+function createCards() {
+    ITEMS.forEach((item, i) => {
+        const geo = new THREE.BoxGeometry(3, 4.2, 0.04);
+        const frontTex = createCardTexture(item, 'front');
+        const backTex = createCardTexture(item, 'back');
+
+        const edgeColor = new THREE.Color(item.color).multiplyScalar(0.3);
+        const materials = [
+            new THREE.MeshStandardMaterial({ color: edgeColor, roughness: 0.2, metalness: 0.6 }),
+            new THREE.MeshStandardMaterial({ color: edgeColor, roughness: 0.2, metalness: 0.6 }),
+            new THREE.MeshStandardMaterial({ color: edgeColor, roughness: 0.2, metalness: 0.6 }),
+            new THREE.MeshStandardMaterial({ color: edgeColor, roughness: 0.2, metalness: 0.6 }),
+            new THREE.MeshStandardMaterial({ map: frontTex, roughness: 0.35, metalness: 0.1 }),
+            new THREE.MeshStandardMaterial({ map: backTex, roughness: 0.35, metalness: 0.1 })
+        ];
+
+        const card = new THREE.Mesh(geo, materials);
+        card.userData = {
+            index: i, title: item.title, description: item.desc, icon: item.icon,
+            isCard: true,
+            targetPos: new THREE.Vector3(), targetRot: new THREE.Euler(), targetScale: 1
+        };
+        card.visible = false;
+        scene.add(card);
+        cardObjects.push(card);
+        cardOnlyObjects.push(card);
+    });
+
+    // Card floor
+    const cf = new THREE.Mesh(
+        new THREE.PlaneGeometry(40, 40),
+        new THREE.MeshStandardMaterial({ color: 0x0a0c16, roughness: 0.2, metalness: 0.6, envMap: envMap, envMapIntensity: 0.3 })
+    );
+    cf.rotation.x = -Math.PI/2; cf.visible = false; scene.add(cf); cardOnlyObjects.push(cf);
+
+    // Floor glow
+    const sg = new THREE.Mesh(
+        new THREE.CircleGeometry(6, 32),
+        new THREE.MeshBasicMaterial({ color: 0x667eea, transparent: true, opacity: 0.04 })
+    );
+    sg.rotation.x = -Math.PI/2; sg.position.y = 0.02; sg.visible = false; scene.add(sg); cardOnlyObjects.push(sg);
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 7b: CARD MODE — CAROUSEL STYLES                      │
+// │  🎠 5 layouts: Ring, Coverflow, Stack, Helix, Wave            │
+// └──────────────────────────────────────────────────────────────┘
+
+function layoutRing(elapsed) {
+    const r = 8, total = cardObjects.length, step = (Math.PI*2)/total;
+    const off = -cardState.currentIndex * step;
+    cardObjects.forEach((card, i) => {
+        const a = i*step + off;
+        card.userData.targetPos.set(Math.sin(a)*r, 2.5+Math.sin(elapsed*0.5+i)*0.1, Math.cos(a)*r);
+        card.userData.targetRot.set(0, a+Math.PI, 0);
+        card.userData.targetScale = (i===cardState.currentIndex) ? 1.15 : 0.8;
+    });
+}
+
+function layoutCoverflow(elapsed) {
+    cardObjects.forEach((card, i) => {
+        const d = i - cardState.currentIndex, f = d===0;
+        card.userData.targetPos.set(f?0:d*2.2, 2.5+Math.sin(elapsed*0.4+i*0.5)*0.06, f?0:-Math.abs(d)*1.5);
+        card.userData.targetRot.set(0, f?0:(d>0?-0.6:0.6), 0);
+        card.userData.targetScale = f?1.1:0.75;
+    });
+}
+
+function layoutStack(elapsed) {
+    const total = cardObjects.length;
+    cardObjects.forEach((card, i) => {
+        const d = Math.min(((i-cardState.currentIndex)+total)%total, (total-(i-cardState.currentIndex)+total)%total);
+        card.userData.targetPos.set(d*0.12, 2.5-d*0.08+Math.sin(elapsed*0.4)*0.05, -d*0.5);
+        card.userData.targetRot.set(0, d*0.03, d*-0.015);
+        card.userData.targetScale = d===0?1.05:Math.max(0.65, 1-d*0.07);
+    });
+}
+
+function layoutHelix(elapsed) {
+    const r=6, total=cardObjects.length, step=(Math.PI*2)/total;
+    const off = -cardState.currentIndex*step;
+    cardObjects.forEach((card, i) => {
+        const a=i*step+off, d=i-cardState.currentIndex;
+        card.userData.targetPos.set(Math.sin(a)*r, 2.5+d*0.7+Math.sin(elapsed*0.5+i)*0.08, Math.cos(a)*r);
+        card.userData.targetRot.set(d*0.12, a+Math.PI, 0);
+        card.userData.targetScale = d===0?1.12:0.72;
+    });
+}
+
+function layoutWave(elapsed) {
+    cardObjects.forEach((card, i) => {
+        const d=i-cardState.currentIndex, f=d===0;
+        card.userData.targetPos.set(d*3, 2.5+Math.sin(elapsed*0.6+i*0.7)*1.1, f?2:-Math.abs(d)*0.4);
+        card.userData.targetRot.set(Math.sin(elapsed*0.6+i*0.7)*0.12, f?0:d*-0.1, 0);
+        card.userData.targetScale = f?1.1:0.78;
+    });
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 7c: CARD MODE — NAVIGATION + DRAG                    │
+// │  ◀ ▶ Browse, click to flip, DRAG to spin the carousel!       │
+// └──────────────────────────────────────────────────────────────┘
+
+function goToCard(index) {
+    const t=ITEMS.length;
+    cardState.currentIndex = ((index%t)+t)%t;
+    document.getElementById('card-counter').textContent = `${cardState.currentIndex+1} / ${t}`;
+    cardState.isFlipped = false; cardState.targetFlipAngle = 0;
+}
+function nextCard() { goToCard(cardState.currentIndex+1); }
+function prevCard() { goToCard(cardState.currentIndex-1); }
+function flipCurrentCard() {
+    cardState.isFlipped = !cardState.isFlipped;
+    cardState.targetFlipAngle = cardState.isFlipped ? Math.PI : 0;
+}
+function setCarouselStyle(style) {
+    cardState.style = style;
+    document.querySelectorAll('.style-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.style === style));
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 7d: CARD MODE — ANIMATIONS                           │
+// │  🎬 Smooth lerping to target positions                        │
+// └──────────────────────────────────────────────────────────────┘
+
+function updateCardMode(elapsed) {
+    if (currentMode !== 'cards') return;
+
+    // Apply drag momentum
+    if (!cardState.isDragging && Math.abs(cardState.dragMomentum) > 0.3) {
+        if (cardState.dragMomentum > 0) { prevCard(); } else { nextCard(); }
+        cardState.dragMomentum = 0;
+    }
+
+    switch (cardState.style) {
+        case 'ring': layoutRing(elapsed); break;
+        case 'coverflow': layoutCoverflow(elapsed); break;
+        case 'stack': layoutStack(elapsed); break;
+        case 'helix': layoutHelix(elapsed); break;
+        case 'wave': layoutWave(elapsed); break;
+    }
+
+    const sp = 0.08;
+    cardObjects.forEach((card, i) => {
+        const ud = card.userData, f = (i===cardState.currentIndex);
+        card.position.lerp(ud.targetPos, sp);
+
+        const tq = new THREE.Quaternion().setFromEuler(ud.targetRot);
+        if (f) {
+            cardState.flipAngle += (cardState.targetFlipAngle - cardState.flipAngle) * 0.1;
+            tq.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), cardState.flipAngle));
+        }
+        card.quaternion.slerp(tq, sp);
+        const ts = ud.targetScale;
+        card.scale.lerp(new THREE.Vector3(ts,ts,ts), sp);
+    });
+
+    camera.position.lerp(new THREE.Vector3(0, 3, 12), 0.03);
+    camera.lookAt(0, 2.5, 0);
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 8: VIRTUOS STUDIOS LOGO MODE                         │
+// │  ✦ Dramatic 3D metallic winged-V with orbiting particles     │
+// └──────────────────────────────────────────────────────────────┘
+
+function createVirtuosLogo() {
+    logoGroup = new THREE.Group();
+
+    const metalMat = new THREE.MeshStandardMaterial({
+        color: 0xd4956b, roughness: 0.15, metalness: 0.9,
+        emissive: 0xd4956b, emissiveIntensity: 0.06,
+        envMap: envMap, envMapIntensity: 1.2
+    });
+    const shinyMat = new THREE.MeshStandardMaterial({
+        color: 0xe8b090, roughness: 0.08, metalness: 0.95,
+        emissive: 0xe8b090, emissiveIntensity: 0.08,
+        envMap: envMap, envMapIntensity: 1.5
+    });
+
+    // V shape
+    const vH = 3.8, vW = 0.3;
+    const lv = new THREE.Mesh(new THREE.BoxGeometry(vW, vH, 0.1), metalMat.clone());
+    lv.position.set(-0.75, 0, 0); lv.rotation.z = 0.22; logoGroup.add(lv);
+    const rv = new THREE.Mesh(new THREE.BoxGeometry(vW, vH, 0.1), metalMat.clone());
+    rv.position.set(0.75, 0, 0); rv.rotation.z = -0.22; logoGroup.add(rv);
+    const bv = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.25, 0.1), shinyMat.clone());
+    bv.position.set(0, -1.65, 0); logoGroup.add(bv);
+
+    // Wings
+    function createWing(side) {
+        const wg = new THREE.Group();
+        for (let f = 0; f < 9; f++) {
+            const len = 1.0 + f * 0.55, h = 0.14 - f * 0.008;
+            const t = f / 9;
+            const col = new THREE.Color(0xe8b090).lerp(new THREE.Color(0x7a4828), t);
+            const fm = new THREE.MeshStandardMaterial({
+                color: col, roughness: 0.12+t*0.25, metalness: 0.92-t*0.2,
+                emissive: col, emissiveIntensity: 0.04,
+                envMap: envMap, envMapIntensity: 1.0 - t*0.4
+            });
+            const feather = new THREE.Mesh(new THREE.BoxGeometry(len, h, 0.05), fm);
+            feather.position.set(side*(len/2+0.5), 0.9-f*0.2, 0);
+            feather.rotation.z = side*(0.12+f*0.07);
+            wg.add(feather);
+        }
+        return wg;
+    }
+    logoGroup.add(createWing(-1));
+    logoGroup.add(createWing(1));
+
+    // Crown detail at top of V
+    const crownGeo = new THREE.ConeGeometry(0.2, 0.4, 4);
+    const crown = new THREE.Mesh(crownGeo, shinyMat.clone());
+    crown.position.set(0, 2.1, 0);
+    logoGroup.add(crown);
+
+    // Text
+    const tc = document.createElement('canvas');
+    tc.width = 512; tc.height = 80;
+    const tCtx = tc.getContext('2d');
+    tCtx.fillStyle = '#c88a60'; tCtx.font = '500 34px Inter, serif'; tCtx.textAlign = 'center';
+    tCtx.fillText('VIRTUOS  STUDIOS', 256, 50);
+    const tTex = new THREE.CanvasTexture(tc); tTex.minFilter = THREE.LinearFilter;
+    const tSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tTex, transparent: true, opacity: 0.8 }));
+    tSprite.position.set(0, -3, 0); tSprite.scale.set(6, 0.94, 1);
+    logoGroup.add(tSprite);
+
+    // Particles
+    const pc = 250;
+    const pp = new Float32Array(pc*3), pcc = new Float32Array(pc*3);
+    for (let i=0; i<pc; i++) {
+        const i3=i*3, th=Math.random()*Math.PI*2, ph=Math.random()*Math.PI, r=3+Math.random()*4;
+        pp[i3]=r*Math.sin(ph)*Math.cos(th); pp[i3+1]=r*Math.cos(ph)-0.5; pp[i3+2]=r*Math.sin(ph)*Math.sin(th);
+        const t=Math.random(); pcc[i3]=0.85+t*0.15; pcc[i3+1]=0.5+t*0.3; pcc[i3+2]=0.3+t*0.2;
+    }
+    const pg = new THREE.BufferGeometry();
+    pg.setAttribute('position', new THREE.BufferAttribute(pp, 3));
+    pg.setAttribute('color', new THREE.BufferAttribute(pcc, 3));
+    logoParticles = new THREE.Points(pg, new THREE.PointsMaterial({
+        size: 0.06, vertexColors: true, transparent: true, opacity: 0.6,
+        blending: THREE.AdditiveBlending, depthWrite: false
+    }));
+    logoGroup.add(logoParticles);
+
+    // Lights
+    [new THREE.PointLight(0xe8b090,0.9,15), new THREE.PointLight(0xd4956b,0.6,12), new THREE.PointLight(0xd4956b,0.6,12)]
+        .forEach((l,i) => { l.position.set([0,-3,3][i],[3,0,0][i],[4,3,3][i]); logoGroup.add(l); });
+
+    logoGroup.position.set(0, 2.5, 0); logoGroup.visible = false;
+    scene.add(logoGroup); logoObjects.push(logoGroup);
+
+    // Logo dark floor
+    const lf = new THREE.Mesh(
+        new THREE.PlaneGeometry(35,35),
+        new THREE.MeshStandardMaterial({ color:0x0c0810, roughness:0.15, metalness:0.5, envMap:envMap, envMapIntensity:0.3 })
+    );
+    lf.rotation.x = -Math.PI/2; lf.visible = false; scene.add(lf); logoObjects.push(lf);
+
+    const lg = new THREE.Mesh(
+        new THREE.CircleGeometry(6, 32),
+        new THREE.MeshBasicMaterial({ color: 0xd4956b, transparent: true, opacity: 0.06 })
+    );
+    lg.rotation.x = -Math.PI/2; lg.position.y = 0.02; lg.visible = false; scene.add(lg); logoObjects.push(lg);
+}
+
+// 🎬 Logo animation + drag-to-orbit
+let logoDragAngle = 0, logoDragY = 3.5, logoIsDragging = false;
+let logoAutoRotate = true;
+
+function updateLogoMode(elapsed) {
+    if (currentMode !== 'logo' || !logoGroup) return;
+
+    if (logoAutoRotate && !logoIsDragging) {
+        logoDragAngle += 0.003;
+    }
+
+    logoGroup.rotation.y = elapsed * 0.15;
+    const breathe = 1 + Math.sin(elapsed * 0.8) * 0.015;
+    logoGroup.scale.set(breathe, breathe, breathe);
+
+    if (logoParticles) {
+        logoParticles.rotation.y = -elapsed * 0.12;
+        logoParticles.rotation.x = Math.sin(elapsed * 0.2) * 0.08;
+    }
+
+    const camR = 10;
+    const cx = Math.sin(logoDragAngle) * camR;
+    const cz = Math.cos(logoDragAngle) * camR;
+    const target = new THREE.Vector3(cx, logoDragY, cz);
+    camera.position.lerp(target, 0.04);
+    camera.lookAt(0, 2, 0);
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 8.5: 3D OPERATING SYSTEM MODE                        │
+// │  🖥️ A futuristic 3D desktop with dock, apps, windows!        │
+// │  Think macOS/Windows/iOS — but in a 3D space!                 │
+// └──────────────────────────────────────────────────────────────┘
+
+// 📱 All the apps you'd find on a real OS!
+const OS_APPS = [
+    { name: "Phone",      icon: "📱", color: 0x43e97b, desc: "Make calls, view contacts, check voicemail. Favorites and recent calls at a glance.",
+      features: ["Voice & Video Calls", "Contact Directory", "Voicemail Inbox", "Call History"] },
+    { name: "Zoom",       icon: "📹", color: 0x4facfe, desc: "Video conferencing, screen sharing, virtual backgrounds, and meeting recordings.",
+      features: ["HD Video Meetings", "Screen Sharing", "Virtual Backgrounds", "Meeting Scheduler"] },
+    { name: "Messages",   icon: "💬", color: 0x43e97b, desc: "Send texts, images, voice memos. Group chats and read receipts included.",
+      features: ["Instant Messaging", "Group Chats", "Media Sharing", "Voice Notes"] },
+    { name: "Mail",       icon: "✉️",  color: 0x4facfe, desc: "Full email client with smart inbox, filters, attachments, and signatures.",
+      features: ["Smart Inbox Sorting", "Rich Text Composer", "Attachment Preview", "Multi-Account"] },
+    { name: "Browser",    icon: "🌐", color: 0x667eea, desc: "Browse the 3D web. Tabs, bookmarks, extensions, and privacy mode built in.",
+      features: ["Tabbed Browsing", "Bookmark Manager", "Ad Blocker", "Private Mode"] },
+    { name: "Files",      icon: "📁", color: 0xf6d365, desc: "Manage your documents, photos, and downloads. Cloud sync and search.",
+      features: ["File Explorer", "Cloud Storage", "Quick Preview", "Smart Search"] },
+    { name: "Camera",     icon: "📷", color: 0xf5576c, desc: "Photo and video capture with filters, HDR, and panorama modes.",
+      features: ["Photo Capture", "Video Recording", "Live Filters", "Panorama Mode"] },
+    { name: "Music",      icon: "🎵", color: 0xe88ded, desc: "Stream music, create playlists, discover new artists. Equalizer included.",
+      features: ["Music Streaming", "Playlist Builder", "Artist Radio", "Equalizer"] },
+    { name: "Calendar",   icon: "📅", color: 0xf5576c, desc: "Schedule events, set reminders, share calendars with your team.",
+      features: ["Event Scheduling", "Smart Reminders", "Shared Calendars", "Meeting Links"] },
+    { name: "Settings",   icon: "⚙️",  color: 0x8090b0, desc: "System preferences, display settings, accounts, security, and updates.",
+      features: ["Display & Theme", "Account Security", "Network Config", "System Updates"] },
+    { name: "Maps",       icon: "🗺️",  color: 0x38f9d7, desc: "3D maps with navigation, transit, satellite view, and offline support.",
+      features: ["3D Navigation", "Transit Routes", "Satellite View", "Offline Maps"] },
+    { name: "Notes",      icon: "📝", color: 0xf6d365, desc: "Quick notes, checklists, sketches. Organize with folders and tags.",
+      features: ["Rich Text Notes", "Checklists", "Sketch Canvas", "Tag Organizer"] },
+    { name: "Weather",    icon: "🌤️", color: 0x4facfe, desc: "Real-time weather, hourly forecasts, radar maps, and severe alerts.",
+      features: ["Live Conditions", "7-Day Forecast", "Radar Maps", "Storm Alerts"] },
+    { name: "Calculator",  icon: "🧮", color: 0x764ba2, desc: "Standard, scientific, and programmer calculator with unit conversion.",
+      features: ["Standard Mode", "Scientific Mode", "Unit Converter", "History Log"] },
+];
+
+// 🖥️ Array to hold all 3D objects specific to OS mode
+const os3dObjects = [];
+
+// 🖥️ The 3D dock icons as meshes (we need these for raycasting!)
+const osDockIcons = [];
+let osDesktopGroup = null;
+let osDragAngle = 0, osDragY = 4.5, osIsDragging = false;
+
+function createOS3D() {
+    // 🌐 Big group to hold the entire OS world
+    osDesktopGroup = new THREE.Group();
+
+    // ═══════════════════════════════════════════
+    // 🪞 FLOOR — Dark reflective desk surface
+    // ═══════════════════════════════════════════
+    const deskFloor = new THREE.Mesh(
+        new THREE.PlaneGeometry(50, 50),
+        new THREE.MeshStandardMaterial({
+            color: 0x080a14, roughness: 0.12, metalness: 0.65,
+            envMap: envMap, envMapIntensity: 0.4
+        })
+    );
+    deskFloor.rotation.x = -Math.PI / 2;
+    osDesktopGroup.add(deskFloor);
+
+    // ═══════════════════════════════════════════
+    // 🟦 DESKTOP "MONITOR" — A floating screen
+    // ═══════════════════════════════════════════
+    // 🖼️ Giant curved "monitor" backdrop
+    const monGeo = new THREE.PlaneGeometry(16, 9, 32, 18);
+    // Curve the monitor slightly (like a curved display!)
+    const monPos = monGeo.attributes.position;
+    for (let i = 0; i < monPos.count; i++) {
+        const x = monPos.getX(i);
+        const z = -Math.pow(x / 12, 2) * 2; // gentle curve
+        monPos.setZ(i, z);
+    }
+    monGeo.computeVertexNormals();
+
+    // 🎨 Create a desktop wallpaper texture
+    const wallCanvas = document.createElement('canvas');
+    wallCanvas.width = 800; wallCanvas.height = 450;
+    const wCtx = wallCanvas.getContext('2d');
+    // Dark gradient with aurora-like colors
+    const wGrad = wCtx.createLinearGradient(0, 0, 800, 450);
+    wGrad.addColorStop(0, '#0a0e1a'); wGrad.addColorStop(0.3, '#101835');
+    wGrad.addColorStop(0.6, '#0d1228'); wGrad.addColorStop(1, '#080a12');
+    wCtx.fillStyle = wGrad; wCtx.fillRect(0, 0, 800, 450);
+    // Aurora glow
+    const aGrad = wCtx.createRadialGradient(400, 200, 50, 400, 200, 350);
+    aGrad.addColorStop(0, 'rgba(102,126,234,0.12)');
+    aGrad.addColorStop(0.5, 'rgba(118,75,162,0.06)');
+    aGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    wCtx.fillStyle = aGrad; wCtx.fillRect(0, 0, 800, 450);
+    // "VERTEX OS" watermark
+    wCtx.font = '300 18px Inter, sans-serif'; wCtx.textAlign = 'center';
+    wCtx.fillStyle = 'rgba(255,255,255,0.06)';
+    wCtx.fillText('VERTEX OS', 400, 150);
+    wCtx.font = '200 11px Inter, sans-serif';
+    wCtx.fillStyle = 'rgba(255,255,255,0.04)';
+    wCtx.fillText('The Future of Computing', 400, 175);
+    // Desktop widget: Clock
+    wCtx.font = '200 52px Inter, sans-serif'; wCtx.fillStyle = 'rgba(255,255,255,0.08)';
+    wCtx.fillText('12:00', 400, 260);
+    wCtx.font = '300 14px Inter, sans-serif'; wCtx.fillStyle = 'rgba(255,255,255,0.05)';
+    wCtx.fillText('Wednesday, February 25', 400, 290);
+    // Tiny dots as "desktop icons" visual hint
+    for (let i = 0; i < 40; i++) {
+        wCtx.fillStyle = `rgba(${100+Math.random()*100},${120+Math.random()*100},${200+Math.random()*55},${0.03+Math.random()*0.04})`;
+        wCtx.beginPath();
+        wCtx.arc(Math.random()*800, Math.random()*450, 1+Math.random()*2, 0, Math.PI*2);
+        wCtx.fill();
+    }
+
+    const wallTex = new THREE.CanvasTexture(wallCanvas);
+    wallTex.minFilter = THREE.LinearFilter;
+
+    const monitor = new THREE.Mesh(monGeo, new THREE.MeshStandardMaterial({
+        map: wallTex, roughness: 0.4, metalness: 0.1,
+        emissive: 0x1a2040, emissiveIntensity: 0.3
+    }));
+    monitor.position.set(0, 5.5, -6);
+    osDesktopGroup.add(monitor);
+
+    // Monitor bezel (thin dark border around it)
+    const bezelGeo = new THREE.PlaneGeometry(16.6, 9.6, 32, 18);
+    const bezelPos = bezelGeo.attributes.position;
+    for (let i = 0; i < bezelPos.count; i++) {
+        const x = bezelPos.getX(i);
+        bezelPos.setZ(i, -Math.pow(x / 12, 2) * 2 - 0.05);
+    }
+    bezelGeo.computeVertexNormals();
+    const bezel = new THREE.Mesh(bezelGeo, new THREE.MeshStandardMaterial({
+        color: 0x15182a, roughness: 0.15, metalness: 0.8,
+        envMap: envMap, envMapIntensity: 0.5
+    }));
+    bezel.position.set(0, 5.5, -6);
+    osDesktopGroup.add(bezel);
+
+    // Monitor stand
+    const standPole = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.15, 0.15, 4, 8),
+        new THREE.MeshStandardMaterial({ color: 0x181c30, roughness: 0.15, metalness: 0.8, envMap: envMap, envMapIntensity: 0.5 })
+    );
+    standPole.position.set(0, 1.5, -6.5);
+    osDesktopGroup.add(standPole);
+
+    const standBase = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.5, 1.8, 0.15, 16),
+        new THREE.MeshStandardMaterial({ color: 0x181c30, roughness: 0.12, metalness: 0.85, envMap: envMap, envMapIntensity: 0.5 })
+    );
+    standBase.position.set(0, 0.08, -6.5);
+    osDesktopGroup.add(standBase);
+
+    // ═══════════════════════════════════════════
+    // 🔲 3D DOCK — Curved bar with app icons!
+    // ═══════════════════════════════════════════
+    const dockGroup = new THREE.Group();
+    const dockCount = OS_APPS.length;
+    const dockWidth = dockCount * 1.15;
+    const dockRadius = 8; // curve radius
+
+    // Dock shelf (translucent curved bar)
+    const dockShelfGeo = new THREE.BoxGeometry(dockWidth + 1.5, 0.12, 0.9);
+    const dockShelf = new THREE.Mesh(dockShelfGeo, new THREE.MeshStandardMaterial({
+        color: 0x181c30, roughness: 0.1, metalness: 0.7,
+        transparent: true, opacity: 0.7,
+        envMap: envMap, envMapIntensity: 0.4
+    }));
+    dockShelf.position.set(0, 0.8, 5);
+    dockGroup.add(dockShelf);
+
+    // Dock glow under it
+    const dockGlow = new THREE.Mesh(
+        new THREE.PlaneGeometry(dockWidth + 2, 1.5),
+        new THREE.MeshBasicMaterial({ color: 0x667eea, transparent: true, opacity: 0.04 })
+    );
+    dockGlow.rotation.x = -Math.PI / 2;
+    dockGlow.position.set(0, 0.02, 5);
+    dockGroup.add(dockGlow);
+
+    // 📱 Create each app icon as a 3D rounded box with icon texture
+    OS_APPS.forEach((app, i) => {
+        const iconGroup = new THREE.Group();
+
+        // 🎨 Draw icon texture on canvas
+        const ic = document.createElement('canvas');
+        ic.width = 128; ic.height = 128;
+        const ictx = ic.getContext('2d');
+
+        // Rounded rectangle background
+        const appColor = new THREE.Color(app.color);
+        const grad = ictx.createLinearGradient(0, 0, 128, 128);
+        grad.addColorStop(0, '#' + appColor.getHexString());
+        const darker = appColor.clone().multiplyScalar(0.5);
+        grad.addColorStop(1, '#' + darker.getHexString());
+        ictx.fillStyle = grad;
+        // Rounded rect
+        const rr = 20;
+        ictx.beginPath();
+        ictx.moveTo(rr, 0); ictx.lineTo(128-rr, 0); ictx.quadraticCurveTo(128, 0, 128, rr);
+        ictx.lineTo(128, 128-rr); ictx.quadraticCurveTo(128, 128, 128-rr, 128);
+        ictx.lineTo(rr, 128); ictx.quadraticCurveTo(0, 128, 0, 128-rr);
+        ictx.lineTo(0, rr); ictx.quadraticCurveTo(0, 0, rr, 0);
+        ictx.closePath(); ictx.fill();
+
+        // Icon emoji
+        ictx.font = '56px serif'; ictx.textAlign = 'center'; ictx.textBaseline = 'middle';
+        ictx.fillText(app.icon, 64, 64);
+
+        const iconTex = new THREE.CanvasTexture(ic);
+        iconTex.minFilter = THREE.LinearFilter;
+
+        // 📦 3D icon cube (slightly rounded look with beveled edges)
+        const iconMesh = new THREE.Mesh(
+            new THREE.BoxGeometry(0.75, 0.75, 0.15, 2, 2, 1),
+            [
+                new THREE.MeshStandardMaterial({ color: app.color, roughness: 0.3, metalness: 0.5 }),  // right
+                new THREE.MeshStandardMaterial({ color: app.color, roughness: 0.3, metalness: 0.5 }),  // left
+                new THREE.MeshStandardMaterial({ color: app.color, roughness: 0.3, metalness: 0.5 }),  // top
+                new THREE.MeshStandardMaterial({ color: app.color, roughness: 0.3, metalness: 0.5 }),  // bottom
+                new THREE.MeshStandardMaterial({ map: iconTex, roughness: 0.35, metalness: 0.1 }),     // front (icon face!)
+                new THREE.MeshStandardMaterial({ color: app.color, roughness: 0.3, metalness: 0.5 }),  // back
+            ]
+        );
+
+        // 📐 Position along the dock arc
+        const t = (i - (dockCount - 1) / 2) * 1.15; // horizontal spread
+        iconMesh.position.set(t, 1.25, 5);
+
+        iconMesh.userData = {
+            isOSApp: true,
+            appIndex: i,
+            appName: app.name,
+            baseY: 1.25,
+            targetY: 1.25,
+            targetScale: 1,
+            hoverGlow: 0
+        };
+
+        iconGroup.add(iconMesh);
+
+        // 🔆 Tiny point light under each icon
+        const iLight = new THREE.PointLight(app.color, 0.15, 2);
+        iLight.position.set(t, 0.7, 5);
+        iconGroup.add(iLight);
+
+        // App name label (tiny sprite below)
+        const labelCanvas = document.createElement('canvas');
+        labelCanvas.width = 200; labelCanvas.height = 40;
+        const lCtx = labelCanvas.getContext('2d');
+        lCtx.font = '300 18px Inter, sans-serif'; lCtx.textAlign = 'center';
+        lCtx.fillStyle = 'rgba(180,190,220,0.35)';
+        lCtx.fillText(app.name, 100, 28);
+        const labelTex = new THREE.CanvasTexture(labelCanvas);
+        labelTex.minFilter = THREE.LinearFilter;
+        const labelSprite = new THREE.Sprite(
+            new THREE.SpriteMaterial({ map: labelTex, transparent: true, opacity: 0.5 })
+        );
+        labelSprite.position.set(t, 0.5, 5);
+        labelSprite.scale.set(1.5, 0.3, 1);
+        iconGroup.add(labelSprite);
+
+        dockGroup.add(iconGroup);
+        osDockIcons.push(iconMesh);
+    });
+
+    osDesktopGroup.add(dockGroup);
+
+    // ═══════════════════════════════════════════
+    // 🌟 FLOATING WIDGET PANELS (on the desktop)
+    // ═══════════════════════════════════════════
+
+    // 📊 System stats widget (left side of monitor)
+    function makeWidgetPanel(x, y, z, w, h, title, lines, color) {
+        const wc = document.createElement('canvas');
+        wc.width = w * 50; wc.height = h * 50;
+        const wctx = wc.getContext('2d');
+        wctx.fillStyle = 'rgba(12,14,24,0.85)';
+        wctx.fillRect(0, 0, wc.width, wc.height);
+        wctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        wctx.strokeRect(0, 0, wc.width, wc.height);
+        // Title bar
+        const col = new THREE.Color(color);
+        wctx.fillStyle = '#' + col.getHexString() + '30';
+        wctx.fillRect(0, 0, wc.width, 30);
+        wctx.fillStyle = 'rgba(255,255,255,0.6)'; wctx.font = '500 14px Inter, sans-serif';
+        wctx.fillText('  ' + title, 8, 20);
+        // Content lines
+        wctx.fillStyle = 'rgba(255,255,255,0.3)'; wctx.font = '300 12px Inter, sans-serif';
+        lines.forEach((line, li) => {
+            wctx.fillText('  ' + line, 8, 52 + li * 22);
+        });
+        const wTex = new THREE.CanvasTexture(wc); wTex.minFilter = THREE.LinearFilter;
+        const panel = new THREE.Mesh(
+            new THREE.PlaneGeometry(w, h),
+            new THREE.MeshStandardMaterial({ map: wTex, roughness: 0.4, metalness: 0.1, emissive: color, emissiveIntensity: 0.03, transparent: true, opacity: 0.9 })
+        );
+        panel.position.set(x, y, z);
+        return panel;
+    }
+
+    const statsWidget = makeWidgetPanel(-9.5, 6, -3, 3.5, 2.5, '⚡ System',
+        ['CPU: 12% ▮▮▯▯▯▯▯▯', 'RAM: 8.2 / 16 GB', 'GPU: 24% ▮▮▮▯▯▯▯▯', 'Disk: 234 GB free', 'Network: 125 Mbps ↓'],
+        0x667eea);
+    osDesktopGroup.add(statsWidget);
+
+    const musicWidget = makeWidgetPanel(9.5, 6, -3, 3.5, 2, '🎵 Now Playing',
+        ['Midnight Drive — Synthwave', '▶  ━━━━━●━━━━  3:42', 'Up Next: Neon Lights'],
+        0xe88ded);
+    osDesktopGroup.add(musicWidget);
+
+    const notiWidget = makeWidgetPanel(-9.5, 3, -3, 3.5, 2, '🔔 Notifications',
+        ['3 new messages', '1 missed call', 'Calendar: Team Sync 2:00 PM', 'Update available'],
+        0x43e97b);
+    osDesktopGroup.add(notiWidget);
+
+    const weatherWidget = makeWidgetPanel(9.5, 3.5, -3, 3.5, 1.5, '🌤️ Weather',
+        ['72°F  Partly Cloudy', 'Wind: 8 mph NW', 'Humidity: 45%'],
+        0x4facfe);
+    osDesktopGroup.add(weatherWidget);
+
+    // ═══════════════════════════════════════════
+    // ✨ Ambient particles for the OS space
+    // ═══════════════════════════════════════════
+    const osParticleCount = 300;
+    const ospp = new Float32Array(osParticleCount * 3);
+    const ospc = new Float32Array(osParticleCount * 3);
+    for (let i = 0; i < osParticleCount; i++) {
+        const i3 = i * 3;
+        ospp[i3]   = (Math.random()-0.5)*40;
+        ospp[i3+1] = Math.random()*12;
+        ospp[i3+2] = (Math.random()-0.5)*30;
+        const b = 0.2 + Math.random() * 0.3;
+        ospc[i3] = b*0.6; ospc[i3+1] = b*0.7; ospc[i3+2] = b;
+    }
+    const ospGeo = new THREE.BufferGeometry();
+    ospGeo.setAttribute('position', new THREE.BufferAttribute(ospp, 3));
+    ospGeo.setAttribute('color', new THREE.BufferAttribute(ospc, 3));
+    const osParticles = new THREE.Points(ospGeo, new THREE.PointsMaterial({
+        size: 0.06, vertexColors: true, transparent: true, opacity: 0.4,
+        blending: THREE.AdditiveBlending, depthWrite: false
+    }));
+    osDesktopGroup.add(osParticles);
+
+    // ═══════════════════════════════════════════
+    // 💡 OS-specific lighting
+    // ═══════════════════════════════════════════
+    const osLight1 = new THREE.PointLight(0x667eea, 0.4, 20);
+    osLight1.position.set(0, 8, -4);
+    osDesktopGroup.add(osLight1);
+    const osLight2 = new THREE.PointLight(0x764ba2, 0.3, 15);
+    osLight2.position.set(-8, 5, 2);
+    osDesktopGroup.add(osLight2);
+    const osLight3 = new THREE.PointLight(0x4facfe, 0.25, 15);
+    osLight3.position.set(8, 5, 2);
+    osDesktopGroup.add(osLight3);
+
+    // 🎯 Add it all to the scene
+    osDesktopGroup.visible = false;
+    scene.add(osDesktopGroup);
+    os3dObjects.push(osDesktopGroup);
+}
+
+// 🎯 Raycaster for the OS dock — detects which app you're hovering
+const osRaycaster = new THREE.Raycaster();
+let osHoveredApp = null;
+
+function updateOSMode(elapsed) {
+    if (currentMode !== 'os' || !osDesktopGroup) return;
+
+    // 🕐 Update real clock in status bar
+    const now = new Date();
+    const h = now.getHours(), m = now.getMinutes();
+    document.getElementById('osTime').textContent =
+        `${h > 12 ? h-12 : h || 12}:${m < 10 ? '0'+m : m} ${h >= 12 ? 'PM' : 'AM'}`;
+
+    // 🔄 Slow orbit if not dragging
+    if (!osIsDragging) {
+        osDragAngle += 0.0012;
+    }
+
+    // 📷 Camera orbits the desktop
+    const camR = 14;
+    const cx = Math.sin(osDragAngle) * camR;
+    const cz = Math.cos(osDragAngle) * camR;
+    const target = new THREE.Vector3(cx, osDragY, cz);
+    camera.position.lerp(target, 0.04);
+    camera.lookAt(0, 3, -1);
+
+    // 🎯 Dock icon hover animation
+    osDockIcons.forEach(icon => {
+        const ud = icon.userData;
+        // Lerp position for bounce
+        const curY = icon.position.y;
+        icon.position.y += (ud.targetY - curY) * 0.12;
+        // Lerp scale for pop
+        const cs = icon.scale.x;
+        const ts = ud.targetScale;
+        icon.scale.set(
+            cs + (ts - cs) * 0.12,
+            cs + (ts - cs) * 0.12,
+            icon.scale.z + (1 - icon.scale.z) * 0.12
+        );
+        // Subtle idle float
+        icon.position.y += Math.sin(elapsed * 1.2 + ud.appIndex * 0.5) * 0.01;
+    });
+
+    // ✨ Rotate OS ambient particles
+    if (osDesktopGroup.children) {
+        osDesktopGroup.children.forEach(child => {
+            if (child.isPoints) { child.rotation.y = elapsed * 0.015; }
+        });
+    }
+
+    // 📊 Float the widget panels gently
+    osDesktopGroup.children.forEach(child => {
+        if (child.isMesh && child.geometry.type === 'PlaneGeometry' && child.position.y > 2 && child.position.z === -3) {
+            child.position.y += Math.sin(elapsed * 0.4 + child.position.x) * 0.001;
+        }
+    });
+}
+
+// 📱 Open an app window with info
+function openOSApp(appIndex) {
+    const app = OS_APPS[appIndex];
+    const win = document.getElementById('osAppWindow');
+    document.getElementById('winIcon').textContent = app.icon;
+    document.getElementById('winTitle').textContent = app.name;
+
+    // Build body content
+    let bodyHTML = `<p>${app.desc}</p>`;
+    app.features.forEach(feat => {
+        const col = '#' + new THREE.Color(app.color).getHexString();
+        bodyHTML += `<div class="app-feature"><div class="feat-dot" style="background:${col}"></div><span>${feat}</span></div>`;
+    });
+    document.getElementById('winBody').innerHTML = bodyHTML;
+
+    win.style.display = 'block';
+    // Re-trigger animation
+    win.style.animation = 'none';
+    win.offsetHeight; // reflow
+    win.style.animation = '';
+}
+
+function closeOSApp() {
+    document.getElementById('osAppWindow').style.display = 'none';
+}
+
+// 🎯 Check if mouse is hovering a dock icon (called on mousemove)
+function updateOSHover(event) {
+    if (currentMode !== 'os') return;
+
+    const mouse = new THREE.Vector2(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1
+    );
+    osRaycaster.setFromCamera(mouse, camera);
+    const hits = osRaycaster.intersectObjects(osDockIcons);
+
+    // Reset all
+    osDockIcons.forEach(icon => {
+        icon.userData.targetY = icon.userData.baseY;
+        icon.userData.targetScale = 1;
+    });
+    const label = document.getElementById('osDockLabel');
+
+    if (hits.length > 0) {
+        const hit = hits[0].object;
+        osHoveredApp = hit;
+        hit.userData.targetY = hit.userData.baseY + 0.35; // bounce up!
+        hit.userData.targetScale = 1.25; // grow!
+        // Also pop neighbors slightly
+        const idx = hit.userData.appIndex;
+        osDockIcons.forEach(icon => {
+            const d = Math.abs(icon.userData.appIndex - idx);
+            if (d === 1) { icon.userData.targetY = icon.userData.baseY + 0.15; icon.userData.targetScale = 1.1; }
+            if (d === 2) { icon.userData.targetY = icon.userData.baseY + 0.05; icon.userData.targetScale = 1.03; }
+        });
+        // Show label
+        label.textContent = hit.userData.appName;
+        label.style.display = 'block';
+        document.body.style.cursor = 'pointer';
+    } else {
+        osHoveredApp = null;
+        label.style.display = 'none';
+        if (currentMode === 'os') document.body.style.cursor = 'default';
+    }
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 8.55: DEVICE LAB MODE                                │
+// │  📱💻🖥️ Multi-device testing environment!                     │
+// │  See your app running on 12 different devices at once!        │
+// │  + Voice control with speech recognition & synthesis!         │
+// └──────────────────────────────────────────────────────────────┘
+
+// 📱 All the device types we simulate!
+const DEVICES = [
+    { name: "Smartphone",       emoji: "📱", w: 0.45, h: 0.85, bezel: 0.03, radius: 0.05, pos: [-6, 1.8, 3], rot: [0, 0.3, 0], scale: 1.8 },
+    { name: "Tablet",           emoji: "📋", w: 0.8,  h: 0.6,  bezel: 0.03, radius: 0.04, pos: [-4, 1.8, 2], rot: [0, 0.2, 0], scale: 1.8 },
+    { name: "Laptop",           emoji: "💻", w: 1.2,  h: 0.75, bezel: 0.04, radius: 0.02, pos: [-1.5, 1.5, 2.5], rot: [-0.2, 0.1, 0], scale: 1.8 },
+    { name: "Desktop Monitor",  emoji: "🖥️",  w: 1.6,  h: 0.95, bezel: 0.04, radius: 0.01, pos: [1.5, 2.5, -1], rot: [0, -0.05, 0], scale: 2.0 },
+    { name: "Multi-Monitor",    emoji: "🖥️🖥️", w: 1.4, h: 0.85, bezel: 0.04, radius: 0.01, pos: [5, 2.5, -1], rot: [0, -0.2, 0], scale: 1.8 },
+    { name: "Television",       emoji: "📺", w: 2.2,  h: 1.25, bezel: 0.03, radius: 0.01, pos: [0, 4.5, -4], rot: [0, 0, 0], scale: 2.2 },
+    { name: "Smartwatch",       emoji: "⌚", w: 0.25, h: 0.3,  bezel: 0.025, radius: 0.06, pos: [-7.5, 1.2, 2], rot: [0, 0.4, 0], scale: 2.5 },
+    { name: "Smart Speaker",    emoji: "🔊", w: 0.35, h: 0.5,  bezel: 0.02, radius: 0.08, pos: [7.5, 1.2, 2], rot: [0, -0.35, 0], scale: 2.0 },
+    { name: "AR Glasses",       emoji: "🕶️",  w: 0.9,  h: 0.35, bezel: 0.02, radius: 0.04, pos: [-3.5, 3.5, 0], rot: [0, 0.15, 0], scale: 1.8 },
+    { name: "VR Headset",       emoji: "🥽", w: 0.8,  h: 0.5,  bezel: 0.03, radius: 0.06, pos: [3.5, 3.5, 0], rot: [0, -0.15, 0], scale: 1.8 },
+    { name: "Game Console",     emoji: "🎮", w: 1.0,  h: 0.6,  bezel: 0.03, radius: 0.03, pos: [6.5, 1.5, 3], rot: [0, -0.3, 0], scale: 1.7 },
+    { name: "Kiosk Touchscreen",emoji: "🏧", w: 0.7,  h: 1.1,  bezel: 0.04, radius: 0.02, pos: [-8, 2.5, 0], rot: [0, 0.45, 0], scale: 1.6 },
+];
+
+// 🎯 Apps that can be loaded on all devices
+const DL_APPS = [
+    { name: "Calculator", icon: "🧮", color: '#764ba2', layout: 'grid' },
+    { name: "Weather",    icon: "🌤️", color: '#4facfe', layout: 'card' },
+    { name: "Music",      icon: "🎵", color: '#e88ded', layout: 'player' },
+    { name: "Messages",   icon: "💬", color: '#43e97b', layout: 'chat' },
+    { name: "Maps",       icon: "🗺️", color: '#38f9d7', layout: 'map' },
+    { name: "Calendar",   icon: "📅", color: '#f5576c', layout: 'list' },
+    { name: "Browser",    icon: "🌐", color: '#667eea', layout: 'web' },
+    { name: "Camera",     icon: "📷", color: '#f6d365', layout: 'viewfinder' },
+];
+
+const dlObjects = [];
+const dlScreens = []; // { mesh, device, texCanvas, texCtx, texture }
+let dlGroup = null;
+let dlSelectedApp = 0;
+let dlDragAngle = 0, dlDragY = 3, dlIsDragging = false;
+let dlHoveredDevice = null;
+
+function createDeviceLab() {
+    dlGroup = new THREE.Group();
+
+    // 🪞 Floor
+    const dlFloor = new THREE.Mesh(
+        new THREE.PlaneGeometry(50, 50),
+        new THREE.MeshStandardMaterial({ color: 0x080a14, roughness: 0.12, metalness: 0.6, envMap: envMap, envMapIntensity: 0.4 })
+    );
+    dlFloor.rotation.x = -Math.PI / 2;
+    dlGroup.add(dlFloor);
+
+    // 📱 Build each device as a 3D object with a screen texture
+    DEVICES.forEach((dev, di) => {
+        const group = new THREE.Group();
+
+        // 🖼️ Screen canvas (will be updated when app changes)
+        const sc = document.createElement('canvas');
+        sc.width = 256; sc.height = Math.round(256 * (dev.h / dev.w));
+        const sctx = sc.getContext('2d');
+        const tex = new THREE.CanvasTexture(sc);
+        tex.minFilter = THREE.LinearFilter;
+
+        // 📺 Screen mesh
+        const screenMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(dev.w, dev.h),
+            new THREE.MeshStandardMaterial({ map: tex, roughness: 0.4, metalness: 0.05, emissive: 0x1a2040, emissiveIntensity: 0.25 })
+        );
+        screenMesh.userData = { isDeviceScreen: true, deviceIndex: di, deviceName: dev.name };
+        group.add(screenMesh);
+
+        // 📦 Bezel frame around screen
+        const bw = dev.w + dev.bezel * 2, bh = dev.h + dev.bezel * 2;
+        const bezelMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(bw, bh),
+            new THREE.MeshStandardMaterial({ color: 0x1a1e30, roughness: 0.15, metalness: 0.75, envMap: envMap, envMapIntensity: 0.5 })
+        );
+        bezelMesh.position.z = -0.01;
+        group.add(bezelMesh);
+
+        // Device label (sprite below)
+        const lc = document.createElement('canvas');
+        lc.width = 256; lc.height = 48;
+        const lctx = lc.getContext('2d');
+        lctx.font = '300 16px Inter, sans-serif'; lctx.textAlign = 'center';
+        lctx.fillStyle = 'rgba(180,190,220,0.45)';
+        lctx.fillText(`${dev.emoji} ${dev.name}`, 128, 32);
+        const lTex = new THREE.CanvasTexture(lc); lTex.minFilter = THREE.LinearFilter;
+        const label = new THREE.Sprite(new THREE.SpriteMaterial({ map: lTex, transparent: true, opacity: 0.6 }));
+        label.position.set(0, -(dev.h / 2 + 0.3), 0);
+        label.scale.set(2, 0.4, 1);
+        group.add(label);
+
+        // 💡 Glow light for the screen
+        const sLight = new THREE.PointLight(0x4466cc, 0.15, 3);
+        sLight.position.set(0, 0, 0.5);
+        group.add(sLight);
+
+        // Position + rotate
+        group.position.set(dev.pos[0], dev.pos[1], dev.pos[2]);
+        group.rotation.set(dev.rot[0], dev.rot[1], dev.rot[2]);
+        group.scale.setScalar(dev.scale * 0.6);
+
+        dlGroup.add(group);
+        dlScreens.push({ mesh: screenMesh, device: dev, texCanvas: sc, texCtx: sctx, texture: tex, group: group });
+    });
+
+    // ✨ Ambient particles
+    const pCount = 200;
+    const pp = new Float32Array(pCount * 3), pc = new Float32Array(pCount * 3);
+    for (let i = 0; i < pCount; i++) {
+        const i3 = i * 3;
+        pp[i3] = (Math.random()-0.5)*35; pp[i3+1] = Math.random()*10; pp[i3+2] = (Math.random()-0.5)*25;
+        const b = 0.2 + Math.random()*0.2;
+        pc[i3] = b*0.5; pc[i3+1] = b*0.6; pc[i3+2] = b;
+    }
+    const pg = new THREE.BufferGeometry();
+    pg.setAttribute('position', new THREE.BufferAttribute(pp, 3));
+    pg.setAttribute('color', new THREE.BufferAttribute(pc, 3));
+    dlGroup.add(new THREE.Points(pg, new THREE.PointsMaterial({
+        size: 0.05, vertexColors: true, transparent: true, opacity: 0.35,
+        blending: THREE.AdditiveBlending, depthWrite: false
+    })));
+
+    // 💡 Lights — use .set() because position is a getter/setter in Three.js
+    const dlLight1 = new THREE.PointLight(0x667eea, 0.4, 20); dlLight1.position.set(0, 8, 0); dlGroup.add(dlLight1);
+    const dlLight2 = new THREE.PointLight(0x764ba2, 0.25, 15); dlLight2.position.set(-8, 5, 2); dlGroup.add(dlLight2);
+    const dlLight3 = new THREE.PointLight(0x4facfe, 0.25, 15); dlLight3.position.set(8, 5, 2); dlGroup.add(dlLight3);
+
+    dlGroup.visible = false;
+    scene.add(dlGroup);
+    dlObjects.push(dlGroup);
+
+    // Build the app picker UI
+    buildDLAppPicker();
+    // Draw initial app on all screens
+    updateDLScreens();
+}
+
+// 🎨 Draw the selected app on ALL device screens
+function updateDLScreens() {
+    const app = DL_APPS[dlSelectedApp];
+    dlScreens.forEach(s => {
+        const ctx = s.texCtx, w = s.texCanvas.width, h = s.texCanvas.height;
+        // Background
+        ctx.fillStyle = '#0c0e18'; ctx.fillRect(0, 0, w, h);
+        // App-colored header bar
+        ctx.fillStyle = app.color + 'cc';
+        ctx.fillRect(0, 0, w, Math.round(h * 0.12));
+        // App icon + name in header
+        ctx.font = `${Math.round(h*0.07)}px serif`; ctx.textAlign = 'center';
+        ctx.fillText(app.icon, w*0.12, h*0.09);
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.font = `500 ${Math.round(h*0.055)}px Inter, sans-serif`;
+        ctx.fillText(app.name, w*0.55, h*0.085);
+        // Simulated app content based on layout type
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        switch (app.layout) {
+            case 'grid': // Calculator grid
+                for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
+                    ctx.fillRect(w*0.08+c*(w*0.22), h*0.2+r*(h*0.18), w*0.18, h*0.14);
+                }
+                break;
+            case 'card': // Weather card
+                ctx.fillRect(w*0.1, h*0.18, w*0.8, h*0.35);
+                ctx.fillRect(w*0.1, h*0.58, w*0.38, h*0.15);
+                ctx.fillRect(w*0.52, h*0.58, w*0.38, h*0.15);
+                ctx.fillStyle = 'rgba(255,255,255,0.12)';
+                ctx.font = `200 ${Math.round(h*0.15)}px Inter`; ctx.fillText('72°', w*0.5, h*0.42);
+                break;
+            case 'player': // Music player
+                ctx.beginPath(); ctx.arc(w*0.5, h*0.42, w*0.2, 0, Math.PI*2); ctx.fill();
+                ctx.fillRect(w*0.15, h*0.72, w*0.7, h*0.03);
+                ctx.fillRect(w*0.3, h*0.82, w*0.12, h*0.08);
+                ctx.fillRect(w*0.44, h*0.82, w*0.12, h*0.08);
+                ctx.fillRect(w*0.58, h*0.82, w*0.12, h*0.08);
+                break;
+            case 'chat': // Messages
+                for (let i = 0; i < 5; i++) {
+                    const isMe = i % 2 === 0;
+                    const bw = w * (0.4 + Math.random()*0.2);
+                    ctx.fillStyle = isMe ? app.color + '30' : 'rgba(255,255,255,0.06)';
+                    ctx.fillRect(isMe ? w-bw-w*0.05 : w*0.05, h*0.18+i*h*0.14, bw, h*0.1);
+                }
+                ctx.fillStyle = 'rgba(255,255,255,0.08)';
+                ctx.fillRect(w*0.05, h*0.9, w*0.75, h*0.06);
+                break;
+            case 'map': // Maps
+                ctx.fillRect(w*0.02, h*0.14, w*0.96, h*0.7);
+                ctx.fillStyle = app.color + '40';
+                ctx.beginPath(); ctx.arc(w*0.5, h*0.5, w*0.04, 0, Math.PI*2); ctx.fill();
+                ctx.fillRect(w*0.05, h*0.87, w*0.9, h*0.08);
+                break;
+            case 'list': // Calendar list
+                for (let i = 0; i < 5; i++) {
+                    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+                    ctx.fillRect(w*0.05, h*0.18+i*h*0.14, w*0.9, h*0.1);
+                    ctx.fillStyle = app.color + '60';
+                    ctx.fillRect(w*0.05, h*0.18+i*h*0.14, w*0.015, h*0.1);
+                }
+                break;
+            case 'web': // Browser
+                ctx.fillRect(w*0.05, h*0.14, w*0.9, h*0.05); // address bar
+                ctx.fillRect(w*0.05, h*0.24, w*0.9, h*0.4);  // main content
+                ctx.fillRect(w*0.05, h*0.68, w*0.43, h*0.18);
+                ctx.fillRect(w*0.52, h*0.68, w*0.43, h*0.18);
+                break;
+            case 'viewfinder': // Camera
+                ctx.fillRect(w*0.02, h*0.14, w*0.96, h*0.65);
+                ctx.fillStyle = 'rgba(255,255,255,0.05)';
+                ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.arc(w*0.5, h*0.85, w*0.07, 0, Math.PI*2); ctx.stroke();
+                break;
+        }
+        // Device size label
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        ctx.font = `300 ${Math.round(h*0.035)}px Inter`; ctx.textAlign = 'right';
+        const sizes = { 'Smartphone':'390×844', 'Tablet':'768×1024', 'Laptop':'1366×768',
+            'Desktop Monitor':'1920×1080', 'Multi-Monitor':'3840×1080', 'Television':'3840×2160',
+            'Smartwatch':'184×224', 'Smart Speaker':'480×480', 'AR Glasses':'1280×720',
+            'VR Headset':'2160×2160', 'Game Console':'1920×1080', 'Kiosk Touchscreen':'1080×1920' };
+        ctx.fillText(sizes[s.device.name] || '', w-8, h-6);
+        s.texture.needsUpdate = true;
+    });
+}
+
+// 🎛️ Build app picker buttons
+function buildDLAppPicker() {
+    const ui = document.getElementById('deviceLabUI');
+    ui.innerHTML = '';
+    DL_APPS.forEach((app, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'dl-app-btn' + (i === dlSelectedApp ? ' active' : '');
+        btn.textContent = `${app.icon} ${app.name}`;
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dlSelectedApp = i;
+            updateDLScreens();
+            document.querySelectorAll('.dl-app-btn').forEach((b,bi) => b.classList.toggle('active', bi === i));
+            // Voice announce
+            voiceSpeak(`Now showing ${app.name} across all devices`);
+        });
+        ui.appendChild(btn);
+    });
+}
+
+// 🔄 Device Lab update loop
+function updateDeviceLabMode(elapsed) {
+    if (currentMode !== 'devicelab' || !dlGroup) return;
+    if (!dlIsDragging) dlDragAngle += 0.001;
+    const camR = 16;
+    const cx = Math.sin(dlDragAngle) * camR;
+    const cz = Math.cos(dlDragAngle) * camR;
+    camera.position.lerp(new THREE.Vector3(cx, dlDragY, cz), 0.04);
+    camera.lookAt(0, 2.5, 0);
+    // Gently float devices
+    dlScreens.forEach((s, i) => {
+        s.group.position.y = DEVICES[i].pos[1] + Math.sin(elapsed * 0.4 + i * 0.7) * 0.08;
+    });
+}
+
+// 🎤 Voice Control System
+let voiceRecognition = null;
+let voiceIsListening = false;
+
+function voiceSpeak(text) {
+    if ('speechSynthesis' in window) {
+        const u = new SpeechSynthesisUtterance(text);
+        u.rate = 1.0; u.pitch = 1.05; u.volume = 0.8;
+        window.speechSynthesis.speak(u);
+    }
+    // Show transcript
+    const el = document.getElementById('voiceTranscript');
+    el.textContent = `🔊 ${text}`;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+function toggleVoiceListening() {
+    const btn = document.getElementById('voiceBtn');
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+        voiceSpeak('Speech recognition not supported in this browser');
+        return;
+    }
+    if (voiceIsListening) {
+        voiceRecognition.stop();
+        voiceIsListening = false;
+        btn.classList.remove('listening');
+        return;
+    }
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    voiceRecognition = new SpeechRec();
+    voiceRecognition.continuous = false;
+    voiceRecognition.interimResults = false;
+    voiceRecognition.lang = 'en-US';
+
+    voiceRecognition.onstart = () => { voiceIsListening = true; btn.classList.add('listening'); };
+    voiceRecognition.onend = () => { voiceIsListening = false; btn.classList.remove('listening'); };
+    voiceRecognition.onerror = () => { voiceIsListening = false; btn.classList.remove('listening'); };
+
+    voiceRecognition.onresult = (e) => {
+        const transcript = e.results[0][0].transcript.toLowerCase();
+        const el = document.getElementById('voiceTranscript');
+        el.textContent = `🎤 "${transcript}"`;
+        el.style.display = 'block';
+
+        // Parse voice commands
+        let matched = false;
+        DL_APPS.forEach((app, i) => {
+            if (transcript.includes(app.name.toLowerCase())) {
+                dlSelectedApp = i;
+                updateDLScreens();
+                document.querySelectorAll('.dl-app-btn').forEach((b,bi) => b.classList.toggle('active', bi === i));
+                voiceSpeak(`Switching to ${app.name} on all devices`);
+                matched = true;
+            }
+        });
+        if (transcript.includes('describe') || transcript.includes('what do you see')) {
+            const app = DL_APPS[dlSelectedApp];
+            voiceSpeak(`I see ${DEVICES.length} devices displaying the ${app.name} app. The devices include smartphones, tablets, laptops, desktop monitors, a television, a smartwatch, smart speaker, AR glasses, VR headset, game console, and a kiosk touchscreen.`);
+            matched = true;
+        }
+        if (transcript.includes('go home') || transcript.includes('go back')) {
+            goHome(); matched = true;
+        }
+        if (transcript.includes('next app')) {
+            dlSelectedApp = (dlSelectedApp + 1) % DL_APPS.length;
+            updateDLScreens();
+            document.querySelectorAll('.dl-app-btn').forEach((b,bi) => b.classList.toggle('active', bi === dlSelectedApp));
+            voiceSpeak(`Now showing ${DL_APPS[dlSelectedApp].name}`);
+            matched = true;
+        }
+        if (!matched) {
+            voiceSpeak(`I heard "${transcript}". Try saying an app name like Calculator, Weather, or Music. Or say "describe" to hear what I see.`);
+        }
+        setTimeout(() => { el.style.display = 'none'; }, 5000);
+    };
+    voiceRecognition.start();
+}
+
+// 🚪 Enter Device Lab mode
+function enterDeviceLabMode() {
+    transitionTo(() => {
+        currentMode = 'devicelab';
+        const ov = document.getElementById('overlay'); ov.style.opacity = '0'; ov.style.pointerEvents = 'none';
+        if (document.pointerLockElement) document.exitPointerLock();
+        playerState.isLocked = false;
+        hideAll();
+        dlObjects.forEach(o => o.visible = true);
+        if (dlGroup) dlGroup.visible = true;
+        showUI(['backBtn','wireframeBtn','modeLabel']);
+        document.getElementById('deviceLabUI').style.display = 'flex';
+        document.getElementById('dlDeviceInfo').style.display = 'block';
+        document.getElementById('dlDeviceInfo').textContent = `${DEVICES.length} devices • ${DL_APPS.length} apps • Voice-enabled`;
+        document.getElementById('voiceBtn').style.display = 'block';
+        setModeLabel('Device Lab');
+        if (!wireframeOn) { scene.background = BG_COLORS.devicelab; scene.fog = new THREE.FogExp2(BG_COLORS.devicelab.getHex(), 0.012); }
+        camera.position.set(0, 3, 16); camera.lookAt(0, 2.5, 0);
+        dlDragAngle = 0; dlDragY = 3;
+        updateDLScreens();
+        voiceSpeak('Welcome to Device Lab. Choose an app to see it on all devices.');
+    });
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 8.6: STORYBOARD MODE                                 │
+// │  🎬 7 cinematic sections with horizontal carousels            │
+// │  Each section = gradient bg + title + scrollable frames       │
+// │  Click any frame to upload an image from your computer!       │
+// └──────────────────────────────────────────────────────────────┘
+
+// 🎬 The 7 storyboard sections — each with its own theme!
+const STORYBOARD_SECTIONS = [
+    {
+        title: "Pixel's Introduction",
+        gradient: 'linear-gradient(135deg, #0a1628 0%, #162a4a 30%, #1a3355 60%, #2a4a6a 100%)',
+        glowColor: '#4facfe',
+        frames: [
+            { num: 1, caption: "Pixel AI appears" },
+            { num: 2, caption: "Educational interface" },
+            { num: 3, caption: "Starting OS setup" },
+            { num: 4, caption: "Internet connection fixed" },
+            { num: 5, caption: "System calibration" },
+            { num: 6, caption: "First boot sequence" },
+            { num: 7, caption: "Desktop reveals" },
+            { num: 8, caption: "Tutorial begins" },
+        ]
+    },
+    {
+        title: "Manrique's Training & Creation",
+        gradient: 'linear-gradient(135deg, #0a1a20 0%, #0f2a35 30%, #1a4050 60%, #2a5a6a 100%)',
+        glowColor: '#38f9d7',
+        frames: [
+            { num: 22, caption: "Manrique begins training" },
+            { num: 23, caption: "Learning AI systems" },
+            { num: 24, caption: "Template creation" },
+            { num: 25, caption: "Building AI team" },
+            { num: 26, caption: "Neural network design" },
+            { num: 27, caption: "Data visualization" },
+            { num: 28, caption: "Model deployment" },
+            { num: 29, caption: "System integration" },
+            { num: 30, caption: "First breakthrough" },
+        ]
+    },
+    {
+        title: "The Game of Life & Programming",
+        gradient: 'linear-gradient(135deg, #12081a 0%, #1a1040 30%, #251560 60%, #301a70 100%)',
+        glowColor: '#b388ff',
+        frames: [
+            { num: 43, caption: "Conway's Game of Life" },
+            { num: 44, caption: "Database architecture" },
+            { num: 45, caption: "Algorithm design" },
+            { num: 45, caption: "Magic mirror interface" },
+            { num: 47, caption: "Code compilation" },
+            { num: 48, caption: "Recursive patterns" },
+            { num: 49, caption: "Cellular automata" },
+            { num: 50, caption: "Digital evolution" },
+        ]
+    },
+    {
+        title: "Alien Intervention & Super Intelligence",
+        gradient: 'linear-gradient(135deg, #150a28 0%, #201540 30%, #2a1a55 60%, #3a2570 100%)',
+        glowColor: '#e88ded',
+        frames: [
+            { num: 64, caption: "Alien spacecraft arrives" },
+            { num: 65, caption: "Multi-layered reality" },
+            { num: 66, caption: "Super intelligence awakens" },
+            { num: 67, caption: "Planetary scale systems" },
+            { num: 68, caption: "Cosmic data streams" },
+            { num: 69, caption: "Dimensional gateway" },
+            { num: 70, caption: "First contact protocol" },
+        ]
+    },
+    {
+        title: "Legends Unite Character Gathering",
+        gradient: 'linear-gradient(135deg, #1a1508 0%, #2a2010 30%, #3a2a15 60%, #4a3520 100%)',
+        glowColor: '#f6d365',
+        frames: [
+            { num: 85, caption: "Mario enters portal" },
+            { num: 86, caption: "Sonic speeds in" },
+            { num: 87, caption: "Transformers arrive" },
+            { num: 88, caption: "Disney characters gather" },
+            { num: 89, caption: "Wonka's factory opens" },
+            { num: 87, caption: "Heroes assemble" },
+            { num: 88, caption: "Alliance formed" },
+        ]
+    },
+    {
+        title: "Custom OS Design Examples",
+        gradient: 'linear-gradient(135deg, #081a1a 0%, #0f2a2a 30%, #1a3a3a 60%, #2a4a4a 100%)',
+        glowColor: '#4facfe',
+        frames: [
+            { num: 106, caption: "OS for 10-year-old" },
+            { num: 107, caption: "OS for 25-year-old" },
+            { num: 108, caption: "OS for 50-year-old" },
+            { num: 109, caption: "OS for 75-year-old" },
+            { num: 110, caption: "OS for 100-year-old" },
+            { num: 108, caption: "Accessibility mode" },
+            { num: 109, caption: "Night mode OS" },
+        ]
+    },
+    {
+        title: "Manrique Orchestra Finale",
+        gradient: 'linear-gradient(135deg, #1a1005 0%, #2a1a0a 30%, #3a2510 60%, #4a3015 100%)',
+        glowColor: '#fda085',
+        frames: [
+            { num: 127, caption: "Orchestra assembles" },
+            { num: 128, caption: "Las Vegas Sphere venue" },
+            { num: 129, caption: "Karol G performs" },
+            { num: 130, caption: "Interactive finale begins" },
+            { num: 131, caption: "Crowd erupts" },
+            { num: 132, caption: "Standing ovation" },
+        ]
+    }
+];
+
+// 🖼️ Store uploaded images (frameKey → dataURL)
+const sbUploadedImages = {};
+let sbCurrentFrameKey = null; // "sectionIdx-frameIdx" when waiting for upload
+
+// 🏗️ Build the entire storyboard DOM
+function buildStoryboardDOM() {
+    const container = document.getElementById('storyboardContainer');
+    container.innerHTML = ''; // clear
+
+    // Navigation dots
+    const navEl = document.getElementById('sbSectionNav');
+    navEl.innerHTML = '';
+
+    STORYBOARD_SECTIONS.forEach((section, si) => {
+        // ── Section wrapper ──
+        const sEl = document.createElement('div');
+        sEl.className = 'sb-section';
+        sEl.id = `sb-section-${si}`;
+        sEl.style.background = section.gradient;
+
+        // Cloud/atmosphere overlay (radial glow)
+        const atmo = document.createElement('div');
+        atmo.style.cssText = `position:absolute;inset:0;pointer-events:none;z-index:1;
+            background:radial-gradient(ellipse at 50% 80%, ${section.glowColor}10 0%, transparent 70%);`;
+        sEl.appendChild(atmo);
+
+        // Top light streak
+        const streak = document.createElement('div');
+        streak.style.cssText = `position:absolute;top:0;left:0;right:0;height:1px;z-index:1;
+            background:linear-gradient(90deg,transparent,${section.glowColor}30,transparent);`;
+        sEl.appendChild(streak);
+
+        // ── Title ──
+        const titleEl = document.createElement('div');
+        titleEl.className = 'sb-section-title';
+        titleEl.textContent = section.title;
+        titleEl.style.textShadow = `0 0 30px ${section.glowColor}40`;
+        sEl.appendChild(titleEl);
+
+        // ── Carousel track ──
+        const track = document.createElement('div');
+        track.className = 'sb-carousel-track';
+
+        section.frames.forEach((frame, fi) => {
+            const fEl = document.createElement('div');
+            fEl.className = 'sb-frame';
+            fEl.dataset.section = si;
+            fEl.dataset.frame = fi;
+
+            // 🌟 Glow border (uses section's glow color)
+            fEl.style.setProperty('--glow', section.glowColor);
+            fEl.style.cssText += `; --glow: ${section.glowColor};`;
+            // After pseudo for glow outline
+            const glowShadow = `0 0 15px ${section.glowColor}40, 0 0 30px ${section.glowColor}20, inset 0 0 15px ${section.glowColor}10`;
+
+            // Check if we have an uploaded image for this frame
+            const imgKey = `${si}-${fi}`;
+            if (sbUploadedImages[imgKey]) {
+                const img = document.createElement('img');
+                img.className = 'frame-img';
+                img.src = sbUploadedImages[imgKey];
+                fEl.appendChild(img);
+            } else {
+                const ph = document.createElement('div');
+                ph.className = 'frame-placeholder';
+                ph.innerHTML = `🖼️<small>CLICK TO UPLOAD</small>`;
+                fEl.appendChild(ph);
+            }
+
+            // Frame number badge
+            const numEl = document.createElement('div');
+            numEl.className = 'frame-number';
+            numEl.textContent = frame.num;
+            fEl.appendChild(numEl);
+
+            // Caption below
+            const capEl = document.createElement('div');
+            capEl.className = 'frame-caption';
+            capEl.textContent = frame.caption;
+            fEl.appendChild(capEl);
+
+            // 🌟 Hover glow effect
+            fEl.addEventListener('mouseenter', () => {
+                fEl.style.boxShadow = glowShadow;
+                fEl.querySelector('.frame-number').style.color = section.glowColor;
+            });
+            fEl.addEventListener('mouseleave', () => {
+                fEl.style.boxShadow = '';
+                fEl.querySelector('.frame-number').style.color = '';
+            });
+
+            // 📷 Click to upload image
+            fEl.addEventListener('click', () => {
+                sbCurrentFrameKey = imgKey;
+                document.getElementById('sbFileInput').click();
+            });
+
+            // Add depth classes to frames further right
+            if (fi >= section.frames.length - 1) fEl.classList.add('depth-3');
+            else if (fi >= section.frames.length - 2) fEl.classList.add('depth-2');
+            else if (fi >= section.frames.length - 3) fEl.classList.add('depth-1');
+
+            track.appendChild(fEl);
+        });
+
+        sEl.appendChild(track);
+        container.appendChild(sEl);
+
+        // Nav dot
+        const dot = document.createElement('button');
+        dot.className = 'sb-nav-dot';
+        dot.title = section.title;
+        dot.dataset.sectionIndex = si;
+        dot.addEventListener('click', () => {
+            document.getElementById(`sb-section-${si}`).scrollIntoView({ behavior: 'smooth' });
+        });
+        navEl.appendChild(dot);
+    });
+
+    // 📍 Update nav dots on scroll
+    container.addEventListener('scroll', updateSBNavDots);
+}
+
+// 📍 Highlight active nav dot based on scroll position
+function updateSBNavDots() {
+    const container = document.getElementById('storyboardContainer');
+    const dots = document.querySelectorAll('.sb-nav-dot');
+    const scrollY = container.scrollTop;
+    const sectionHeight = 260; // approximate
+
+    let activeIdx = Math.round(scrollY / sectionHeight);
+    activeIdx = Math.max(0, Math.min(activeIdx, STORYBOARD_SECTIONS.length - 1));
+
+    dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === activeIdx);
+    });
+}
+
+// 📷 Handle file upload for frames
+document.getElementById('sbFileInput').addEventListener('change', (e) => {
+    if (!sbCurrentFrameKey || !e.target.files.length) return;
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+        sbUploadedImages[sbCurrentFrameKey] = evt.target.result;
+        // Rebuild just the affected frame
+        buildStoryboardDOM();
+        sbCurrentFrameKey = null;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = ''; // reset so same file can be re-uploaded
+});
+
+// 🚪 Enter / exit storyboard mode
+function enterStoryboardMode() {
+    transitionTo(() => {
+        currentMode = 'storyboard';
+        const ov = document.getElementById('overlay'); ov.style.opacity = '0'; ov.style.pointerEvents = 'none';
+        if (document.pointerLockElement) document.exitPointerLock();
+        playerState.isLocked = false;
+        hideAll();
+
+        // Hide the THREE.js canvas & show the storyboard HTML
+        renderer.domElement.style.display = 'none';
+        showUI([]);
+        setModeLabel('');
+
+        buildStoryboardDOM();
+        document.getElementById('storyboardContainer').style.display = 'block';
+        document.getElementById('sbBackBtn').style.display = 'block';
+        document.getElementById('sbSectionNav').style.display = 'flex';
+        document.getElementById('storyboardContainer').scrollTop = 0;
+        updateSBNavDots();
+    });
+}
+
+function exitStoryboardMode() {
+    document.getElementById('storyboardContainer').style.display = 'none';
+    document.getElementById('sbBackBtn').style.display = 'none';
+    document.getElementById('sbSectionNav').style.display = 'none';
+    renderer.domElement.style.display = 'block';
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 8.8: STORYBOARD V2 MODE                              │
+// │  ☁️🎬 Enhanced: zoom animation, batch upload, cloud parallax  │
+// └──────────────────────────────────────────────────────────────┘
+
+// 📦 Storyboard V2 section data — 7 sections with MORE frames each
+const SB2_SECTIONS = [
+    {
+        title: "The Awakening", cloud: 'linear-gradient(135deg, #1a1c2e 0%, #1f2544 40%, #2a3060 100%)',
+        cloudAnim: { hue: 220, speed: 0.3 }, glowColor: '#4facfe',
+        frames: Array.from({length:12}, (_,i) => ({ num: i+1, caption: `Awakening ${i+1}` }))
+    },
+    {
+        title: "Digital Genesis", cloud: 'linear-gradient(135deg, #0f1a2e 0%, #162040 40%, #1a3050 100%)',
+        cloudAnim: { hue: 200, speed: 0.4 }, glowColor: '#43e97b',
+        frames: Array.from({length:14}, (_,i) => ({ num: i+13, caption: `Genesis ${i+1}` }))
+    },
+    {
+        title: "Neural Convergence", cloud: 'linear-gradient(135deg, #1a0f2e 0%, #251540 40%, #301a55 100%)',
+        cloudAnim: { hue: 270, speed: 0.35 }, glowColor: '#a18cd1',
+        frames: Array.from({length:12}, (_,i) => ({ num: i+27, caption: `Neural ${i+1}` }))
+    },
+    {
+        title: "Quantum Realms", cloud: 'linear-gradient(135deg, #0f1e1e 0%, #0a2a2a 40%, #103535 100%)',
+        cloudAnim: { hue: 170, speed: 0.45 }, glowColor: '#4facfe',
+        frames: Array.from({length:15}, (_,i) => ({ num: i+39, caption: `Quantum ${i+1}` }))
+    },
+    {
+        title: "Cosmic Assembly", cloud: 'linear-gradient(135deg, #1a1508 0%, #2a2010 40%, #352a15 100%)',
+        cloudAnim: { hue: 40, speed: 0.3 }, glowColor: '#f6d365',
+        frames: Array.from({length:12}, (_,i) => ({ num: i+54, caption: `Assembly ${i+1}` }))
+    },
+    {
+        title: "The Great Migration", cloud: 'linear-gradient(135deg, #1a0a0a 0%, #2a1010 40%, #351515 100%)',
+        cloudAnim: { hue: 0, speed: 0.5 }, glowColor: '#f093fb',
+        frames: Array.from({length:14}, (_,i) => ({ num: i+66, caption: `Migration ${i+1}` }))
+    },
+    {
+        title: "Transcendence", cloud: 'linear-gradient(135deg, #0a0f1a 0%, #101a2a 40%, #152535 100%)',
+        cloudAnim: { hue: 190, speed: 0.25 }, glowColor: '#667eea',
+        frames: Array.from({length:12}, (_,i) => ({ num: i+80, caption: `Transcend ${i+1}` }))
+    }
+];
+
+const sb2UploadedImages = {};
+let sb2ZoomedFrame = null;
+let sb2ZoomRect = null;
+let sb2CurrentUploadKey = null;
+let sb2CurrentBatchSection = -1;
+
+// 🏗️ Build the Storyboard V2 DOM
+function buildSB2DOM() {
+    const container = document.getElementById('sb2Container');
+    container.innerHTML = '';
+    const nav = document.getElementById('sb2Nav');
+    nav.innerHTML = '';
+
+    SB2_SECTIONS.forEach((section, si) => {
+        // Nav dot
+        const dot = document.createElement('button');
+        dot.className = 'sb2-nav-dot' + (si === 0 ? ' active' : '');
+        dot.onclick = () => {
+            const sec = container.querySelectorAll('.sb2-section')[si];
+            if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+        };
+        nav.appendChild(dot);
+
+        // Section
+        const sec = document.createElement('div');
+        sec.className = 'sb2-section';
+        sec.style.background = section.cloud;
+
+        // Cloud parallax BG layer (animated via canvas)
+        const cloudDiv = document.createElement('div');
+        cloudDiv.className = 'sb2-cloud-bg';
+        cloudDiv.id = `sb2Cloud${si}`;
+        const cCanvas = document.createElement('canvas');
+        cCanvas.width = 800; cCanvas.height = 300;
+        const cCtx = cCanvas.getContext('2d');
+        // Draw procedural heavenly clouds
+        drawClouds(cCtx, 800, 300, section.cloudAnim.hue);
+        cloudDiv.style.backgroundImage = `url(${cCanvas.toDataURL()})`;
+        cloudDiv.style.backgroundSize = '120% 120%';
+        sec.appendChild(cloudDiv);
+
+        // Title
+        const title = document.createElement('div');
+        title.className = 'sb2-section-title';
+        title.innerHTML = `<span class="section-num">SECTION ${si+1}</span>${section.title}`;
+        sec.appendChild(title);
+
+        // Batch upload button
+        const batchBtn = document.createElement('button');
+        batchBtn.className = 'sb2-batch-btn';
+        batchBtn.textContent = '📁 BATCH UPLOAD FRAMES';
+        batchBtn.onclick = () => {
+            sb2CurrentBatchSection = si;
+            document.getElementById('sb2BatchInput').click();
+        };
+        sec.appendChild(batchBtn);
+
+        // Carousel track
+        const track = document.createElement('div');
+        track.className = 'sb2-track';
+        section.frames.forEach((frame, fi) => {
+            const f = document.createElement('div');
+            f.className = 'sb2-frame';
+            f.style.setProperty('--glow', section.glowColor);
+            f.style.cssText += `--glow-color: ${section.glowColor};`;
+            // Add glow after pseudo
+            const style = document.createElement('style');
+            style.textContent = `#sb2f${si}_${fi}::after { background: radial-gradient(ellipse, ${section.glowColor}33 0%, transparent 70%); }`;
+            document.head.appendChild(style);
+            f.id = `sb2f${si}_${fi}`;
+
+            const key = `${si}_${fi}`;
+            if (sb2UploadedImages[key]) {
+                f.innerHTML = `<img class="frame-img" src="${sb2UploadedImages[key]}"><div class="frame-number">#${frame.num}</div>`;
+            } else {
+                f.innerHTML = `<div class="frame-placeholder">🖼️<small>CLICK TO ADD</small></div><div class="frame-number">#${frame.num}</div>`;
+            }
+
+            // Click to upload single OR zoom if has image
+            f.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (sb2ZoomedFrame) return; // already zoomed
+                if (sb2UploadedImages[key]) {
+                    zoomSB2Frame(f, si, fi);
+                } else {
+                    sb2CurrentUploadKey = key;
+                    document.getElementById('sb2FileInput').click();
+                }
+            });
+            track.appendChild(f);
+        });
+        sec.appendChild(track);
+        container.appendChild(sec);
+    });
+
+    // Parallax scroll listener
+    container.addEventListener('scroll', () => {
+        const scrollY = container.scrollTop;
+        container.querySelectorAll('.sb2-cloud-bg').forEach((cloud, i) => {
+            const offset = (scrollY - (i * 300)) * 0.15;
+            cloud.style.transform = `translateY(${offset}px) scale(1.1)`;
+        });
+        // Update nav dots
+        const sections = container.querySelectorAll('.sb2-section');
+        const dots = document.querySelectorAll('.sb2-nav-dot');
+        let activeIdx = 0;
+        sections.forEach((sec, i) => {
+            if (sec.offsetTop - 150 < scrollY) activeIdx = i;
+        });
+        dots.forEach((d, i) => d.classList.toggle('active', i === activeIdx));
+    });
+}
+
+// ☁️ Draw procedural heavenly clouds
+function drawClouds(ctx, w, h, hue) {
+    ctx.fillStyle = `hsla(${hue}, 30%, 8%, 1)`;
+    ctx.fillRect(0, 0, w, h);
+    for (let i = 0; i < 18; i++) {
+        const cx = Math.random() * w;
+        const cy = Math.random() * h;
+        const rx = 60 + Math.random() * 180;
+        const ry = 30 + Math.random() * 60;
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, rx);
+        const alpha = 0.04 + Math.random() * 0.08;
+        grad.addColorStop(0, `hsla(${hue + Math.random()*30 - 15}, 40%, 70%, ${alpha})`);
+        grad.addColorStop(0.5, `hsla(${hue}, 30%, 50%, ${alpha * 0.5})`);
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    // Subtle heavenly glow at top
+    const topGrad = ctx.createLinearGradient(0, 0, 0, h * 0.4);
+    topGrad.addColorStop(0, `hsla(${hue}, 40%, 60%, 0.06)`);
+    topGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = topGrad;
+    ctx.fillRect(0, 0, w, h * 0.4);
+}
+
+// 🔍 Zoom a frame to center of screen with animation
+function zoomSB2Frame(frameEl, si, fi) {
+    const overlay = document.getElementById('sb2ZoomOverlay');
+    overlay.classList.add('active');
+    sb2ZoomRect = frameEl.getBoundingClientRect();
+    const clone = frameEl.cloneNode(true);
+    clone.className = 'sb2-frame zoomed';
+    clone.style.left = sb2ZoomRect.left + 'px';
+    clone.style.top = sb2ZoomRect.top + 'px';
+    clone.style.width = sb2ZoomRect.width + 'px';
+    clone.style.height = sb2ZoomRect.height + 'px';
+    clone.id = 'sb2ZoomedClone';
+    document.body.appendChild(clone);
+    sb2ZoomedFrame = clone;
+
+    // Animate to center
+    requestAnimationFrame(() => {
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const targetW = Math.min(vw * 0.7, 700);
+        const targetH = targetW * 0.6;
+        clone.style.left = (vw - targetW) / 2 + 'px';
+        clone.style.top = (vh - targetH) / 2 + 'px';
+        clone.style.width = targetW + 'px';
+        clone.style.height = targetH + 'px';
+        clone.style.borderRadius = '16px';
+    });
+
+    // Click overlay or clone to unzoom
+    const unzoom = () => {
+        clone.style.left = sb2ZoomRect.left + 'px';
+        clone.style.top = sb2ZoomRect.top + 'px';
+        clone.style.width = sb2ZoomRect.width + 'px';
+        clone.style.height = sb2ZoomRect.height + 'px';
+        overlay.classList.remove('active');
+        setTimeout(() => { clone.remove(); sb2ZoomedFrame = null; }, 600);
+        overlay.removeEventListener('click', unzoom);
+        clone.removeEventListener('click', unzoom);
+    };
+    overlay.addEventListener('click', unzoom);
+    clone.addEventListener('click', unzoom);
+}
+
+// 🚪 Enter / Exit Storyboard V2
+function enterSB2Mode() {
+    buildSB2DOM();
+    document.getElementById('sb2Container').style.display = 'block';
+    document.getElementById('sb2BackBtn').style.display = 'block';
+    document.getElementById('sb2Nav').style.display = 'flex';
+    renderer.domElement.style.display = 'none';
+    const ov = document.getElementById('overlay');
+    ov.style.opacity = '0'; ov.style.pointerEvents = 'none';
+    currentMode = 'storyboard2';
+}
+function exitSB2Mode() {
+    document.getElementById('sb2Container').style.display = 'none';
+    document.getElementById('sb2BackBtn').style.display = 'none';
+    document.getElementById('sb2Nav').style.display = 'none';
+    const clone = document.getElementById('sb2ZoomedClone');
+    if (clone) clone.remove();
+    document.getElementById('sb2ZoomOverlay').classList.remove('active');
+    sb2ZoomedFrame = null;
+    renderer.domElement.style.display = 'block';
+}
+
+// File upload handlers for SB2
+document.getElementById('sb2FileInput').addEventListener('change', (e) => {
+    if (!e.target.files[0] || !sb2CurrentUploadKey) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        sb2UploadedImages[sb2CurrentUploadKey] = ev.target.result;
+        buildSB2DOM(); // rebuild to show new image
+    };
+    reader.readAsDataURL(e.target.files[0]);
+    e.target.value = '';
+});
+document.getElementById('sb2BatchInput').addEventListener('change', (e) => {
+    if (!e.target.files.length || sb2CurrentBatchSection < 0) return;
+    const si = sb2CurrentBatchSection;
+    const section = SB2_SECTIONS[si];
+    Array.from(e.target.files).forEach((file, fi) => {
+        if (fi >= section.frames.length) return;
+        const reader = new FileReader();
+        const key = `${si}_${fi}`;
+        reader.onload = (ev) => {
+            sb2UploadedImages[key] = ev.target.result;
+            if (fi === e.target.files.length - 1 || fi === section.frames.length - 1) {
+                buildSB2DOM(); // rebuild after all loaded
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+    e.target.value = '';
+});
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 8.9: ONBOARDING / MIGRATION MODE                    │
+// │  🚀📲 3D assembly line to migrate into VirtuOS               │
+// └──────────────────────────────────────────────────────────────┘
+
+const ONBOARD_STEPS = [
+    {
+        icon: '📲', title: 'Connect Your Phone', color: '#4facfe', btnText: 'CONNECT DEVICE',
+        desc: 'Link your iPhone or Android device to begin importing contacts, messages, and call history into VirtuOS.',
+        importAPIs: [
+            { name: 'Apple Contacts Framework', type: 'Native iOS SDK', pricing: 'Free', docs: 'developer.apple.com/documentation/contacts' },
+            { name: 'Android ContactsContract', type: 'ContentProvider API', pricing: 'Free', docs: 'developer.android.com/reference/android/provider/ContactsContract' },
+            { name: 'Google People API v1', type: 'REST + gRPC', pricing: 'Free (10 QPS)', docs: 'developers.google.com/people/api/rest/v1' }
+        ],
+        serveAPIs: [
+            { name: 'VirtuOS Contacts API', endpoints: ['POST /api/v1/contacts/batch-import', 'GET /api/v1/contacts', 'PUT /api/v1/contacts/{id}'] }
+        ],
+        devSteps: ['Request iOS NSContactsUsageDescription permission', 'Implement CNContactStore fetch query', 'Request Android READ_CONTACTS + READ_CALL_LOG', 'Handle OAuth 2.0 for Google People API', 'Map all formats to unified VirtuOS contact schema', 'Implement duplicate detection + merging', 'Batch import via /contacts/batch-import']
+    },
+    {
+        icon: '💬', title: 'Import Text Messages', color: '#43e97b', btnText: 'IMPORT MESSAGES',
+        desc: 'Securely transfer all your SMS & iMessage conversations. Your messages will be encrypted end-to-end.',
+        importAPIs: [
+            { name: 'Apple Messages Framework', type: 'Native iOS SDK (sandboxed)', pricing: 'Free', docs: 'developer.apple.com/documentation/messages' },
+            { name: 'Android Telephony.Sms', type: 'ContentProvider API', pricing: 'Free', docs: 'developer.android.com/reference/android/provider/Telephony.Sms' },
+            { name: 'Google Takeout', type: 'Batch Export (manual)', pricing: 'Free', docs: 'takeout.google.com' }
+        ],
+        serveAPIs: [
+            { name: 'VirtuOS Messages API', endpoints: ['POST /api/v1/messages/import-sms', 'GET /api/v1/conversations', 'WSS /v1/messages/stream (real-time)'] }
+        ],
+        devSteps: ['Request Android READ_SMS permission', 'Query Telephony.Sms.CONTENT_URI', 'Parse iMessage via Apple Migration tool (sandboxed)', 'Normalize SMS/iMessage format', 'Extract attachments + re-host media', 'Map phone numbers to VirtuOS contacts', 'WebSocket stream for real-time sync']
+    },
+    {
+        icon: '📧', title: 'Import Emails', color: '#667eea', btnText: 'CONNECT EMAIL',
+        desc: 'Connect Gmail, Outlook, Yahoo, or any IMAP email. All your inboxes in one unified VirtuOS Mail app.',
+        importAPIs: [
+            { name: 'Gmail API', type: 'REST', pricing: 'Free (500MB/day)', docs: 'developers.google.com/gmail/api' },
+            { name: 'Microsoft Graph API', type: 'REST (OData v4)', pricing: 'Free', docs: 'learn.microsoft.com/en-us/graph/api/resources/mail-api-overview' },
+            { name: 'IMAP Protocol (RFC 3501)', type: 'Open Protocol', pricing: 'Free', docs: 'tools.ietf.org/html/rfc3501' },
+            { name: 'Yahoo Mail API', type: 'REST (limited)', pricing: 'Free', docs: 'developer.yahoo.com/docs/mail' }
+        ],
+        serveAPIs: [
+            { name: 'VirtuOS Email API', endpoints: ['POST /api/v1/emails/import/{provider}', 'GET /api/v1/emails/folders', 'GET /api/v1/emails/search', 'POST /api/v1/emails/send'] }
+        ],
+        devSteps: ['OAuth 2.0 for Gmail (googleapis.com/auth/gmail.readonly)', 'OAuth 2.0 for Microsoft Graph (Mail.Read scope)', 'IMAP connection pool for Yahoo + custom servers', 'Batch fetch with pagination', 'Parse email headers + body (HTML + plain)', 'Handle attachments + inline content', 'Map Gmail labels → VirtuOS folders', 'Incremental sync after initial import']
+    },
+    {
+        icon: '📁', title: 'Import Files & Photos', color: '#f093fb', btnText: 'IMPORT FILES',
+        desc: 'Transfer files from iCloud, Google Drive, OneDrive, or Dropbox. Photos, documents, videos — all of it.',
+        importAPIs: [
+            { name: 'Google Drive API v3', type: 'REST', pricing: 'Free', docs: 'developers.google.com/drive/api/reference/rest/v3' },
+            { name: 'Google Photos Library API', type: 'REST', pricing: 'Free', docs: 'developers.google.com/photos/library' },
+            { name: 'iCloud CloudKit', type: 'Native iOS SDK + REST', pricing: 'Free (5GB)', docs: 'developer.apple.com/documentation/cloudkit' },
+            { name: 'Microsoft OneDrive API', type: 'REST (Graph)', pricing: 'Free', docs: 'learn.microsoft.com/en-us/graph/api/resources/onedrive' },
+            { name: 'Dropbox API v2', type: 'REST + RPC', pricing: 'Free (2GB)', docs: 'dropbox.com/developers/documentation' }
+        ],
+        serveAPIs: [
+            { name: 'VirtuOS Files API', endpoints: ['POST /api/v1/files/import/{provider}', 'GET /api/v1/files', 'POST /api/v1/files/upload', 'GET /api/v1/files/{id}/download'] },
+            { name: 'VirtuOS Photos API', endpoints: ['POST /api/v1/photos/import', 'GET /api/v1/photos/albums'] }
+        ],
+        devSteps: ['OAuth 2.0 for Google Drive, OneDrive, Dropbox', 'Recursive folder listing with pagination', 'Chunked download + re-host to VirtuOS S3', 'Extract EXIF metadata from photos', 'Preserve folder hierarchy', 'Progress tracking via WebSocket', 'Handle rate limits per provider']
+    },
+    {
+        icon: '📞', title: 'Port Your Phone Number', color: '#f6d365', btnText: 'PORT NUMBER',
+        desc: 'Forward or fully port your existing phone number to VirtuOS. Powered by Twilio for crystal-clear calls.',
+        importAPIs: [
+            { name: 'Twilio Porting API', type: 'REST + Webhooks', pricing: '$25-50/port', docs: 'twilio.com/docs/phone-numbers/porting/api' },
+            { name: 'Vonage Voice API', type: 'REST', pricing: 'Per-minute', docs: 'developer.vonage.com/voice/voice-api' },
+            { name: 'AT&T Number Porting', type: 'REST', pricing: 'Carrier-dependent', docs: 'developer.att.com/apis/number-porting' }
+        ],
+        serveAPIs: [
+            { name: 'VirtuOS Phone API', endpoints: ['POST /api/v1/phone/port-request', 'GET /api/v1/phone/port-status/{number}', 'POST /api/v1/phone/forwarding-setup'] }
+        ],
+        devSteps: ['Integrate Twilio Porting API for LNP requests', 'Collect carrier info + account number + PIN', 'Create VirtuOS virtual number via Twilio', 'Configure call + SMS forwarding rules', 'Track porting status (4-24 hours typical)', 'Webhook notifications for status updates', 'Encrypt carrier credentials (AES-256-GCM)', 'Grace period: both numbers active during port']
+    },
+    {
+        icon: '🔐', title: 'Import Passwords & Keys', color: '#a18cd1', btnText: 'IMPORT VAULT',
+        desc: 'Bring in saved passwords from Chrome, Safari, 1Password, or LastPass into the VirtuOS Vault.',
+        importAPIs: [
+            { name: '1Password API', type: 'REST + OAuth', pricing: 'Free API (subscription needed)', docs: 'developer.1password.com/docs/service-accounts' },
+            { name: 'Chrome Password Export', type: 'Manual CSV', pricing: 'Free', docs: 'chrome://settings/passwords' },
+            { name: 'Safari Keychain', type: 'Native macOS (Security.framework)', pricing: 'Free', docs: 'developer.apple.com/documentation/security/keychain_services' },
+            { name: 'Bitwarden API', type: 'REST + WebSocket', pricing: 'Free (open-source)', docs: 'bitwarden.com/help/article/vault-management-api' },
+            { name: 'LastPass API', type: 'REST (enterprise only)', pricing: 'Enterprise required', docs: 'lastpass.com/documentation/lastpass-api.php' }
+        ],
+        serveAPIs: [
+            { name: 'VirtuOS Secrets Manager', endpoints: ['POST /api/v1/secrets/import/{source}', 'GET /api/v1/secrets', 'POST /api/v1/secrets (gRPC preferred)'] }
+        ],
+        devSteps: ['1Password OAuth 2.0 + vault:read_all scope', 'Parse Chrome/LastPass CSV exports', 'Safari Keychain via Security.framework', 'Zero-knowledge encryption for VirtuOS vault', 'Use gRPC for internal secrets (no HTTP logs)', 'Never log decrypted passwords', 'Audit trail for all password access', 'Flag weak passwords + suggest improvements']
+    },
+    {
+        icon: '🎵', title: 'Import Music & Media', color: '#ff6b6b', btnText: 'IMPORT MEDIA',
+        desc: 'Transfer playlists from Spotify, Apple Music, YouTube Music. Your music library, your way.',
+        importAPIs: [
+            { name: 'Spotify Web API', type: 'REST (OAuth 2.0)', pricing: 'Free', docs: 'developer.spotify.com/documentation/web-api' },
+            { name: 'Apple Music API + MusicKit JS', type: 'REST + JWT', pricing: 'Free (subscription needed)', docs: 'developer.apple.com/documentation/musickit' },
+            { name: 'YouTube API v3', type: 'REST', pricing: 'Free', docs: 'developers.google.com/youtube/v3/docs' },
+            { name: 'Last.fm API', type: 'REST', pricing: 'Free (250k req/day)', docs: 'last.fm/api' },
+            { name: 'SoundCloud API', type: 'REST (OAuth 2.0)', pricing: 'Free', docs: 'developers.soundcloud.com/docs/api' }
+        ],
+        serveAPIs: [
+            { name: 'VirtuOS Music API', endpoints: ['POST /api/v1/music/import/{provider}', 'GET /api/v1/playlists', 'GET /api/v1/library/liked-songs'] }
+        ],
+        devSteps: ['Spotify OAuth 2.0 (playlist-read-private scope)', 'Paginated playlist + track fetch', 'Apple MusicKit JS user token init', 'YouTube API for playlist data', 'Normalize tracks via ISRC codes', 'Map source tracks to VirtuOS library', 'Preserve playlist order + metadata', 'Incremental sync for new likes']
+    },
+    {
+        icon: '📱', title: 'Import Apps & Settings', color: '#ffd93d', btnText: 'IMPORT APPS',
+        desc: 'Clone your app preferences, home screen layout, and notification settings from your old OS.',
+        importAPIs: [
+            { name: 'iOS UserDefaults', type: 'Native iOS (Foundation)', pricing: 'Free', docs: 'developer.apple.com/documentation/foundation/userdefaults' },
+            { name: 'Android SharedPreferences', type: 'Native Android', pricing: 'Free', docs: 'developer.android.com/reference/android/content/SharedPreferences' },
+            { name: 'Google Play Store API', type: 'REST + gRPC', pricing: 'Free', docs: 'developers.google.com/android/management' },
+            { name: 'App Store Connect API', type: 'REST (JWT)', pricing: 'Free', docs: 'developer.apple.com/documentation/appstoreconnectapi' }
+        ],
+        serveAPIs: [
+            { name: 'VirtuOS Settings API', endpoints: ['POST /api/v1/settings/import/{platform}', 'GET /api/v1/settings', 'GET /api/v1/apps/installed'] }
+        ],
+        devSteps: ['Extract iOS UserDefaults plist files', 'Query Android SharedPreferences XML', 'Use PackageManager to list installed apps', 'Extract app metadata (name, version, install date)', 'Map theme + accessibility + notification prefs', 'Create portable JSON settings export', 'Generate VirtuOS app install recommendations']
+    },
+    {
+        icon: '💳', title: 'Cancel Old Subscriptions', color: '#ff8a65', btnText: 'REVIEW SUBS',
+        desc: 'Review and cancel Apple, Google, Microsoft, and other subscriptions you no longer need.',
+        importAPIs: [
+            { name: 'Apple App Store Server API', type: 'REST + JWT', pricing: 'Free', docs: 'developer.apple.com/documentation/appstoreserverapi' },
+            { name: 'Google Play Billing Library', type: 'REST + gRPC', pricing: 'Free', docs: 'developer.android.com/google/play/billing' },
+            { name: 'Microsoft Graph Subscriptions', type: 'REST (OData v4)', pricing: 'Free', docs: 'learn.microsoft.com/en-us/graph/api/resources/subscription' },
+            { name: 'Stripe Billing API', type: 'REST', pricing: 'Free API (2.9%+30c per txn)', docs: 'stripe.com/docs/api/subscriptions' }
+        ],
+        serveAPIs: [
+            { name: 'VirtuOS Subscription Manager', endpoints: ['GET /api/v1/subscriptions', 'POST /api/v1/subscriptions/{id}/cancel', 'GET /api/v1/subscriptions/{id}/status'] }
+        ],
+        devSteps: ['JWT for App Store Server API auth', 'Fetch Apple subscriptions by transaction ID', 'Google Play OAuth Service Account setup', 'Microsoft Graph OAuth for subscription list', 'Parse status (active, expired, paused)', 'Display renewal dates + billing frequency', 'Redirect to platform settings for cancellation', 'Track + confirm cancellation status']
+    },
+    {
+        icon: '✅', title: 'Migration Complete!', color: '#43e97b', btnText: 'LAUNCH VIRTUOS',
+        desc: 'Welcome to VirtuOS! All your data is safely imported. Start exploring your new custom operating system.',
+        importAPIs: [], serveAPIs: [], devSteps: ['All steps complete — launch VirtuOS dashboard']
+    }
+];
+
+let obCompleted = {};
+
+function buildOnboardDOM() {
+    const container = document.getElementById('onboardContainer');
+    container.innerHTML = '';
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'ob-header';
+    header.innerHTML = `<h2>◈ VIRTUOS MIGRATION</h2><p>Leave the old world behind</p>`;
+    container.appendChild(header);
+
+    // Conveyor line
+    const line = document.createElement('div');
+    line.className = 'ob-conveyor-line';
+    const completedCount = Object.keys(obCompleted).length;
+    const pct = Math.round((completedCount / ONBOARD_STEPS.length) * 100);
+    line.innerHTML = `<div class="progress" style="width:${pct}%"></div>`;
+    container.appendChild(line);
+
+    // Conveyor wrap with steps
+    const wrap = document.createElement('div');
+    wrap.className = 'ob-conveyor-wrap';
+    ONBOARD_STEPS.forEach((step, i) => {
+        const card = document.createElement('div');
+        const isCompleted = obCompleted[i];
+        card.className = 'ob-step' + (isCompleted ? ' completed' : '');
+        card.style.setProperty('--accent', step.color);
+        const hasAPIs = step.importAPIs && step.importAPIs.length > 0;
+        card.innerHTML = `
+            <style>#obStep${i}::before { background: linear-gradient(90deg, ${step.color}, transparent); }</style>
+            ${hasAPIs ? `<button class="ob-info-btn" data-step="${i}" title="View API & Dev Details">i</button>` : ''}
+            <div class="ob-step-num">STEP ${i + 1} OF ${ONBOARD_STEPS.length}</div>
+            <div class="ob-step-icon">${step.icon}</div>
+            <div class="ob-step-title">${step.title}</div>
+            <div class="ob-step-desc">${step.desc}</div>
+            <button class="ob-step-btn ${isCompleted ? 'secondary' : 'primary'}" id="obBtn${i}">
+                ${isCompleted ? '✓ DONE' : step.btnText}
+            </button>
+        `;
+        card.id = `obStep${i}`;
+
+        // Info button handler → opens API modal
+        if (hasAPIs) {
+            card.querySelector('.ob-info-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                openObInfoModal(i);
+            });
+        }
+
+        if (!isCompleted) {
+            card.querySelector('.ob-step-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                obCompleted[i] = true;
+                buildOnboardDOM();
+                setTimeout(() => {
+                    const next = document.getElementById(`obStep${Math.min(i+1, ONBOARD_STEPS.length-1)}`);
+                    if (next) next.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+                }, 300);
+            });
+        }
+        wrap.appendChild(card);
+
+        // Add connector arrow between steps
+        if (i < ONBOARD_STEPS.length - 1) {
+            const arrow = document.createElement('div');
+            arrow.style.cssText = 'flex-shrink:0; color:rgba(102,126,234,0.2); font-size:1.5rem;';
+            arrow.textContent = '→';
+            wrap.appendChild(arrow);
+        }
+    });
+    container.appendChild(wrap);
+
+    // Progress bar at bottom
+    const pBar = document.createElement('div');
+    pBar.className = 'ob-progress-bar';
+    pBar.innerHTML = `<div class="fill" style="width:${pct}%"></div>`;
+    container.appendChild(pBar);
+    const pText = document.createElement('div');
+    pText.className = 'ob-progress-text';
+    pText.textContent = `${completedCount} / ${ONBOARD_STEPS.length} STEPS COMPLETE`;
+    container.appendChild(pText);
+}
+
+// 📋 Open the API info modal for a given step
+function openObInfoModal(stepIndex) {
+    const step = ONBOARD_STEPS[stepIndex];
+    const modal = document.getElementById('obInfoModal');
+    const content = document.getElementById('obInfoContent');
+
+    let html = `<button class="ob-info-close" id="obInfoClose">&times;</button>`;
+    html += `<h3>${step.icon} ${step.title}</h3>`;
+
+    // Import APIs
+    if (step.importAPIs.length > 0) {
+        html += `<h4>Import APIs (pull data from old platforms)</h4>`;
+        step.importAPIs.forEach(api => {
+            html += `<div class="ob-api-row">
+                <strong>${api.name}</strong>
+                <span class="api-tag">${api.type}</span>
+                <span class="api-price">${api.pricing}</span><br>
+                <a href="https://${api.docs}" target="_blank">${api.docs}</a>
+            </div>`;
+        });
+    }
+
+    // Serve APIs
+    if (step.serveAPIs.length > 0) {
+        html += `<h4>VirtuOS APIs (build to replace)</h4>`;
+        step.serveAPIs.forEach(api => {
+            html += `<div class="ob-api-row">
+                <strong>${api.name}</strong><br>
+                ${api.endpoints.map(ep => `<span class="ob-endpoint">${ep}</span>`).join('')}
+            </div>`;
+        });
+    }
+
+    // Dev Steps
+    if (step.devSteps.length > 0) {
+        html += `<h4>Development Steps</h4>`;
+        step.devSteps.forEach(s => {
+            html += `<div class="ob-dev-step">${s}</div>`;
+        });
+    }
+
+    content.innerHTML = html;
+    modal.classList.add('active');
+
+    // Close handlers
+    document.getElementById('obInfoClose').addEventListener('click', () => modal.classList.remove('active'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+}
+
+function enterOnboardMode() {
+    buildOnboardDOM();
+    document.getElementById('onboardContainer').style.display = 'block';
+    document.getElementById('obBackBtn').style.display = 'block';
+    renderer.domElement.style.display = 'none';
+    const ov = document.getElementById('overlay');
+    ov.style.opacity = '0'; ov.style.pointerEvents = 'none';
+    currentMode = 'onboard';
+}
+function exitOnboardMode() {
+    document.getElementById('onboardContainer').style.display = 'none';
+    document.getElementById('obBackBtn').style.display = 'none';
+    renderer.domElement.style.display = 'block';
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 9: WIREFRAME TOGGLE                                  │
+// │  ◇ Skeleton view                                              │
+// └──────────────────────────────────────────────────────────────┘
+
+function toggleWireframe() {
+    wireframeOn = !wireframeOn;
+    const btn = document.getElementById('wireframeBtn');
+    btn.classList.toggle('active', wireframeOn);
+    btn.textContent = wireframeOn ? '◆ Wireframe ON' : '◇ Wireframe';
+
+    scene.traverse(obj => {
+        if (obj.isMesh) {
+            if (Array.isArray(obj.material)) obj.material.forEach(m => { m.wireframe = wireframeOn; });
+            else obj.material.wireframe = wireframeOn;
+        }
+    });
+
+    const bgColor = wireframeOn ? BG_COLORS.wire : (BG_COLORS[currentMode] || BG_COLORS.home);
+    scene.background = bgColor;
+    scene.fog = new THREE.FogExp2(bgColor.getHex(), 0.018);
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 10: MODE SWITCHING                                   │
+// │  🔄 Smooth fade transitions between all modes                 │
+// └──────────────────────────────────────────────────────────────┘
+
+function transitionTo(callback) {
+    const t = document.getElementById('transitionOverlay');
+    t.classList.add('active');
+    setTimeout(() => {
+        callback();
+        setTimeout(() => { t.classList.remove('active'); }, 50);
+    }, 400);
+}
+
+function setModeLabel(text) {
+    const el = document.getElementById('modeLabel');
+    el.textContent = text;
+    el.style.display = text ? 'block' : 'none';
+}
+
+function showUI(ids) {
+    ['hud','crosshair','minimap','card-hud','carouselStylePicker','backBtn','wireframeBtn','modeLabel','osStatusBar'].forEach(id => {
+        const flexIds = ['card-hud','carouselStylePicker','osStatusBar'];
+        document.getElementById(id).style.display = ids.includes(id) ? (flexIds.includes(id) ? 'flex' : 'block') : 'none';
+    });
+}
+
+function hideAll() {
+    galleryOnlyObjects.forEach(o => o.visible = false);
+    cardOnlyObjects.forEach(o => o.visible = false);
+    logoObjects.forEach(o => o.visible = false);
+    homeObjects.forEach(o => o.visible = false);
+    os3dObjects.forEach(o => o.visible = false);
+    dlObjects.forEach(o => o.visible = false);
+    if (logoGroup) logoGroup.visible = false;
+    if (osDesktopGroup) osDesktopGroup.visible = false;
+    if (dlGroup) dlGroup.visible = false;
+    document.getElementById('info-panel').classList.remove('visible');
+    document.getElementById('osAppWindow').style.display = 'none';
+    document.getElementById('osDockLabel').style.display = 'none';
+    document.getElementById('deviceLabUI').style.display = 'none';
+    document.getElementById('dlDeviceInfo').style.display = 'none';
+    document.getElementById('voiceBtn').style.display = 'none';
+    document.getElementById('voiceTranscript').style.display = 'none';
+}
+
+function enterGalleryMode() {
+    transitionTo(() => {
+        currentMode = 'gallery';
+        const ov = document.getElementById('overlay'); ov.style.opacity = '0'; ov.style.pointerEvents = 'none';
+        hideAll();
+        galleryOnlyObjects.forEach(o => o.visible = true);
+        showUI(['hud','crosshair','minimap','backBtn','wireframeBtn','modeLabel']);
+        setModeLabel('Gallery Mode');
+        if (!wireframeOn) { scene.background = BG_COLORS.gallery; scene.fog = new THREE.FogExp2(BG_COLORS.gallery.getHex(), 0.016); }
+        camera.position.set(0, 1.7, 15);
+        camera.rotation.set(0,0,0);
+        playerState.euler.set(0,0,0,'YXZ');
+        camera.quaternion.setFromEuler(playerState.euler);
+        renderer.domElement.requestPointerLock();
+    });
+}
+
+function enterCardMode() {
+    transitionTo(() => {
+        currentMode = 'cards';
+        const ov = document.getElementById('overlay'); ov.style.opacity = '0'; ov.style.pointerEvents = 'none';
+        if (document.pointerLockElement) document.exitPointerLock();
+        playerState.isLocked = false;
+        hideAll();
+        cardOnlyObjects.forEach(o => o.visible = true);
+        showUI(['card-hud','carouselStylePicker','backBtn','wireframeBtn','modeLabel']);
+        setModeLabel('Card Carousel');
+        if (!wireframeOn) { scene.background = BG_COLORS.cards; scene.fog = new THREE.FogExp2(BG_COLORS.cards.getHex(), 0.016); }
+        camera.position.set(0, 3, 12); camera.rotation.set(0,0,0); camera.lookAt(0, 2.5, 0);
+        goToCard(0);
+    });
+}
+
+function enterLogoMode() {
+    transitionTo(() => {
+        currentMode = 'logo';
+        const ov = document.getElementById('overlay'); ov.style.opacity = '0'; ov.style.pointerEvents = 'none';
+        if (document.pointerLockElement) document.exitPointerLock();
+        playerState.isLocked = false;
+        hideAll();
+        logoObjects.forEach(o => o.visible = true);
+        if (logoGroup) logoGroup.visible = true;
+        showUI(['backBtn','wireframeBtn','modeLabel']);
+        setModeLabel('Virtuos Studios');
+        if (!wireframeOn) { scene.background = BG_COLORS.logo; scene.fog = new THREE.FogExp2(BG_COLORS.logo.getHex(), 0.02); }
+        camera.position.set(0, 3.5, 10); camera.lookAt(0, 2, 0);
+        logoDragAngle = 0; logoDragY = 3.5;
+    });
+}
+
+function enterOSMode() {
+    transitionTo(() => {
+        currentMode = 'os';
+        const ov = document.getElementById('overlay'); ov.style.opacity = '0'; ov.style.pointerEvents = 'none';
+        if (document.pointerLockElement) document.exitPointerLock();
+        playerState.isLocked = false;
+        hideAll();
+        os3dObjects.forEach(o => o.visible = true);
+        if (osDesktopGroup) osDesktopGroup.visible = true;
+        showUI(['backBtn','wireframeBtn','modeLabel','osStatusBar']);
+        setModeLabel('3D Operating System');
+        if (!wireframeOn) { scene.background = BG_COLORS.os; scene.fog = new THREE.FogExp2(BG_COLORS.os.getHex(), 0.015); }
+        camera.position.set(0, 4.5, 14); camera.lookAt(0, 3, -1);
+        osDragAngle = 0; osDragY = 4.5;
+        document.body.style.cursor = 'default';
+    });
+}
+
+function goHome() {
+    // If we're in storyboard mode, clean up the HTML overlay first
+    if (currentMode === 'storyboard') exitStoryboardMode();
+    if (currentMode === 'storyboard2') exitSB2Mode();
+    if (currentMode === 'onboard') exitOnboardMode();
+    // If we're in device lab mode, stop any voice recognition
+    if (currentMode === 'devicelab' && voiceRecognition) {
+        try { voiceRecognition.stop(); } catch(e) {}
+        voiceIsListening = false;
+        const vb = document.getElementById('voiceBtn');
+        if (vb) vb.classList.remove('listening');
+    }
+    transitionTo(() => {
+        currentMode = 'none';
+        if (document.pointerLockElement) document.exitPointerLock();
+        playerState.isLocked = false;
+        hideAll();
+        homeObjects.forEach(o => o.visible = true);
+        showUI([]);
+        setModeLabel('');
+        if (wireframeOn) toggleWireframe();
+        scene.background = BG_COLORS.home;
+        scene.fog = new THREE.FogExp2(BG_COLORS.home.getHex(), 0.018);
+        document.body.style.cursor = 'default';
+        const ov = document.getElementById('overlay');
+        ov.style.opacity = '1'; ov.style.pointerEvents = 'all';
+    });
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 11: POST-PROCESSING (Bloom Simulation)               │
+// │  ✨ We simulate bloom with a simple glow overlay technique    │
+// │  (Real UnrealBloomPass needs extra imports — keeping light!)  │
+// └──────────────────────────────────────────────────────────────┘
+
+// 💡 Instead of heavy post-processing, we use high emissive values
+//    + additive-blended particles to simulate bloom. Very lightweight!
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 12: ANIMATION LOOP                                   │
+// │  🎬 The heartbeat! Runs every frame                           │
+// └──────────────────────────────────────────────────────────────┘
+
+function animate() {
+    requestAnimationFrame(animate);
+    const delta = Math.min(clock.getDelta(), 0.05);
+    const elapsed = clock.elapsedTime;
+
+    if (currentMode === 'none') {
+        updateHomeAnimation(elapsed);
+        // 📷 Slow camera drift on home screen
+        camera.position.x = Math.sin(elapsed * 0.08) * 3;
+        camera.position.y = 3 + Math.sin(elapsed * 0.12) * 0.5;
+        camera.lookAt(0, 1, -5);
+    }
+
+    if (currentMode === 'gallery') {
+        updateGalleryMovement(delta);
+        updateGalleryRaycaster();
+
+        for (let i = 0; i < allAnimatedObjects.length; i++) {
+            const obj = allAnimatedObjects[i];
+            if (obj === particleSystem) {
+                obj.rotation.y += delta * 0.012;
+            } else if (obj.userData.isInteractive) {
+                obj.rotation.x += obj.userData.rotationSpeed;
+                obj.rotation.y += obj.userData.rotationSpeed * 1.2;
+                obj.position.y = obj.userData.baseY + Math.sin(elapsed * obj.userData.floatSpeed + obj.userData.floatOffset) * 0.2;
+                if (obj.userData.label) obj.userData.label.position.y = obj.position.y + 2;
+            } else if (obj.userData.floatOffset !== undefined) {
+                obj.rotation.z = Math.sin(elapsed * 0.5 + obj.userData.floatOffset) * 0.3;
+            }
+        }
+        if (frameCount % 5 === 0) updateMinimap();
+    }
+
+    if (currentMode === 'cards') updateCardMode(elapsed);
+    if (currentMode === 'logo') updateLogoMode(elapsed);
+    if (currentMode === 'os') updateOSMode(elapsed);
+    if (currentMode === 'devicelab') updateDeviceLabMode(elapsed);
+
+    renderer.render(scene, camera);
+}
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 13: EVENT LISTENERS                                  │
+// │  ⌨️🖱️ All input                                               │
+// └──────────────────────────────────────────────────────────────┘
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'KeyF' && currentMode !== 'none') {
+        if (currentMode==='cards'||currentMode==='logo'||(currentMode==='gallery'&&playerState.isLocked)) { toggleWireframe(); return; }
+    }
+    if (currentMode === 'gallery') {
+        switch(e.code) {
+            case 'KeyW': keys.w=true; break; case 'KeyA': keys.a=true; break;
+            case 'KeyS': keys.s=true; break; case 'KeyD': keys.d=true; break;
+            case 'Space': keys.space=true; e.preventDefault(); break;
+        }
+    }
+    if (currentMode === 'cards') {
+        switch(e.code) {
+            case 'ArrowLeft': case 'KeyA': prevCard(); break;
+            case 'ArrowRight': case 'KeyD': nextCard(); break;
+            case 'Space': case 'Enter': flipCurrentCard(); e.preventDefault(); break;
+        }
+    }
+});
+document.addEventListener('keyup', (e) => {
+    switch(e.code) { case 'KeyW': keys.w=false; break; case 'KeyA': keys.a=false; break;
+        case 'KeyS': keys.s=false; break; case 'KeyD': keys.d=false; break; case 'Space': keys.space=false; break; }
+});
+
+document.addEventListener('mousemove', onMouseMove);
+
+// 🖱️ Mouse drag for cards + logo orbit
+document.addEventListener('mousedown', (e) => {
+    if (currentMode === 'cards' && e.target === renderer.domElement) {
+        cardState.isDragging = true; cardState.dragStartX = e.clientX; cardState.dragMomentum = 0;
+    }
+    if (currentMode === 'logo' && e.target === renderer.domElement) {
+        logoIsDragging = true; cardState.dragStartX = e.clientX;
+    }
+    if (currentMode === 'os' && e.target === renderer.domElement) {
+        osIsDragging = true;
+    }
+    if (currentMode === 'devicelab' && e.target === renderer.domElement) {
+        dlIsDragging = true;
+    }
+});
+document.addEventListener('mousemove', (e) => {
+    if (cardState.isDragging && currentMode === 'cards') {
+        const dx = e.clientX - cardState.dragStartX;
+        if (Math.abs(dx) > 50) {
+            cardState.dragMomentum = dx;
+            cardState.dragStartX = e.clientX;
+        }
+    }
+    if (logoIsDragging && currentMode === 'logo') {
+        logoDragAngle -= e.movementX * 0.005;
+        logoDragY = Math.max(1.5, Math.min(6, logoDragY - e.movementY * 0.01));
+    }
+    if (osIsDragging && currentMode === 'os') {
+        osDragAngle -= e.movementX * 0.004;
+        osDragY = Math.max(2, Math.min(8, osDragY - e.movementY * 0.008));
+    }
+    if (dlIsDragging && currentMode === 'devicelab') {
+        dlDragAngle -= e.movementX * 0.004;
+        dlDragY = Math.max(1.5, Math.min(8, dlDragY - e.movementY * 0.008));
+    }
+    // OS hover detection (runs even if not dragging)
+    if (currentMode === 'os' && !osIsDragging) {
+        updateOSHover(e);
+    }
+});
+document.addEventListener('mouseup', () => {
+    cardState.isDragging = false;
+    logoIsDragging = false;
+    osIsDragging = false;
+    dlIsDragging = false;
+});
+
+document.addEventListener('click', (e) => {
+    if (currentMode === 'gallery') {
+        if (!playerState.isLocked || !currentHovered) return;
+        document.getElementById('panel-icon').textContent = currentHovered.userData.icon || '';
+        document.getElementById('panel-title').textContent = currentHovered.userData.title;
+        document.getElementById('panel-desc').textContent = currentHovered.userData.description;
+        document.getElementById('info-panel').classList.add('visible');
+    }
+    if (currentMode === 'cards') {
+        if (e.target === renderer.domElement && !cardState.isDragging) flipCurrentCard();
+    }
+    if (currentMode === 'os' && osHoveredApp && !osIsDragging) {
+        openOSApp(osHoveredApp.userData.appIndex);
+    }
+});
+
+document.getElementById('closePanel').addEventListener('click', (e) => {
+    e.stopPropagation(); document.getElementById('info-panel').classList.remove('visible');
+});
+document.addEventListener('pointerlockchange', () => {
+    playerState.isLocked = document.pointerLockElement === renderer.domElement;
+});
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+document.getElementById('modeGallery').addEventListener('click', enterGalleryMode);
+document.getElementById('modeCards').addEventListener('click', enterCardMode);
+document.getElementById('modeLogo').addEventListener('click', enterLogoMode);
+document.getElementById('modeOS').addEventListener('click', enterOSMode);
+document.getElementById('modeDeviceLab').addEventListener('click', enterDeviceLabMode);
+document.getElementById('voiceBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleVoiceListening(); });
+document.getElementById('modeStoryboard').addEventListener('click', enterStoryboardMode);
+document.getElementById('modeStoryboard2').addEventListener('click', enterSB2Mode);
+document.getElementById('modeOnboard').addEventListener('click', enterOnboardMode);
+document.getElementById('winClose').addEventListener('click', (e) => { e.stopPropagation(); closeOSApp(); });
+document.getElementById('sbBackBtn').addEventListener('click', (e) => { e.stopPropagation(); goHome(); });
+document.getElementById('sb2BackBtn').addEventListener('click', (e) => { e.stopPropagation(); goHome(); });
+document.getElementById('obBackBtn').addEventListener('click', (e) => { e.stopPropagation(); goHome(); });
+document.getElementById('backBtn').addEventListener('click', (e) => { e.stopPropagation(); goHome(); });
+document.getElementById('prevCard').addEventListener('click', (e) => { e.stopPropagation(); prevCard(); });
+document.getElementById('nextCard').addEventListener('click', (e) => { e.stopPropagation(); nextCard(); });
+document.querySelectorAll('.style-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => { e.stopPropagation(); setCarouselStyle(btn.dataset.style); });
+});
+document.getElementById('wireframeBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleWireframe(); });
+
+// 🖱️ Mouse wheel to zoom in logo mode
+document.addEventListener('wheel', (e) => {
+    if (currentMode === 'logo') {
+        logoDragY = Math.max(1.5, Math.min(7, logoDragY + e.deltaY * 0.003));
+    }
+    if (currentMode === 'os') {
+        osDragY = Math.max(2, Math.min(8, osDragY + e.deltaY * 0.003));
+    }
+    if (currentMode === 'devicelab') {
+        dlDragY = Math.max(1.5, Math.min(8, dlDragY + e.deltaY * 0.003));
+    }
+});
+
+
+// ┌──────────────────────────────────────────────────────────────┐
+// │  SECTION 14: START!                                           │
+// │  🚀 Build everything, show loading, then reveal!              │
+// └──────────────────────────────────────────────────────────────┘
+
+// 🌈 Generate procedural environment map
+envMap = generateEnvMap();
+
+// 🏗️ Build everything
+createLighting();
+createHomeAnimation();
+createEnvironment();
+createGalleryObjects();
+createParticles();
+createCards();
+createVirtuosLogo();
+createOS3D();
+createDeviceLab();
+
+// 🙈 Hide non-home objects
+galleryOnlyObjects.forEach(o => o.visible = false);
+cardOnlyObjects.forEach(o => o.visible = false);
+logoObjects.forEach(o => o.visible = false);
+os3dObjects.forEach(o => o.visible = false);
+if (logoGroup) logoGroup.visible = false;
+if (osDesktopGroup) osDesktopGroup.visible = false;
+
+// 📷 Camera for home screen
+camera.position.set(0, 3, 10);
+camera.lookAt(0, 1, -5);
+
+// 🎬 Start animation
+animate();
+
+// 🎉 Fade out loading screen, reveal home
+setTimeout(() => {
+    const ls = document.getElementById('loadScreen');
+    ls.style.opacity = '0';
+    setTimeout(() => { ls.remove(); }, 800);
+    document.getElementById('overlay').classList.add('ready');
+}, 800);
+
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║                                                              ║
+// ║   TABLE OF CONTENTS (BOTTOM REFERENCE)                       ║
+// ║                                                              ║
+// ║   1.  SETUP & GLOBALS          — Scene, camera, renderer     ║
+// ║   2.  SHARED DATA              — Info used by all modes      ║
+// ║   3.  ENVIRONMENT MAP          — Fake reflections!           ║
+// ║   4.  LIGHTING                 — Premium multi-light rig     ║
+// ║   5.  HOME SCREEN ANIMATION   — 3D background behind menu   ║
+// ║   6.  GALLERY MODE             — Walk-through 3D space       ║
+// ║       6a. Environment          — Reflective floor, pillars   ║
+// ║       6b. Interactive Objects   — Floating 3D shapes         ║
+// ║       6c. Particles            — Soft floating dots          ║
+// ║       6d. Player Controls      — WASD + mouse look           ║
+// ║       6e. Raycaster            — Click detection + glow      ║
+// ║       6f. Minimap              — Top-down view               ║
+// ║   7.  CARD MODE                — 3D playing cards            ║
+// ║       7a. Card Creation        — Build the 3D cards          ║
+// ║       7b. Carousel Styles      — Ring, Coverflow, Stack...   ║
+// ║       7c. Card Navigation      — Flip, browse, drag          ║
+// ║       7d. Card Animations      — Smooth transitions          ║
+// ║   8.  VIRTUOS LOGO MODE       — 3D metallic winged-V logo   ║
+// ║       8a. Logo Geometry        — Wings + V + crown + text    ║
+// ║       8b. Logo Animation       — Orbit, glow, particles      ║
+// ║  8.5  3D OPERATING SYSTEM     — Futuristic 3D desktop!      ║
+// ║       8.5a OS Apps & Dock     — App icons in curved dock     ║
+// ║       8.5b OS Desktop         — Monitor, widgets, particles  ║
+// ║       8.5c OS Interactions    — Hover, click, open apps      ║
+// ║  8.6  STORYBOARD MODE        — 7 scrollable sections!       ║
+// ║       8.6a Section Data      — Titles, frames, colors       ║
+// ║       8.6b Frame Carousels   — Glowing glass frames         ║
+// ║       8.6c Image Upload      — Click frame → upload pic     ║
+// ║  8.7  DEVICE LAB MODE       — Multi-device testing!        ║
+// ║       8.7a Device Models    — 12 device types in 3D        ║
+// ║       8.7b Screen Rendering — App UI on each screen        ║
+// ║       8.7c Voice Control    — Speech recognition + output  ║
+// ║  8.8  STORYBOARD V2         — Zoom, batch, cloud parallax ║
+// ║  8.9  ONBOARDING MODE       — Migration assembly line     ║
+// ║   9.  WIREFRAME TOGGLE        — See-through skeleton view    ║
+// ║  10.  MODE SWITCHING           — Smooth transitions          ║
+// ║  11.  POST-PROCESSING          — Bloom glow effect           ║
+// ║  12.  ANIMATION LOOP           — Runs everything             ║
+// ║  13.  EVENT LISTENERS          — All input handling          ║
+// ║  14.  START                    — Kick everything off!        ║
+// ║                                                              ║
+// ╚══════════════════════════════════════════════════════════════╝
+</script>
+</body>
+</html>

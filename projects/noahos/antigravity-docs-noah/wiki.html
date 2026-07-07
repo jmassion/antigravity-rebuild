@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoahOS Wiki — AntiGravity Training Manual</title>
+    <meta name="description"
+        content="Noah's personalized AntiGravity training manual — a wiki-style learning system with original docs reference.">
+    <link rel="stylesheet" href="wiki.css">
+</head>
+
+<body>
+
+    <!-- Topbar -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+            <a href="wiki.html" class="topbar-logo">
+                <span class="logo-icon">🐸</span>
+                <span>Noah<span class="accent">OS</span> Wiki</span>
+            </a>
+        </div>
+        <div class="topbar-right">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search pages..." autocomplete="off">
+            </div>
+            <div class="import-badge">
+                <span class="dot"></span>
+                <span id="importCount">0/0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="wiki-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header-mobile">
+                <span class="close-sidebar" id="closeSidebar">✕</span>
+            </div>
+            <a href="../index.html" class="sidebar-home">🏠 Back to NoahOS Home</a>
+            <nav id="sidebarNav"></nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Populated by JS -->
+        </main>
+
+    </div>
+
+    <!-- Reference Panel Toggle -->
+    <button class="ref-toggle" id="refToggle">Original</button>
+
+    <!-- Reference Panel -->
+    <aside class="ref-panel" id="refPanel">
+        <div class="ref-panel-header">
+            <h3>📄 Original AntiGravity Docs</h3>
+            <p>Official reference for comparison</p>
+        </div>
+        <div class="ref-panel-content" id="refPanelBody">
+            <!-- Populated by JS -->
+        </div>
+    </aside>
+
+    <script src="wiki-data.js"></script>
+    <script src="wiki.js"></script>
+</body>
+
+</html>
