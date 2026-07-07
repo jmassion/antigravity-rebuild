@@ -283,5 +283,20 @@
 
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
+<script>
+  // a.lovart.ai now blocks hotlinking, so many source thumbnails 404/ORB.
+  // Degrade dead media to quiet placeholder tiles instead of broken-image icons.
+  addEventListener('error', (e) => {
+    const t = e.target;
+    if (t && (t.tagName === 'IMG' || t.tagName === 'VIDEO')) {
+      t.style.visibility = 'hidden';
+      const host = t.parentElement;
+      if (host && !host.dataset.deadMedia) {
+        host.dataset.deadMedia = '1';
+        host.style.background = 'linear-gradient(135deg,#15151f,#1d1d2e)';
+      }
+    }
+  }, true);
+</script>
 </body>
 </html>

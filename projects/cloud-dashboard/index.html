@@ -360,7 +360,9 @@
     </div>
 
     <!-- Initialization -->
-    <script>document.addEventListener("DOMContentLoaded", initApp);</script>
+    <!-- initApp is declared in a later script block; reference it lazily or
+         this line throws ReferenceError and the app never unhides. -->
+    <script>document.addEventListener("DOMContentLoaded", () => initApp());</script>
 
     <script>
       let pollInterval = null;

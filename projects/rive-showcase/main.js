@@ -1006,7 +1006,7 @@ function initRiveButton() {
 
   try {
     const r = new rive.Rive({
-      src: '/rive-button.riv',
+      src: './public/rive-button.riv',
       canvas: canvas,
       autoplay: true,
       stateMachines: 'Active',

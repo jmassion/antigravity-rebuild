@@ -40,11 +40,12 @@ copy "living-canvas-wiki"                  living-canvas-wiki
 copy "Sanity"                              sanity-wiki \
   --exclude studio --exclude frontend --exclude .agent
 
-# HolodeckOS Gallery v1: the old root gallery, preserved
+# HolodeckOS Gallery v1: the old root gallery, preserved (thumbnails included —
+# the gallery renders broken images without them)
 mkdir -p "$DEST/holodeck-gallery/ag-assets"
 cp "$SRC/index.html" "$DEST/holodeck-gallery/index.html"
 rsync -a --delete --exclude node_modules --exclude package-lock.json \
-  --exclude capture.js --exclude package.json --exclude thumbnails \
+  --exclude capture.js --exclude package.json \
   "$SRC/ag-assets/" "$DEST/holodeck-gallery/ag-assets/"
 
 # ── Data browsers & scrapers ────────────────────────────────────
@@ -52,9 +53,10 @@ copy "Scraper/Higgsfield"                  higgsfield --exclude api --exclude "*
 copy "Scraper/LovartHiggsFieldAirOrganizer/AirUIStudy" air-ui-study \
   --exclude data-export.json   # 38MB export not referenced by the app
 copy "Scraper/LovartHiggsFieldAirOrganizer/public"     air-organizer
-copy "Scraper/lovable/aurora-builder"          lovable-aurora
-copy "Scraper/lovable/cosmic-dreamscape-arts"  lovable-dreamscape
-copy "Scraper/lovable/project-muse-cloud"      lovable-muse
+# lovable-aurora / lovable-dreamscape / lovable-muse are NOT copied here:
+# the originals are unbuilt Vite/React source (Lovable exports). They are
+# compiled (npm install && vite build --base=./) and their dist/ output is
+# committed to projects/<slug>/ directly — see README build recipe.
 
 # ── 3D & interaction demos ──────────────────────────────────────
 copy "Demos/Immersive Gallery"             immersive-gallery
@@ -71,4 +73,16 @@ copy "MCP/Vercel"                          vercel-mcp
 copy "cloud_dashboard/public"              cloud-dashboard
 copy "Utilities/Stream Deck Project/_project.streamdeck-ai/packages/website" streamdeck-ai
 
-echo "Done. Built apps (agentworld, mission-control) are compiled separately — see README."
+# ── post-copy patches (fixes for static serving under /p/<slug>/) ──
+# rive-showcase: vite-dev absolute paths → relative
+sed -i '' -e 's|href="/style.css"|href="./style.css"|' \
+          -e 's|src="/main.js"|src="./main.js"|' \
+          -e 's|src="/agent-demo.webp"|src="./public/agent-demo.webp"|' \
+  "$DEST/rive-showcase/index.html"
+sed -i '' "s|'/rive-button.riv'|'./public/rive-button.riv'|" "$DEST/rive-showcase/main.js"
+# cloud-dashboard: initApp referenced before its defining script block
+sed -i '' 's|addEventListener("DOMContentLoaded", initApp)|addEventListener("DOMContentLoaded", () => initApp())|' \
+  "$DEST/cloud-dashboard/index.html"
+
+echo "Done. Built apps (agentworld, mission-control, spatial-lab, lovable-*) are compiled separately — see README."
+echo "Note: mission-control build needs 's|\"/images/|\"images/|g' applied to its bundle after vite build."
