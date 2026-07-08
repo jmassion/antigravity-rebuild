@@ -15,3 +15,6 @@ of truth — never modify it from here).
 - `npm run build` assembles `dist/`; `npm run dev` serves it on :4321.
 - Screenshot capture uses system Chrome via puppeteer borrowed from
   `../AntiGravity/ag-assets/node_modules` (see scripts/capture.mjs header).
+- **LovArt media/data broken (lovart-explorer, air-ui-study)? → read
+  `docs/RUNBOOK-lovart.md` before debugging.** Known failure modes and fixes are
+  all there (Referer 403s, agentThreadId gotcha, snapshot refresh).

@@ -22,6 +22,12 @@
         <span class="brand-sub">prototype portfolio</span>
       </div>
     </div>
+    <nav class="topnav">
+      <button class="nav-link" id="nav-about">About</button>
+      <a class="nav-link" href="p/spatial-lab/">Spatial Lab</a>
+      <button class="nav-link" id="nav-random" title="Open a random project">🎲 Random</button>
+      <a class="nav-link" href="https://github.com/jmassion/antigravity-rebuild" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
     <div class="topbar-stats" id="topbar-stats"></div>
   </header>
 
@@ -37,7 +43,14 @@
         <input type="search" id="search" placeholder="Search projects, tech, ideas…  ( / )" autocomplete="off">
       </div>
       <div class="chip-row" id="category-chips"></div>
-      <div class="chip-row chip-row-status" id="status-chips"></div>
+      <div class="filter-foot">
+        <div class="chip-row chip-row-status" id="status-chips"></div>
+        <div class="view-switch" id="view-switch" role="group" aria-label="View">
+          <button data-view="grid" title="Grid">▦ Grid</button>
+          <button data-view="list" title="List">☰ List</button>
+          <button data-view="compact" title="Compact">▤ Compact</button>
+        </div>
+      </div>
     </section>
 
     <section id="gallery" class="gallery" aria-live="polite"></section>
@@ -64,12 +77,56 @@
         </div>
         <p class="detail-desc" id="detail-desc"></p>
         <ul class="detail-highlights" id="detail-highlights"></ul>
+        <div class="explore-block" id="explore-block" hidden>
+          <h4>🧭 What to explore</h4>
+          <ol id="detail-explore"></ol>
+        </div>
         <div class="detail-meta">
           <div class="meta-block" id="detail-tech-block"><h4>Tech</h4><div class="chiplets" id="detail-tech"></div></div>
           <div class="meta-block" id="detail-variants-block" hidden><h4>Variants</h4><div class="chiplets" id="detail-variants"></div></div>
           <div class="meta-block" id="detail-links-block" hidden><h4>Links</h4><div class="chiplets" id="detail-links"></div></div>
           <div class="meta-block"><h4>Source</h4><code id="detail-source"></code></div>
         </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- About overlay -->
+  <div class="overlay" id="about-overlay" hidden>
+    <div class="overlay-backdrop" data-close-about></div>
+    <article class="detail about" role="dialog" aria-modal="true">
+      <button class="detail-close" data-close-about aria-label="Close">✕</button>
+      <div class="detail-body">
+        <h3 class="about-title">About AntiGravity</h3>
+        <p class="detail-desc">
+          AntiGravity is a running collection of prototypes — platforms, 3D experiments,
+          wikis, data browsers, and tools — built rapidly with AI agents and rebuilt here
+          as one navigable, permanently hosted portfolio. Every project is a path on a
+          single origin: no subdomains, no servers, no tokens.
+        </p>
+        <div class="about-stats" id="about-stats"></div>
+        <div class="about-cols">
+          <div>
+            <h4>How it works</h4>
+            <p>A single <code>catalog.json</code> drives everything — the gallery, the 3D
+            views, screenshots, and deploys. Static copies and compiled builds live under
+            <code>/p/&lt;slug&gt;/</code>; GitHub Actions rebuilds and ships on every push.</p>
+          </div>
+          <div>
+            <h4>Depth ratings</h4>
+            <p><span class="depth d1">●</span> Quick look — a single page or moment<br>
+               <span class="depth d2">●●</span> Explorable — several interactions worth trying<br>
+               <span class="depth d3">●●●</span> Deep dive — whole systems to get lost in</p>
+          </div>
+          <div>
+            <h4>Lineage</h4>
+            <p>v1 was the HolodeckOS Gallery (preserved as the “HolodeckOS Gallery (v1)”
+            project below). The 3D demos were rebuilt on a shared engine as the
+            <a href="p/spatial-lab/">Spatial Lab</a>. The originals stay untouched in the
+            source archive.</p>
+          </div>
+        </div>
+        <p class="about-foot">Built by Justin Massion with Claude · <a href="https://github.com/jmassion/antigravity-rebuild" target="_blank" rel="noopener">source ↗</a></p>
       </div>
     </article>
   </div>

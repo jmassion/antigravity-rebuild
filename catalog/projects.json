@@ -47,6 +47,13 @@
         "Dockable, draggable panel system built on FlexLayout",
         "3D solar-system view of the OS Solar System data backbone",
         "Mermaid diagrams, mission control, and device profiles"
+      ],
+      "depth": 3,
+      "explore": [
+        "Drag panel tabs to split and dock windows — the whole workspace is rearrangeable",
+        "Open the 3D views (solar system / node map) from the left icon rail",
+        "Check Mission Control, Daily Routine, and Agent Data Shards panels",
+        "Relational CMS and Virtual File System panels show the data backbone"
       ]
     },
     {
@@ -66,7 +73,13 @@
         "path": "p/os-solar-system/"
       },
       "source": "AntiGravity/OS Solar System",
-      "thumbnail": "thumbnails/os-solar-system.jpg"
+      "thumbnail": "thumbnails/os-solar-system.jpg",
+      "depth": 2,
+      "explore": [
+        "Browse Operating Systems → each OS folder mirrors the same structure",
+        "Open Devices and Control Panel to see per-device JSON profiles",
+        "This exact data is what AgentWorld renders as a 3D solar system"
+      ]
     },
     {
       "slug": "oneos",
@@ -85,7 +98,12 @@
         "path": "p/oneos/"
       },
       "source": "AntiGravity/playground/oneOS",
-      "thumbnail": "thumbnails/oneos.jpg"
+      "thumbnail": "thumbnails/oneos.jpg",
+      "depth": 1,
+      "explore": [
+        "Scroll the vision page — the product IS the homepage",
+        "Deeper docs (PRD, phases, methodology) live in the source folder, not the page"
+      ]
     },
     {
       "slug": "mission-control",
@@ -105,7 +123,14 @@
         "path": "p/mission-control/"
       },
       "source": "AntiGravity/Utilities/Mission Control Center",
-      "thumbnail": "thumbnails/mission-control.jpg"
+      "thumbnail": "thumbnails/mission-control.jpg",
+      "depth": 3,
+      "explore": [
+        "Use the sidebar: Chat, People & Teams, Feedback, File Manager, Docs are all real views",
+        "Create/edit content — everything persists in your browser (localStorage)",
+        "Watch the credit tracker respond as you work",
+        "Agent avatars in chat are themed personas (Architect, Forge, Sentinel…)"
+      ]
     },
     {
       "slug": "game-engine",
@@ -124,7 +149,12 @@
         "path": "p/game-engine/"
       },
       "source": "AntiGravity/Utilities/GameEngine",
-      "thumbnail": "thumbnails/game-engine.jpg"
+      "thumbnail": "thumbnails/game-engine.jpg",
+      "depth": 2,
+      "explore": [
+        "Read the landing page manifesto",
+        "The engine wiki (wiki/ under this project) documents World, Senses, SpaceML, Foundation, and Life systems"
+      ]
     },
     {
       "slug": "webbrowser",
@@ -144,7 +174,12 @@
         "path": "p/webbrowser/"
       },
       "source": "AntiGravity/Utilities/WebBrowser",
-      "thumbnail": "thumbnails/browser.jpg"
+      "thumbnail": "thumbnails/browser.jpg",
+      "depth": 2,
+      "explore": [
+        "Scroll the vision site for TabSpace — 8 view modes, CDP streaming, multiplayer browsing",
+        "The mockups show the 3D sphere tab view; the real CDP driver lives in source only"
+      ]
     },
     {
       "slug": "void-room",
@@ -173,6 +208,13 @@
           "label": "Original device guide",
           "path": "p/void-room/device-guide.html"
         }
+      ],
+      "depth": 3,
+      "explore": [
+        "Click the ground to place shapes; keys 1–9 switch shape type",
+        "Drag to move · R rotate · C recolor · +/- resize · X delete",
+        "Open this page in a second tab — every change syncs live between tabs",
+        "Detail view links the original combined edition and the 26-device setup guide"
       ]
     },
     {
@@ -193,7 +235,13 @@
         "path": "p/browser-platformer/"
       },
       "source": "AntiGravity/BrowserPlatformer",
-      "thumbnail": "thumbnails/browser-platformer.jpg"
+      "thumbnail": "thumbnails/browser-platformer.jpg",
+      "depth": 2,
+      "explore": [
+        "Watch work orbs travel the rail through Genesis → Processing → Delivery",
+        "Read station task lists and the live Agent Diagnostics panel",
+        "The voice-command bar needs mic permission; Clerk login was removed for this static build"
+      ]
     },
     {
       "slug": "noahos",
@@ -219,6 +267,12 @@
           "label": "Vercel deploy",
           "url": "https://noahos.vercel.app"
         }
+      ],
+      "depth": 3,
+      "explore": [
+        "Navigate the sidebar wiki — it is a full modular OS interface",
+        "Open the HolodeckOS docs subsite bundled inside (antigravity-docs-noah)",
+        "One of the earliest artifacts: the doc system the whole project grew from"
       ]
     },
     {
@@ -243,6 +297,10 @@
           "label": "Vercel deploy",
           "url": "https://garfield-ten.vercel.app"
         }
+      ],
+      "depth": 1,
+      "explore": [
+        "Scroll the cinematic narrative page top to bottom — it is a single set piece"
       ]
     },
     {
@@ -267,7 +325,11 @@
         }
       ],
       "source": "AntiGravity/Case-Studies/Aluzina",
-      "thumbnail": "thumbnails/aluzina.jpg"
+      "thumbnail": "thumbnails/aluzina.jpg",
+      "depth": 1,
+      "explore": [
+        "Offline: needs its Express API + ~360MB of imagery. Ask to revive it via the snapshot technique used for LovArt Explorer"
+      ]
     },
     {
       "slug": "alphaunicorn",
@@ -287,7 +349,13 @@
         "path": "p/alphaunicorn/"
       },
       "source": "AntiGravity/Scraper/siteground/AlphaUnicorn",
-      "thumbnail": "thumbnails/alphaunicorn.jpg"
+      "thumbnail": "thumbnails/alphaunicorn.jpg",
+      "depth": 2,
+      "explore": [
+        "Scroll for the animations — marquee ticker, reveal effects",
+        "Venture portfolio and VirtuOS product sections",
+        "A few images hotlinked from the old WordPress site are gone (their origin 404s)"
+      ]
     },
     {
       "slug": "air-rebuild",
@@ -307,7 +375,13 @@
         "path": "p/air-rebuild/"
       },
       "source": "AntiGravity/playground/air-rebuild",
-      "thumbnail": "thumbnails/air-rebuild.jpg"
+      "thumbnail": "thumbnails/air-rebuild.jpg",
+      "depth": 2,
+      "explore": [
+        "Watch the 3D glassy logo animation on load",
+        "Try the theme switcher — four complete visual states",
+        "content.config.js in source enables one-click brand swaps of the whole site"
+      ]
     },
     {
       "slug": "media-engine",
@@ -332,6 +406,12 @@
           "label": "Old Vercel deploy",
           "url": "https://media-engine-zeta.vercel.app"
         }
+      ],
+      "depth": 2,
+      "explore": [
+        "Scroll the full marketing narrative — chaos → assembly line → brand DNA",
+        "The hero imagery was AI-generated (the 'brain images')",
+        "Pricing and competitive positioning sections at the bottom"
       ]
     },
     {
@@ -377,6 +457,11 @@
           "label": "KittyBird Blooms",
           "path": "p/franchiseos/KittyBird Blooms/"
         }
+      ],
+      "depth": 2,
+      "explore": [
+        "The hub links six complete franchise sites built from one template system",
+        "Open 2–3 variants (CoPlay, Petrock Hotel, KittyBird Blooms) to compare the reskins"
       ]
     },
     {
@@ -402,6 +487,12 @@
           "label": "Rating App",
           "path": "p/swiperate/app/"
         }
+      ],
+      "depth": 3,
+      "explore": [
+        "Read the landing page, then launch the Rating App variant",
+        "Drag items on the XY plane — position IS the rating",
+        "Try XYZ mode for three-axis rating and the multi-user annotation support"
       ]
     },
     {
@@ -421,7 +512,12 @@
         "path": "p/agent-manager/"
       },
       "source": "AntiGravity/Utilities/agent-manager-dashboard",
-      "thumbnail": "thumbnails/agent-manager.jpg"
+      "thumbnail": "thumbnails/agent-manager.jpg",
+      "depth": 2,
+      "explore": [
+        "Browse the tracked agent conversations and workspace statuses",
+        "Cards link threads to projects — an early ancestor of this very portfolio"
+      ]
     },
     {
       "slug": "annotation-studio",
@@ -439,7 +535,11 @@
         "path": "p/annotation-studio/"
       },
       "source": "AntiGravity/Utilities/Annotation Studio",
-      "thumbnail": "thumbnails/annotation-studio.jpg"
+      "thumbnail": "thumbnails/annotation-studio.jpg",
+      "depth": 1,
+      "explore": [
+        "A lightweight review UI — click around the comment and annotation affordances"
+      ]
     },
     {
       "slug": "lessons",
@@ -458,7 +558,12 @@
         "path": "p/lessons/"
       },
       "source": "AntiGravity/lessons",
-      "thumbnail": "thumbnails/lessons.jpg"
+      "thumbnail": "thumbnails/lessons.jpg",
+      "depth": 2,
+      "explore": [
+        "Pick any lesson — concepts are explained jargon-free with visual diagrams",
+        "Your progress persists between visits (localStorage)"
+      ]
     },
     {
       "slug": "sanity-wiki",
@@ -478,7 +583,13 @@
         "path": "p/sanity-wiki/"
       },
       "source": "AntiGravity/Sanity",
-      "thumbnail": "thumbnails/sanity-wiki.jpg"
+      "thumbnail": "thumbnails/sanity-wiki.jpg",
+      "depth": 3,
+      "explore": [
+        "Browse sections 00–12: framework, agents, skills, styles, rules, brand, publishing, CRM",
+        "Follow [[backlinks]] between pages — it is a real linked wiki",
+        "The Liquid Glass UI itself is part of the prototype"
+      ]
     },
     {
       "slug": "living-canvas-wiki",
@@ -498,7 +609,13 @@
         "path": "p/living-canvas-wiki/"
       },
       "source": "AntiGravity/living-canvas-wiki",
-      "thumbnail": "thumbnails/living-canvas-wiki.jpg"
+      "thumbnail": "thumbnails/living-canvas-wiki.jpg",
+      "depth": 3,
+      "explore": [
+        "13 chapters from Philosophy to Validation — read 00 and 10 for the core vision",
+        "Diagrams section visualizes the architecture",
+        "MASTER_PLAN ties the whole system together"
+      ]
     },
     {
       "slug": "holodeck-gallery",
@@ -517,7 +634,13 @@
         "path": "p/holodeck-gallery/"
       },
       "source": "AntiGravity/index.html + ag-assets",
-      "thumbnail": "thumbnails/holodeck-gallery.jpg"
+      "thumbnail": "thumbnails/holodeck-gallery.jpg",
+      "depth": 2,
+      "explore": [
+        "This is the portfolio's ancestor — try grid and list views",
+        "Hit the 3D Mode button for the Three.js spatial view",
+        "Project links inside point at old paths and may 404 — it is preserved as an artifact"
+      ]
     },
     {
       "slug": "higgsfield",
@@ -537,7 +660,13 @@
         "path": "p/higgsfield/"
       },
       "source": "AntiGravity/Scraper/Higgsfield",
-      "thumbnail": "thumbnails/higgsfield.jpg"
+      "thumbnail": "thumbnails/higgsfield.jpg",
+      "depth": 3,
+      "explore": [
+        "3,184 real assets stream from CloudFront — filter by image/video/audio",
+        "Click any video for playback; open the detail view for metadata",
+        "Try boards and favorites; search by model type or date"
+      ]
     },
     {
       "slug": "lovart-explorer",
@@ -563,6 +692,13 @@
         "174 projects / 211 threads / full chat + artifact history",
         "Chat histories lazy-load per thread — fast first paint",
         "Captured in-browser: auth token never left Chrome"
+      ],
+      "depth": 3,
+      "explore": [
+        "174 projects → click one to see its agent threads",
+        "Open a thread for the full chat history with every generated artifact inline",
+        "Images, videos, and 3D models all render; data is a baked snapshot (2026-07-07)",
+        "If media ever breaks, see docs/RUNBOOK-lovart.md in the repo"
       ]
     },
     {
@@ -583,7 +719,14 @@
         "path": "p/air-ui-study/"
       },
       "source": "AntiGravity/Scraper/LovartHiggsFieldAirOrganizer/AirUIStudy",
-      "thumbnail": "thumbnails/air-ui-study.jpg"
+      "thumbnail": "thumbnails/air-ui-study.jpg",
+      "depth": 3,
+      "explore": [
+        "16,625 assets with full provenance — use the filter rail (type, source, tool)",
+        "Try Exact vs Smart search modes",
+        "Switch grid/list/kanban views (top right); open an asset for the metadata panel",
+        "Boards tree on the left mirrors the LovArt/Higgsfield source hierarchy"
+      ]
     },
     {
       "slug": "air-organizer",
@@ -602,7 +745,11 @@
         "path": "p/air-organizer/"
       },
       "source": "AntiGravity/Scraper/LovartHiggsFieldAirOrganizer",
-      "thumbnail": "thumbnails/air-organizer.jpg"
+      "thumbnail": "thumbnails/air-organizer.jpg",
+      "depth": 1,
+      "explore": [
+        "A snapshot of the upload/organizer pipeline UI that fed Air.inc"
+      ]
     },
     {
       "slug": "lovable-aurora",
@@ -620,7 +767,12 @@
         "path": "p/lovable-aurora/"
       },
       "source": "AntiGravity/Scraper/lovable/aurora-builder",
-      "thumbnail": "thumbnails/lovable-aurora.jpg"
+      "thumbnail": "thumbnails/lovable-aurora.jpg",
+      "depth": 2,
+      "explore": [
+        "A full 'HyperCard' spatial-OS concept site — use the top nav (Workspace, Nodes, Flow 3D…)",
+        "Enter the World for the hero experience"
+      ]
     },
     {
       "slug": "lovable-dreamscape",
@@ -638,7 +790,11 @@
         "path": "p/lovable-dreamscape/"
       },
       "source": "AntiGravity/Scraper/lovable/cosmic-dreamscape-arts",
-      "thumbnail": "thumbnails/lovable-dreamscape.jpg"
+      "thumbnail": "thumbnails/lovable-dreamscape.jpg",
+      "depth": 2,
+      "explore": [
+        "Lovable-built art app exploration — navigate its pages via the top nav"
+      ]
     },
     {
       "slug": "lovable-muse",
@@ -656,7 +812,11 @@
         "path": "p/lovable-muse/"
       },
       "source": "AntiGravity/Scraper/lovable/project-muse-cloud",
-      "thumbnail": "thumbnails/lovable-muse.jpg"
+      "thumbnail": "thumbnails/lovable-muse.jpg",
+      "depth": 2,
+      "explore": [
+        "VirtuOS production-pipeline concept — explore the pipeline stages"
+      ]
     },
     {
       "slug": "immersive-gallery",
@@ -681,6 +841,12 @@
           "label": "Original (8-mode prototype)",
           "path": "p/immersive-gallery/"
         }
+      ],
+      "depth": 2,
+      "explore": [
+        "Morph the whole portfolio between ring, helix, wall, and sphere formations",
+        "Drag to orbit, click any panel for project info, toggle auto-spin",
+        "The original 8-mode prototype is linked as a variant"
       ]
     },
     {
@@ -719,6 +885,12 @@
           "label": "Original v5 config 5 (Living Gallery)",
           "path": "p/corridors/v5-3d_5.html"
         }
+      ],
+      "depth": 2,
+      "explore": [
+        "Scroll to travel the corridor — momentum carries you",
+        "Hover art to wake it; click to open that project's info",
+        "Category wings change the glow color; three v1 originals linked as variants"
       ]
     },
     {
@@ -744,6 +916,12 @@
           "label": "Original v3.15",
           "path": "p/mouse-mastery/3d-mastery-v3_15.html"
         }
+      ],
+      "depth": 2,
+      "explore": [
+        "Switch between the four camera modes and feel the difference",
+        "Fly mode: click to lock pointer, WASD + QE to move, Shift for speed",
+        "Rail mode: scroll scrubs a cinematic dolly; Chase hunts the comet"
       ]
     },
     {
@@ -770,6 +948,12 @@
           "label": "Old Vercel deploy",
           "url": "https://visual-terminal.vercel.app"
         }
+      ],
+      "depth": 3,
+      "explore": [
+        "Bring a free Gemini API key (aistudio.google.com) — asked once, stored only in your browser",
+        "Every response is a generated image; click hotspots inside images to go deeper",
+        "Try the vibe-coding demo cards: landing page, game HUD, e-commerce"
       ]
     },
     {
@@ -789,7 +973,12 @@
         "path": "p/rive-showcase/"
       },
       "source": "AntiGravity/playground/rive-showcase",
-      "thumbnail": "thumbnails/rive-showcase.jpg"
+      "thumbnail": "thumbnails/rive-showcase.jpg",
+      "depth": 2,
+      "explore": [
+        "All animation is Rive state machines — click the buttons and watch transitions",
+        "The agent mission-control dashboard is driven programmatically"
+      ]
     },
     {
       "slug": "nexus-dashboard",
@@ -818,6 +1007,10 @@
           "label": "Handoff Rules",
           "path": "p/nexus-dashboard/nexus-handoff-rules.html"
         }
+      ],
+      "depth": 1,
+      "explore": [
+        "A static multi-panel layout study; the Handoff Rules variant documents the design tokens"
       ]
     },
     {
@@ -837,7 +1030,11 @@
         "path": "p/cloud-dashboard/"
       },
       "source": "AntiGravity/cloud_dashboard",
-      "thumbnail": "thumbnails/cloud-dashboard.jpg"
+      "thumbnail": "thumbnails/cloud-dashboard.jpg",
+      "depth": 1,
+      "explore": [
+        "UI renders fully; live AWS cost/EC2 data needs the server running with credentials"
+      ]
     },
     {
       "slug": "streamdeck-ai",
@@ -857,7 +1054,12 @@
         "path": "p/streamdeck-ai/"
       },
       "source": "AntiGravity/Utilities/Stream Deck Project",
-      "thumbnail": "thumbnails/streamdeck-ai.jpg"
+      "thumbnail": "thumbnails/streamdeck-ai.jpg",
+      "depth": 2,
+      "explore": [
+        "Marketing site for the Stream Deck plugin — Style Lab, device shop, billing sections",
+        "The actual plugin source (TypeScript, Rollup) lives in the original folder"
+      ]
     }
   ]
 }

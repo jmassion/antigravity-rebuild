@@ -6,7 +6,19 @@ const state = {
   category: 'all',
   status: 'all',
   query: '',
+  view: localStorage.getItem('ag-view') || 'grid',
 };
+
+const DEPTH = {
+  1: { dots: '●', label: 'Quick look' },
+  2: { dots: '●●', label: 'Explorable' },
+  3: { dots: '●●●', label: 'Deep dive' },
+};
+
+function depthBadge(p) {
+  const d = DEPTH[p.depth] || DEPTH[1];
+  return `<span class="depth-label"><span class="depth d${p.depth || 1}">${d.dots}</span>${d.label}</span>`;
+}
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -94,7 +106,7 @@ function cardHTML(p) {
       <span class="card-status status-${p.status}">${STATUS_LABELS[p.status]}</span>
     </div>
     <div class="card-body">
-      <span class="card-cat">${p.category}</span>
+      <span class="card-cat">${p.category} · ${depthBadge(p)}</span>
       <h3>${p.name}</h3>
       <p class="tagline">${p.tagline}</p>
       <div class="card-tech">${(p.tech || []).slice(0, 4).map((t) => `<span class="tech-chip">${t}</span>`).join('')}</div>
@@ -102,22 +114,42 @@ function cardHTML(p) {
   </article>`;
 }
 
+function rowHTML(p) {
+  const thumb = p.thumbnail
+    ? `<img class="row-thumb" src="${p.thumbnail}" alt="" loading="lazy"
+         onerror="this.style.background='${gradientFor(p.slug)}';this.src='data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA='">`
+    : `<div class="row-thumb" style="background:${gradientFor(p.slug)}"></div>`;
+  return `
+  <div class="row-item" data-slug="${p.slug}" tabindex="0" role="button" aria-label="${p.name}">
+    ${thumb}
+    <div class="row-name"><b>${p.name}</b><span>${p.category}</span></div>
+    <div class="row-tag">${p.tagline}</div>
+    ${depthBadge(p)}
+    <div class="row-meta"><span class="card-status status-${p.status}" style="position:static">${STATUS_LABELS[p.status]}</span></div>
+  </div>`;
+}
+
 function render() {
   const items = filtered();
   $('#empty-state').hidden = items.length > 0;
   const gallery = $('#gallery');
+  gallery.className = 'gallery' + (state.view === 'list' ? ' view-list' : state.view === 'compact' ? ' view-compact' : '');
+  const item = state.view === 'list' ? rowHTML : cardHTML;
   if (state.category === 'all' && !state.query && state.status === 'all') {
     // Grouped view by category
     gallery.innerHTML = state.meta.categories
       .map((cat) => {
         const group = items.filter((p) => p.category === cat);
         if (!group.length) return '';
-        return `<h3 class="cat-header">${cat}</h3>` + group.map(cardHTML).join('');
+        return `<h3 class="cat-header">${cat}</h3>` + group.map(item).join('');
       })
       .join('');
   } else {
-    gallery.innerHTML = items.map(cardHTML).join('');
+    gallery.innerHTML = items.map(item).join('');
   }
+  document.querySelectorAll('#view-switch button').forEach((b) =>
+    b.classList.toggle('active', b.dataset.view === state.view)
+  );
 }
 
 /* ── Detail overlay ─────────────────────── */
@@ -130,10 +162,13 @@ function embedURL(p) {
 
 function openDetail(p) {
   $('#detail-name').textContent = p.name;
-  $('#detail-tagline').textContent = p.tagline;
+  $('#detail-tagline').innerHTML = `${p.tagline} &nbsp; ${depthBadge(p)}`;
   $('#detail-desc').textContent = p.description;
   $('#detail-source').textContent = p.source;
   $('#detail-highlights').innerHTML = (p.highlights || []).map((h) => `<li>${h}</li>`).join('');
+  const explore = p.explore || [];
+  $('#explore-block').hidden = !explore.length;
+  $('#detail-explore').innerHTML = explore.map((e) => `<li>${e}</li>`).join('');
   $('#detail-tech').innerHTML = (p.tech || []).map((t) => `<span class="tech-chip">${t}</span>`).join('');
 
   const variants = p.variants || [];
@@ -201,16 +236,42 @@ document.addEventListener('click', (e) => {
     render();
     return;
   }
-  const card = e.target.closest('.card[data-slug]');
+  const card = e.target.closest('.card[data-slug], .row-item[data-slug]');
   if (card) {
     const p = state.projects.find((x) => x.slug === card.dataset.slug);
     if (p) openDetail(p);
     return;
   }
+  const vbtn = e.target.closest('#view-switch button');
+  if (vbtn) {
+    state.view = vbtn.dataset.view;
+    localStorage.setItem('ag-view', state.view);
+    render();
+    return;
+  }
   if (e.target.closest('[data-close]')) closeDetail();
+  if (e.target.closest('[data-close-about]')) $('#about-overlay').hidden = true;
+});
+
+/* ── Nav ────────────────────────────────── */
+$('#nav-about').addEventListener('click', () => {
+  const live = state.projects.filter((p) => p.status === 'live').length;
+  const deep = state.projects.filter((p) => p.depth === 3).length;
+  $('#about-stats').innerHTML = `
+    <div class="stat"><b>${state.projects.length}</b><span>projects</span></div>
+    <div class="stat"><b>${live}</b><span>live</span></div>
+    <div class="stat"><b>${deep}</b><span>deep dives</span></div>
+    <div class="stat"><b>1</b><span>origin, zero servers</span></div>`;
+  $('#about-overlay').hidden = false;
+});
+
+$('#nav-random').addEventListener('click', () => {
+  const pool = state.projects.filter((p) => p.embed.type !== 'none');
+  openDetail(pool[Math.floor(Math.random() * pool.length)]);
 });
 
 document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !$('#about-overlay').hidden) { $('#about-overlay').hidden = true; return; }
   if (e.key === 'Escape' && !$('#overlay').hidden) closeDetail();
   if (e.key === '/' && document.activeElement !== $('#search')) {
     e.preventDefault();
@@ -219,7 +280,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('keypress', (e) => {
-  const card = e.target.closest?.('.card[data-slug]');
+  const card = e.target.closest?.('.card[data-slug], .row-item[data-slug]');
   if (card && (e.key === 'Enter' || e.key === ' ')) card.click();
 });
 

@@ -80,7 +80,12 @@ After that: portfolio at `https://ag.holodeckos.com/`, every project at
 `https://ag.holodeckos.com/p/<slug>/`. Do step 1 before step 2 — setting the custom
 domain while DNS still points at Vercel breaks the site.
 
-## Portfolio inventory (41 projects)
+## Runbooks
+
+- [docs/RUNBOOK-lovart.md](docs/RUNBOOK-lovart.md) — LovArt media/data failures: symptoms,
+  diagnosis commands, snapshot-refresh procedure, and the two API gotchas.
+
+## Portfolio inventory
 
 | Category | Projects |
 |---|---|
