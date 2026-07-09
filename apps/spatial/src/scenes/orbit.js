@@ -18,7 +18,7 @@ export async function orbitScene({ ui }) {
   controls.enableDamping = true;
   controls.dampingFactor = 0.06;
   controls.minDistance = 6;
-  controls.maxDistance = 70;
+  controls.maxDistance = 90;
   controls.autoRotate = true;
   controls.autoRotateSpeed = 0.5;
 
@@ -64,16 +64,22 @@ export async function orbitScene({ ui }) {
     three.add(g);
   });
 
-  /* ── formations (each fills userData.target transforms) ── */
+  /* ── formations (each fills userData.target transforms) ──
+     Radii scale with project count: panels are ~3.7 wide incl. glow edge,
+     so each needs ≥4.3 units of arc/surface or neighbors overlap. */
+  const RING_R = Math.max(14, (n * 4.3) / (2 * Math.PI));
+  const HELIX_R = Math.max(11, (n * 4.3) / (2 * Math.PI) * 0.62); // ~1.6 turns share the height
+  const SPHERE_R = Math.max(13, Math.sqrt((n * 4.4 * 4.4) / (4 * Math.PI)) * 1.9);
+  camera.position.set(0, 6, RING_R + 16); // start comfortably outside the largest formation
   const V = new THREE.Vector3();
   const formations = {
     ring(i) {
       const a = (i / n) * Math.PI * 2;
-      return { pos: V.set(Math.cos(a) * 16, 0, Math.sin(a) * 16).clone(), lookCenter: true };
+      return { pos: V.set(Math.cos(a) * RING_R, 0, Math.sin(a) * RING_R).clone(), lookCenter: true };
     },
     helix(i) {
       const a = i * 0.42;
-      return { pos: V.set(Math.cos(a) * 11, (i / n) * 22 - 11, Math.sin(a) * 11).clone(), lookCenter: true };
+      return { pos: V.set(Math.cos(a) * HELIX_R, (i / n) * 26 - 13, Math.sin(a) * HELIX_R).clone(), lookCenter: true };
     },
     wall(i) {
       const cols = Math.ceil(Math.sqrt(n * 1.6));
@@ -84,7 +90,7 @@ export async function orbitScene({ ui }) {
     sphere(i) {
       const ph = Math.acos(1 - (2 * (i + 0.5)) / n);
       const th = Math.PI * (1 + Math.sqrt(5)) * i;
-      return { pos: V.set(15 * Math.sin(ph) * Math.cos(th), 15 * Math.cos(ph), 15 * Math.sin(ph) * Math.sin(th)).clone(), lookCenter: true };
+      return { pos: V.set(SPHERE_R * Math.sin(ph) * Math.cos(th), SPHERE_R * Math.cos(ph), SPHERE_R * Math.sin(ph) * Math.sin(th)).clone(), lookCenter: true };
     },
   };
 
@@ -117,7 +123,10 @@ export async function orbitScene({ ui }) {
   const mouse = new THREE.Vector2();
   let hovered = null;
   const onMove = (e) => mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
-  const onClick = () => { if (hovered) ui.showInfo(hovered.userData.project); };
+  const onClick = (e) => {
+    if (e.target.closest('#hud,#info,#hint')) return; // don't raycast through the UI
+    if (hovered) ui.showInfo(hovered.userData.project);
+  };
   addEventListener('mousemove', onMove);
   addEventListener('click', onClick);
 

@@ -154,8 +154,8 @@ export async function voidScene({ ui }) {
       moved = true;
       ray.setFromCamera(mouse, camera);
       if (ray.ray.intersectPlane(groundPlane, hitP)) {
-        selected.position.set(hitP.x, selected.userData.rec.scale ?? 1 ? selected.position.y : 0.6, hitP.z);
-        selected.position.x = hitP.x; selected.position.z = hitP.z;
+        selected.position.x = hitP.x;
+        selected.position.z = hitP.z;
       }
     }
   };
@@ -202,8 +202,14 @@ export async function voidScene({ ui }) {
       selected.material.color.set(rec.color); selected.material.emissive.set(rec.color);
       sync(rec, 'upsert');
     }
-    if (k === '=' || k === '+') { rec.scale = Math.min((rec.scale ?? 1) * 1.2, 4); selected.scale.setScalar(rec.scale); sync(rec, 'upsert'); }
-    if (k === '-') { rec.scale = Math.max((rec.scale ?? 1) / 1.2, 0.3); selected.scale.setScalar(rec.scale); sync(rec, 'upsert'); }
+    if (k === '=' || k === '+' || k === '-') {
+      rec.scale = k === '-' ? Math.max((rec.scale ?? 1) / 1.2, 0.3) : Math.min((rec.scale ?? 1) * 1.2, 4);
+      selected.scale.setScalar(rec.scale);
+      // keep the base on the floor — otherwise big shapes sink and small ones float
+      selected.position.y = 0.6 * rec.scale;
+      rec.pos = selected.position.toArray();
+      sync(rec, 'upsert');
+    }
   };
 
   addEventListener('pointerdown', onDown);
@@ -217,7 +223,8 @@ export async function voidScene({ ui }) {
       ...SHAPES.slice(0, 5).map(([name], i) => ({
         label: name, on: i === shapeIdx, onClick: () => { shapeIdx = i; refreshButtons(); },
       })),
-      { label: 'more ⟳', onClick: () => { shapeIdx = (shapeIdx + 1) % SHAPES.length; refreshButtons(); } },
+      { label: shapeIdx > 4 ? `more ⟳ (${SHAPES[shapeIdx][0]})` : 'more ⟳', on: shapeIdx > 4,
+        onClick: () => { shapeIdx = shapeIdx < 4 ? 5 : (shapeIdx + 1) % SHAPES.length; refreshButtons(); } },
       { label: '🗑 clear room', onClick: () => { [...objects.keys()].forEach((id) => drop(id)); } },
     ]);
   }

@@ -134,7 +134,8 @@ export async function motionScene({ ui }) {
   ]);
   ui.setHint(HINTS.orbit);
 
-  const onClick = () => {
+  const onClick = (e) => {
+    if (e.target.closest('#hud,#hint,#info')) return; // HUD clicks must never grab the pointer
     if (mode === 'fly' && !document.pointerLockElement) canvasEl.requestPointerLock();
   };
   const onMouseMove = (e) => {

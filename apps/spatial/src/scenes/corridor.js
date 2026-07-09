@@ -32,7 +32,6 @@ export async function corridorScene({ ui }) {
 
   for (const side of [-1, 1]) {
     const wall = new THREE.Mesh(new THREE.PlaneGeometry(depth, H), archMat);
-    wall.rotation.y = side * Math.PI / 2 * -1;
     wall.position.set(side * W / 2, H / 2, -depth / 2 + 10);
     wall.rotation.y = -side * Math.PI / 2;
     three.add(wall);
@@ -174,7 +173,8 @@ export async function corridorScene({ ui }) {
   const onMove = (e) => {
     mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
   };
-  const onClick = () => {
+  const onClick = (e) => {
+    if (e.target.closest('#hud,#info,#hint')) return; // don't raycast through the UI
     if (hovered) ui.showInfo(hovered.userData.project);
   };
   addEventListener('mousemove', onMove);
