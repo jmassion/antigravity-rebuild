@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aleja's Favorites · The Play Set</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#08090D; --ground-2:#0B0D13; --panel:#0F1117; --panel-2:#141721;
+  --line:rgba(255,255,255,.09); --line-strong:rgba(255,255,255,.16);
+  --text:#E7E9F0; --muted:#8A90A6; --dim:#5A6076;
+  --cyan:#38E1FF; --cyan-soft:rgba(56,225,255,.14);
+  --spectrum:linear-gradient(90deg,#38E1FF 0%,#3BF0A6 26%,#FF4FD8 55%,#A15CFF 78%,#FFB13B 100%);
+  --display:'Chakra Petch',ui-monospace,"SF Mono",Menlo,monospace;
+  --body:'Sora',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,monospace;
+  --maxw:1400px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ground);color:var(--text);
+  font-family:var(--body);font-weight:300;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--cyan);color:#04121a}
+
+/* ---- zone spectrum progress rail (left edge) ---- */
+.rail{position:fixed;left:0;top:0;bottom:0;width:3px;z-index:60;background:rgba(255,255,255,.04)}
+.rail-fill{position:absolute;top:0;left:0;width:100%;height:0;background:var(--spectrum);
+  box-shadow:0 0 18px rgba(56,225,255,.5);transition:height .1s linear}
+
+/* ---- top bar ---- */
+.topbar{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;
+  justify-content:space-between;gap:24px;padding:14px clamp(20px,4vw,44px);
+  background:linear-gradient(180deg,rgba(8,9,13,.86),rgba(8,9,13,0));
+  backdrop-filter:blur(10px);transition:background .3s,border-color .3s;
+  border-bottom:1px solid transparent}
+.topbar.solid{background:rgba(9,10,15,.9);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--display);
+  font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:13px}
+.brand .mark{width:22px;height:22px;border-radius:6px;background:var(--spectrum);
+  box-shadow:0 0 14px rgba(56,225,255,.45);flex:none}
+.brand small{color:var(--muted);font-weight:400;letter-spacing:.1em}
+.nav{display:flex;gap:22px;align-items:center;font-family:var(--display);
+  font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.nav a{position:relative;padding:4px 0;transition:color .2s}
+.nav a:hover{color:var(--text)}
+.nav a::after{content:"";position:absolute;left:0;right:100%;bottom:-2px;height:1px;
+  background:var(--cyan);transition:right .25s}
+.nav a:hover::after{right:0}
+.count-pill{font-family:var(--mono);font-size:11px;color:var(--cyan);
+  border:1px solid var(--line-strong);border-radius:999px;padding:5px 12px;
+  letter-spacing:.06em;font-variant-numeric:tabular-nums;white-space:nowrap}
+@media(max-width:860px){.nav{display:none}}
+
+/* ---- hero ---- */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;
+  justify-content:center;padding:120px clamp(20px,5vw,64px) 80px;overflow:hidden}
+.aura{position:absolute;inset:-20% -10%;z-index:0;filter:blur(60px);opacity:.55;
+  pointer-events:none}
+.aura b{position:absolute;border-radius:50%;mix-blend-mode:screen;animation:drift 22s ease-in-out infinite}
+.aura b:nth-child(1){width:46vw;height:46vw;left:-6vw;top:-8vw;background:radial-gradient(circle,#38E1FF,transparent 62%)}
+.aura b:nth-child(2){width:40vw;height:40vw;right:-8vw;top:6vw;background:radial-gradient(circle,#FF4FD8,transparent 62%);animation-delay:-6s}
+.aura b:nth-child(3){width:44vw;height:44vw;left:26vw;bottom:-16vw;background:radial-gradient(circle,#A15CFF,transparent 62%);animation-delay:-12s}
+.aura b:nth-child(4){width:30vw;height:30vw;right:14vw;bottom:-6vw;background:radial-gradient(circle,#3BF0A6,transparent 62%);animation-delay:-3s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4vw,-3vw) scale(1.08)}66%{transform:translate(-3vw,3vw) scale(.95)}}
+.hero-grid{position:absolute;inset:0;z-index:0;opacity:.35;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,#000 30%,transparent 78%)}
+.hero-inner{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;width:100%}
+.eyebrow{font-family:var(--display);text-transform:uppercase;letter-spacing:.34em;
+  font-size:12px;color:var(--cyan);display:flex;align-items:center;gap:14px;margin:0 0 26px}
+.eyebrow::before{content:"";width:44px;height:1px;background:var(--cyan);opacity:.7}
+.hero h1{font-family:var(--display);font-weight:700;text-transform:uppercase;
+  letter-spacing:.01em;line-height:.92;margin:0;font-size:clamp(44px,11vw,168px);
+  text-wrap:balance}
+.hero h1 .line2{background:var(--spectrum);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent}
+.lede{max-width:60ch;margin:30px 0 0;font-size:clamp(16px,1.7vw,20px);color:var(--muted);
+  font-weight:300}
+.lede strong{color:var(--text);font-weight:500}
+.spectrum-line{height:2px;width:min(560px,80vw);margin:40px 0 0;background:var(--spectrum);
+  border-radius:2px;box-shadow:0 0 20px rgba(56,225,255,.35)}
+.stats{display:flex;flex-wrap:wrap;gap:clamp(28px,5vw,64px);margin:40px 0 0;
+  font-family:var(--mono)}
+.stat .n{font-size:clamp(28px,4vw,44px);font-weight:600;font-family:var(--display);
+  color:var(--text);font-variant-numeric:tabular-nums;line-height:1}
+.stat .l{font-family:var(--display);text-transform:uppercase;letter-spacing:.2em;
+  font-size:10.5px;color:var(--dim);margin-top:8px}
+.scrollcue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:2;
+  font-family:var(--display);font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--dim);display:flex;flex-direction:column;align-items:center;gap:8px}
+.scrollcue span{width:1px;height:34px;background:linear-gradient(var(--cyan),transparent);
+  animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ---- chapters ---- */
+main{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;
+  padding:0 clamp(20px,4vw,44px)}
+.chapter{padding:clamp(64px,9vw,128px) 0 clamp(30px,5vw,60px);
+  border-top:1px solid var(--line)}
+.chapter-head{display:grid;grid-template-columns:auto 1fr;gap:clamp(20px,4vw,52px);
+  align-items:start;margin-bottom:clamp(36px,5vw,60px)}
+.chapter-index{font-family:var(--display);font-weight:700;font-size:clamp(52px,9vw,120px);
+  line-height:.8;color:transparent;-webkit-text-stroke:1.4px var(--line-strong);
+  font-variant-numeric:tabular-nums}
+.kicker{font-family:var(--display);text-transform:uppercase;letter-spacing:.26em;
+  font-size:11.5px;color:var(--cyan);margin:6px 0 14px}
+.chapter-meta h2{font-family:var(--body);font-weight:700;font-size:clamp(30px,5vw,58px);
+  line-height:1.02;margin:0 0 18px;letter-spacing:-.02em;text-wrap:balance}
+.blurb{max-width:64ch;color:var(--muted);font-size:clamp(15px,1.4vw,17.5px);margin:0}
+.chapter-count{font-family:var(--mono);font-size:12px;color:var(--dim);margin:20px 0 0;
+  letter-spacing:.04em;text-transform:uppercase}
+.chapter-count span{color:var(--text)}
+.folder-name{color:var(--dim)!important;text-transform:none;font-family:var(--mono)}
+.extra-link{display:inline-flex;align-items:center;gap:10px;margin-top:20px;
+  font-family:var(--display);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--cyan);border:1px solid var(--line-strong);border-radius:999px;padding:9px 16px;
+  transition:border-color .25s,background .25s}
+.extra-link:hover{border-color:var(--cyan);background:var(--cyan-soft)}
+.extra-link .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan)}
+@media(max-width:640px){.chapter-head{grid-template-columns:1fr;gap:6px}}
+
+/* ---- masonry grid ---- */
+.grid{columns:3;column-gap:16px}
+@media(max-width:1080px){.grid{columns:2}}
+@media(max-width:600px){.grid{columns:1}}
+.card{break-inside:avoid;margin:0 0 16px;position:relative;border-radius:14px;
+  overflow:hidden;background:var(--panel);border:1px solid var(--line);cursor:pointer;
+  aspect-ratio:var(--ar);
+  opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease,
+    border-color .3s,box-shadow .3s}
+.card.in{opacity:1;transform:none}
+.card img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease,filter .4s;
+  filter:saturate(.96)}
+.card:hover{border-color:var(--line-strong);box-shadow:0 20px 50px -20px rgba(0,0,0,.8),
+  0 0 0 1px rgba(56,225,255,.25)}
+.card:hover img{transform:scale(1.045);filter:saturate(1.08)}
+.card figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 14px 12px;
+  font-size:12.5px;color:#eef1f7;font-weight:400;line-height:1.35;
+  background:linear-gradient(transparent,rgba(4,5,8,.82) 55%);
+  transform:translateY(8px);opacity:0;transition:opacity .3s,transform .3s;
+  font-family:var(--body)}
+.card:hover figcaption{opacity:1;transform:none}
+.card .zoom{position:absolute;top:11px;right:11px;font-family:var(--display);
+  font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--text);
+  background:rgba(8,10,16,.6);border:1px solid var(--line-strong);border-radius:999px;
+  padding:5px 10px;backdrop-filter:blur(6px);opacity:0;transition:opacity .3s}
+.card:hover .zoom{opacity:1}
+
+/* ---- lightbox ---- */
+.lb{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
+  background:rgba(4,5,9,.94);backdrop-filter:blur(14px)}
+.lb.open{display:flex}
+.lb-stage{position:relative;max-width:94vw;max-height:88vh;display:flex;
+  flex-direction:column;align-items:center;gap:14px}
+.lb-img{max-width:94vw;max-height:80vh;border-radius:12px;object-fit:contain;
+  box-shadow:0 30px 90px -30px #000,0 0 0 1px var(--line);
+  background:var(--panel);opacity:0;transition:opacity .35s}
+.lb-img.ready{opacity:1}
+.lb-cap{font-family:var(--body);font-size:14px;color:var(--text);text-align:center;max-width:70ch}
+.lb-cap .ch{font-family:var(--display);text-transform:uppercase;letter-spacing:.18em;
+  font-size:10.5px;color:var(--cyan);display:block;margin-bottom:5px}
+.lb-btn{position:fixed;top:50%;transform:translateY(-50%);width:56px;height:56px;
+  border-radius:50%;border:1px solid var(--line-strong);background:rgba(15,17,23,.7);
+  color:var(--text);font-size:22px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;transition:background .2s,border-color .2s;z-index:101}
+.lb-btn:hover{background:var(--cyan-soft);border-color:var(--cyan)}
+.lb-prev{left:clamp(10px,3vw,34px)}.lb-next{right:clamp(10px,3vw,34px)}
+.lb-close{position:fixed;top:22px;right:24px;width:46px;height:46px;font-size:20px}
+.lb-counter{position:fixed;top:28px;left:28px;font-family:var(--mono);font-size:12px;
+  color:var(--muted);letter-spacing:.1em;font-variant-numeric:tabular-nums;z-index:101}
+.lb-counter b{color:var(--cyan);font-weight:500}
+@media(max-width:640px){.lb-btn{width:44px;height:44px}.lb-img{max-height:72vh}}
+
+/* ---- footer ---- */
+footer{position:relative;z-index:2;border-top:1px solid var(--line);
+  margin-top:40px;padding:56px clamp(20px,4vw,44px);text-align:center;color:var(--dim)}
+footer .fmark{width:26px;height:26px;border-radius:7px;background:var(--spectrum);
+  margin:0 auto 18px;box-shadow:0 0 16px rgba(56,225,255,.4)}
+footer p{margin:6px 0;font-size:13px}
+footer .big{font-family:var(--display);text-transform:uppercase;letter-spacing:.2em;
+  color:var(--muted);font-size:12px}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important}
+  html{scroll-behavior:auto}
+  .card{opacity:1;transform:none;transition:border-color .3s,box-shadow .3s}
+}
+</style>
+</head>
+<body>
+<div class="rail"><div class="rail-fill" id="rail"></div></div>
+
+<header class="topbar" id="topbar">
+  <a class="brand" href="#top"><span class="mark"></span>Aleja&rsquo;s Favorites<small>· The Play Set</small></a>
+  <nav class="nav"><a href="#building-blocks">Building Blocks</a><a href="#template-studies">Template Studies</a><a href="#the-company-system">The Company System</a><a href="#internal-pipeline">Internal Pipeline</a><a href="#westcol">Westcol</a></nav>
+  <div class="count-pill">101 RENDERS</div>
+</header>
+
+<section class="hero" id="top">
+  <div class="aura"><b></b><b></b><b></b><b></b></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <p class="eyebrow">Curated selection · Game of Life OS</p>
+    <h1>The Play Set<br><span class="line2">Favorites</span></h1>
+    <p class="lede">Every image inside the AI generators, gone through by <strong>Aleja</strong> &mdash;
+      these are the ones she pulled for the Play Set. Grouped by their original folders and
+      sequenced as a build: from the raw <strong>components</strong>, through
+      <strong>template studies</strong> and the full <strong>company system</strong>,
+      to the internal maps and client work.</p>
+    <div class="spectrum-line"></div>
+    <div class="stats">
+      <div class="stat"><div class="n">101</div><div class="l">Renders</div></div>
+      <div class="stat"><div class="n">05</div><div class="l">Chapters</div></div>
+      <div class="stat"><div class="n">&#8734;</div><div class="l">Possibilities</div></div>
+    </div>
+  </div>
+  <div class="scrollcue">Scroll<span></span></div>
+</section>
+
+<main>
+
+  <section class="chapter" id="building-blocks">
+    <header class="chapter-head">
+      <div class="chapter-index">01</div>
+      <div class="chapter-meta">
+        <p class="kicker">Chapter 01 · Components</p>
+        <h2>Building Blocks</h2>
+        <p class="blurb">The raw pieces. Miniature 3D figures on glossy capsule stages and a set of tactile “button” objects — the interface primitives the whole Play Set world is assembled from.</p>
+        <p class="chapter-count"><span>15</span> renders · <span class="folder-name">BUTOMS</span></p>
+        
+      </div>
+    </header>
+    <div class="grid">
+      <figure class="card" data-idx="0" style="--ar:1264 / 848"><img loading="lazy" src="_gallery/thumbs/t001.jpg" alt="01 We Need Jobs" width="1264" height="848"><figcaption>01 We Need Jobs</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="1" style="--ar:1264 / 848"><img loading="lazy" src="_gallery/thumbs/t002.jpg" alt="02 Getting Started" width="1264" height="848"><figcaption>02 Getting Started</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="2" style="--ar:1264 / 848"><img loading="lazy" src="_gallery/thumbs/t003.jpg" alt="07 Project Workflow" width="1264" height="848"><figcaption>07 Project Workflow</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="3" style="--ar:1264 / 848"><img loading="lazy" src="_gallery/thumbs/t004.jpg" alt="10 Full Operation" width="1264" height="848"><figcaption>10 Full Operation</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="4" style="--ar:1264 / 848"><img loading="lazy" src="_gallery/thumbs/t005.jpg" alt="Image 2 — Interactive Path Hologram" width="1264" height="848"><figcaption>Image 2 — Interactive Path Hologram</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="5" style="--ar:1264 / 848"><img loading="lazy" src="_gallery/thumbs/t006.jpg" alt="Image 3 — The Branching Crossroads" width="1264" height="848"><figcaption>Image 3 — The Branching Crossroads</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="6" style="--ar:2752 / 1536"><img loading="lazy" src="_gallery/thumbs/t007.jpg" alt="3D Button — CHARACTER" width="2752" height="1536"><figcaption>3D Button — CHARACTER</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="7" style="--ar:2752 / 1536"><img loading="lazy" src="_gallery/thumbs/t008.jpg" alt="3D Button — CHARACTER" width="2752" height="1536"><figcaption>3D Button — CHARACTER</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="8" style="--ar:2752 / 1536"><img loading="lazy" src="_gallery/thumbs/t009.jpg" alt="3D Button — USERS Rescaled" width="2752" height="1536"><figcaption>3D Button — USERS Rescaled</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="9" style="--ar:2752 / 1536"><img loading="lazy" src="_gallery/thumbs/t010.jpg" alt="3D Button — CONNECTOR" width="2752" height="1536"><figcaption>3D Button — CONNECTOR</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="10" style="--ar:2752 / 1536"><img loading="lazy" src="_gallery/thumbs/t011.jpg" alt="3D Button — FILES" width="2752" height="1536"><figcaption>3D Button — FILES</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="11" style="--ar:2752 / 1536"><img loading="lazy" src="_gallery/thumbs/t012.jpg" alt="3D Button — GOALS" width="2752" height="1536"><figcaption>3D Button — GOALS</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="12" style="--ar:2752 / 1536"><img loading="lazy" src="_gallery/thumbs/t013.jpg" alt="3D Button — TASKS" width="2752" height="1536"><figcaption>3D Button — TASKS</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="13" style="--ar:2752 / 1536"><img loading="lazy" src="_gallery/thumbs/t014.jpg" alt="3D Button — WORKSTATIONS" width="2752" height="1536"><figcaption>3D Button — WORKSTATIONS</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="14" style="--ar:2752 / 1536"><img loading="lazy" src="_gallery/thumbs/t015.jpg" alt="3D Button — WORLD STYLING" width="2752" height="1536"><figcaption>3D Button — WORLD STYLING</figcaption><span class="zoom" aria-hidden="true">View</span></figure>
+    </div>
+  </section>
+  <section class="chapter" id="template-studies">
+    <header class="chapter-head">
+      <div class="chapter-index">02</div>
+      <div class="chapter-meta">
+        <p class="kicker">Chapter 02 · Exploration</p>
+        <h2>Template Studies</h2>
+        <p class="blurb">Style development and upscaled iterations. Floating dashboards, restyled panels, and mobile-friendly variations exploring how the template should look and feel.</p>
+        <p class="chapter-count"><span>18</span> renders · <span class="folder-name">NIKELODEON : PLAY SET TEMPLATE</span></p>
+        
+      </div>
+    </header>
+    <div class="grid">
+      <figure class="card" data-idx="15" style="--ar:1535 / 1024"><img loading="lazy" src="_gallery/thumbs/t016.jpg" alt="Concept study · Jun 25 · 8:02 PM" width="1535" height="1024"><figcaption>Concept study · Jun 25 · 8:02 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="16" style="--ar:752 / 1344"><img loading="lazy" src="_gallery/thumbs/t017.jpg" alt="“Create a clean profession…”" width="752" height="1344"><figcaption>“Create a clean profession…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="17" style="--ar:1024 / 1536"><img loading="lazy" src="_gallery/thumbs/t018.jpg" alt="“Create mobile friendly ve…”" width="1024" height="1536"><figcaption>“Create mobile friendly ve…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="18" style="--ar:1344 / 752"><img loading="lazy" src="_gallery/thumbs/t019.jpg" alt="“Make these more 3d more a…”" width="1344" height="752"><figcaption>“Make these more 3d more a…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="19" style="--ar:1344 / 752"><img loading="lazy" src="_gallery/thumbs/t020.jpg" alt="“Make these more 3d more a…”" width="1344" height="752"><figcaption>“Make these more 3d more a…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="20" style="--ar:1344 / 752"><img loading="lazy" src="_gallery/thumbs/t021.jpg" alt="“Make these more 3d more a…”" width="1344" height="752"><figcaption>“Make these more 3d more a…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="21" style="--ar:1344 / 752"><img loading="lazy" src="_gallery/thumbs/t022.jpg" alt="“Make these more 3d more a…”" width="1344" height="752"><figcaption>“Make these more 3d more a…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="22" style="--ar:1344 / 752"><img loading="lazy" src="_gallery/thumbs/t023.jpg" alt="“Make these more 3d more a…”" width="1344" height="752"><figcaption>“Make these more 3d more a…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="23" style="--ar:2544 / 1456"><img loading="lazy" src="_gallery/thumbs/t024.jpg" alt="“Now instead of just float…”" width="2544" height="1456"><figcaption>“Now instead of just float…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="24" style="--ar:2544 / 1456"><img loading="lazy" src="_gallery/thumbs/t025.jpg" alt="“Now instead of just float…”" width="2544" height="1456"><figcaption>“Now instead of just float…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="25" style="--ar:2544 / 1456"><img loading="lazy" src="_gallery/thumbs/t026.jpg" alt="“Now instead of just float…”" width="2544" height="1456"><figcaption>“Now instead of just float…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="26" style="--ar:2224 / 1664"><img loading="lazy" src="_gallery/thumbs/t027.jpg" alt="“Please restyle all this i…”" width="2224" height="1664"><figcaption>“Please restyle all this i…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="27" style="--ar:1344 / 752"><img loading="lazy" src="_gallery/thumbs/t028.jpg" alt="“Show me a 3d user interfa…”" width="1344" height="752"><figcaption>“Show me a 3d user interfa…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="28" style="--ar:1344 / 752"><img loading="lazy" src="_gallery/thumbs/t029.jpg" alt="“Show me a 3d user interfa…”" width="1344" height="752"><figcaption>“Show me a 3d user interfa…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="29" style="--ar:1344 / 752"><img loading="lazy" src="_gallery/thumbs/t030.jpg" alt="“Show me a 3d user interfa…”" width="1344" height="752"><figcaption>“Show me a 3d user interfa…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="30" style="--ar:1344 / 752"><img loading="lazy" src="_gallery/thumbs/t031.jpg" alt="“Show me a highly detailed…”" width="1344" height="752"><figcaption>“Show me a highly detailed…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="31" style="--ar:1344 / 752"><img loading="lazy" src="_gallery/thumbs/t032.jpg" alt="“Show me a highly detailed…”" width="1344" height="752"><figcaption>“Show me a highly detailed…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="32" style="--ar:1024 / 768"><img loading="lazy" src="_gallery/thumbs/t033.jpg" alt="“The term agent is no diff…”" width="1024" height="768"><figcaption>“The term agent is no diff…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure>
+    </div>
+  </section>
+  <section class="chapter" id="the-company-system">
+    <header class="chapter-head">
+      <div class="chapter-index">03</div>
+      <div class="chapter-meta">
+        <p class="kicker">Chapter 03 · The System</p>
+        <h2>The Company System</h2>
+        <p class="blurb">The master library. Full page layouts, the Design Tower overview, superhero brand renders, and dozens of concept studies that make up the complete Play Set company system.</p>
+        <p class="chapter-count"><span>48</span> renders · <span class="folder-name">PLAY SET TEMPLATES COMPANY SISTEM</span></p>
+        <a class="extra-link" href="PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/Essential%20Prompts%20Play%20Set%20-%20Interactive%20Strategic%20Environment%20Workbook.html" target="_blank" rel="noopener"><span class="dot"></span>Open the interactive workbook · Essential Prompts Play Set - Interactive Strategic Environment Workbook</a>
+      </div>
+    </header>
+    <div class="grid">
+      <figure class="card" data-idx="33" style="--ar:1400 / 936"><img loading="lazy" src="_gallery/thumbs/t034.jpg" alt="Concept study" width="1400" height="936"><figcaption>Concept study</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="34" style="--ar:1200 / 560"><img loading="lazy" src="_gallery/thumbs/t035.jpg" alt="Concept study" width="1200" height="560"><figcaption>Concept study</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="35" style="--ar:2560 / 1045"><img loading="lazy" src="_gallery/thumbs/t036.jpg" alt="Concept study" width="2560" height="1045"><figcaption>Concept study</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="36" style="--ar:2560 / 1440"><img loading="lazy" src="_gallery/thumbs/t037.jpg" alt="Aleja Justin Superhero Duo" width="2560" height="1440"><figcaption>Aleja Justin Superhero Duo</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="37" style="--ar:2560 / 1440"><img loading="lazy" src="_gallery/thumbs/t038.jpg" alt="Aleja Superhero Fashionable" width="2560" height="1440"><figcaption>Aleja Superhero Fashionable</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="38" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t039.jpg" alt="Concept study · Jun 14 · 1:37 PM" width="1536" height="1024"><figcaption>Concept study · Jun 14 · 1:37 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="39" style="--ar:1462 / 1076"><img loading="lazy" src="_gallery/thumbs/t040.jpg" alt="Concept study · Jun 25 · 7:44 PM" width="1462" height="1076"><figcaption>Concept study · Jun 25 · 7:44 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="40" style="--ar:1122 / 1402"><img loading="lazy" src="_gallery/thumbs/t041.jpg" alt="Concept study · Jun 25 · 7:44 PM" width="1122" height="1402"><figcaption>Concept study · Jun 25 · 7:44 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="41" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t042.jpg" alt="Concept study · Jun 25 · 7:47 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 7:47 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="42" style="--ar:1672 / 941"><img loading="lazy" src="_gallery/thumbs/t043.jpg" alt="Concept study · Jun 25 · 7:47 PM" width="1672" height="941"><figcaption>Concept study · Jun 25 · 7:47 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="43" style="--ar:1672 / 941"><img loading="lazy" src="_gallery/thumbs/t044.jpg" alt="Concept study · Jun 25 · 7:47 PM" width="1672" height="941"><figcaption>Concept study · Jun 25 · 7:47 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="44" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t045.jpg" alt="Concept study · Jun 25 · 7:49 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 7:49 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="45" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t046.jpg" alt="Concept study · Jun 25 · 8:02 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:02 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="46" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t047.jpg" alt="Concept study · Jun 25 · 8:04 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:04 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="47" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t048.jpg" alt="Concept study · Jun 25 · 8:05 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:05 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="48" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t049.jpg" alt="Concept study · Jun 25 · 8:06 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:06 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="49" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t050.jpg" alt="Concept study · Jun 25 · 8:07 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:07 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="50" style="--ar:1024 / 1536"><img loading="lazy" src="_gallery/thumbs/t051.jpg" alt="Concept study · Jun 25 · 8:09 PM" width="1024" height="1536"><figcaption>Concept study · Jun 25 · 8:09 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="51" style="--ar:1706 / 922"><img loading="lazy" src="_gallery/thumbs/t052.jpg" alt="Concept study · Jun 25 · 8:12 PM" width="1706" height="922"><figcaption>Concept study · Jun 25 · 8:12 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="52" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t053.jpg" alt="Concept study · Jun 25 · 8:13 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:13 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="53" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t054.jpg" alt="Concept study · Jun 25 · 8:20 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:20 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="54" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t055.jpg" alt="Concept study · Jun 25 · 8:20 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:20 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="55" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t056.jpg" alt="Concept study · Jun 25 · 8:21 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:21 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="56" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t057.jpg" alt="Concept study · Jun 25 · 8:23 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:23 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="57" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t058.jpg" alt="Concept study · Jun 25 · 8:23 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:23 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="58" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t059.jpg" alt="Concept study · Jun 25 · 8:23 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:23 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="59" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t060.jpg" alt="Concept study · Jun 25 · 8:23 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:23 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="60" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t061.jpg" alt="Concept study · Jun 25 · 8:23 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:23 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="61" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t062.jpg" alt="Concept study · Jun 25 · 8:23 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:23 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="62" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t063.jpg" alt="Concept study · Jun 25 · 8:24 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:24 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="63" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t064.jpg" alt="Concept study · Jun 25 · 8:25 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:25 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="64" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t065.jpg" alt="Concept study · Jun 25 · 8:25 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:25 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="65" style="--ar:1054 / 1492"><img loading="lazy" src="_gallery/thumbs/t066.jpg" alt="Concept study · Jun 25 · 8:27 PM" width="1054" height="1492"><figcaption>Concept study · Jun 25 · 8:27 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="66" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t067.jpg" alt="Concept study · Jun 25 · 8:28 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:28 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="67" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t068.jpg" alt="Concept study · Jun 25 · 8:28 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:28 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="68" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t069.jpg" alt="Concept study · Jun 25 · 8:28 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:28 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="69" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t070.jpg" alt="Concept study · Jun 25 · 8:28 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:28 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="70" style="--ar:2688 / 1152"><img loading="lazy" src="_gallery/thumbs/t071.jpg" alt="Content Calendar Visual Rich" width="2688" height="1152"><figcaption>Content Calendar Visual Rich</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="71" style="--ar:2560 / 1440"><img loading="lazy" src="_gallery/thumbs/t072.jpg" alt="Design Tower Full Overview" width="2560" height="1440"><figcaption>Design Tower Full Overview</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="72" style="--ar:1024 / 768"><img loading="lazy" src="_gallery/thumbs/t073.jpg" alt="“Consider how we break dow…”" width="1024" height="768"><figcaption>“Consider how we break dow…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="73" style="--ar:2224 / 1664"><img loading="lazy" src="_gallery/thumbs/t074.jpg" alt="“Microsoft windows 3d styl…”" width="2224" height="1664"><figcaption>“Microsoft windows 3d styl…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="74" style="--ar:752 / 1344"><img loading="lazy" src="_gallery/thumbs/t075.jpg" alt="“Mockup the next page of t…”" width="752" height="1344"><figcaption>“Mockup the next page of t…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="75" style="--ar:2224 / 1664"><img loading="lazy" src="_gallery/thumbs/t076.jpg" alt="“Please restyle all this i…”" width="2224" height="1664"><figcaption>“Please restyle all this i…”</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="76" style="--ar:2048 / 2048"><img loading="lazy" src="_gallery/thumbs/t077.jpg" alt="Page 05 Architecture Lab" width="2048" height="2048"><figcaption>Page 05 Architecture Lab</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="77" style="--ar:2048 / 2048"><img loading="lazy" src="_gallery/thumbs/t078.jpg" alt="Page 06 AI Workforce Part1" width="2048" height="2048"><figcaption>Page 06 AI Workforce Part1</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="78" style="--ar:2048 / 2048"><img loading="lazy" src="_gallery/thumbs/t079.jpg" alt="Page 07 AI Workforce Part2" width="2048" height="2048"><figcaption>Page 07 AI Workforce Part2</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="79" style="--ar:2048 / 2048"><img loading="lazy" src="_gallery/thumbs/t080.jpg" alt="Page 08 Strategy Command Center" width="2048" height="2048"><figcaption>Page 08 Strategy Command Center</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="80" style="--ar:2048 / 2048"><img loading="lazy" src="_gallery/thumbs/t081.jpg" alt="Page 09 Implementation Guide" width="2048" height="2048"><figcaption>Page 09 Implementation Guide</figcaption><span class="zoom" aria-hidden="true">View</span></figure>
+    </div>
+  </section>
+  <section class="chapter" id="internal-pipeline">
+    <header class="chapter-head">
+      <div class="chapter-index">04</div>
+      <div class="chapter-meta">
+        <p class="kicker">Chapter 04 · System Maps</p>
+        <h2>Internal Pipeline</h2>
+        <p class="blurb">For the Play Set itself, not for clients. Rich flow maps, sales and task pipelines, and the complete UX system overview — the wiring diagram behind the experience.</p>
+        <p class="chapter-count"><span>11</span> renders · <span class="folder-name">FOR PLAYSET AND NOT CLIENTS</span></p>
+        
+      </div>
+    </header>
+    <div class="grid">
+      <figure class="card" data-idx="81" style="--ar:1024 / 1536"><img loading="lazy" src="_gallery/thumbs/t082.jpg" alt="Concept study · Jun 25 · 8:13 PM" width="1024" height="1536"><figcaption>Concept study · Jun 25 · 8:13 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="82" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t083.jpg" alt="Concept study · Jun 25 · 8:22 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:22 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="83" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t084.jpg" alt="Concept study · Jun 25 · 8:26 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:26 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="84" style="--ar:1240 / 1269"><img loading="lazy" src="_gallery/thumbs/t085.jpg" alt="Concept study · Jun 25 · 8:26 PM" width="1240" height="1269"><figcaption>Concept study · Jun 25 · 8:26 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="85" style="--ar:2688 / 1152"><img loading="lazy" src="_gallery/thumbs/t086.jpg" alt="Playset Spatial Process Flow" width="2688" height="1152"><figcaption>Playset Spatial Process Flow</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="86" style="--ar:2688 / 1152"><img loading="lazy" src="_gallery/thumbs/t087.jpg" alt="Project Pipeline Clean 3D Environment" width="2688" height="1152"><figcaption>Project Pipeline Clean 3D Environment</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="87" style="--ar:2688 / 1152"><img loading="lazy" src="_gallery/thumbs/t088.jpg" alt="Project Pipeline Clean 3D Environment" width="2688" height="1152"><figcaption>Project Pipeline Clean 3D Environment</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="88" style="--ar:2688 / 1152"><img loading="lazy" src="_gallery/thumbs/t089.jpg" alt="Sales Pipeline Visual Rich" width="2688" height="1152"><figcaption>Sales Pipeline Visual Rich</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="89" style="--ar:2688 / 1152"><img loading="lazy" src="_gallery/thumbs/t090.jpg" alt="Task Management Visual Rich" width="2688" height="1152"><figcaption>Task Management Visual Rich</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="90" style="--ar:2688 / 1152"><img loading="lazy" src="_gallery/thumbs/t091.jpg" alt="Team Roster Clean 3D Environment" width="2688" height="1152"><figcaption>Team Roster Clean 3D Environment</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="91" style="--ar:2688 / 1152"><img loading="lazy" src="_gallery/thumbs/t092.jpg" alt="UX Flow Map Complete System" width="2688" height="1152"><figcaption>UX Flow Map Complete System</figcaption><span class="zoom" aria-hidden="true">View</span></figure>
+    </div>
+  </section>
+  <section class="chapter" id="westcol">
+    <header class="chapter-head">
+      <div class="chapter-index">05</div>
+      <div class="chapter-meta">
+        <p class="kicker">Chapter 05 · Client Work</p>
+        <h2>Westcol</h2>
+        <p class="blurb">The system applied. A focused set of concept renders exploring the Play Set look for the Westcol world.</p>
+        <p class="chapter-count"><span>9</span> renders · <span class="folder-name">Westcol</span></p>
+        
+      </div>
+    </header>
+    <div class="grid">
+      <figure class="card" data-idx="92" style="--ar:1024 / 1536"><img loading="lazy" src="_gallery/thumbs/t093.jpg" alt="Concept study · Jun 25 · 7:44 PM" width="1024" height="1536"><figcaption>Concept study · Jun 25 · 7:44 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="93" style="--ar:1195 / 1316"><img loading="lazy" src="_gallery/thumbs/t094.jpg" alt="Concept study · Jun 25 · 7:45 PM" width="1195" height="1316"><figcaption>Concept study · Jun 25 · 7:45 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="94" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t095.jpg" alt="Concept study · Jun 25 · 7:45 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 7:45 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="95" style="--ar:1086 / 1448"><img loading="lazy" src="_gallery/thumbs/t096.jpg" alt="Concept study · Jun 25 · 8:11 PM" width="1086" height="1448"><figcaption>Concept study · Jun 25 · 8:11 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="96" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t097.jpg" alt="Concept study · Jun 25 · 8:15 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:15 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="97" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t098.jpg" alt="Concept study · Jun 25 · 8:15 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:15 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="98" style="--ar:1619 / 971"><img loading="lazy" src="_gallery/thumbs/t099.jpg" alt="Concept study · Jun 25 · 8:16 PM" width="1619" height="971"><figcaption>Concept study · Jun 25 · 8:16 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="99" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t100.jpg" alt="Concept study · Jun 25 · 8:17 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:17 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure><figure class="card" data-idx="100" style="--ar:1536 / 1024"><img loading="lazy" src="_gallery/thumbs/t101.jpg" alt="Concept study · Jun 25 · 8:17 PM" width="1536" height="1024"><figcaption>Concept study · Jun 25 · 8:17 PM</figcaption><span class="zoom" aria-hidden="true">View</span></figure>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="fmark"></div>
+  <p class="big">Aleja&rsquo;s Favorites &middot; The Play Set</p>
+  <p>101 curated renders across 5 chapters &middot; Game of Life OS</p>
+  <p style="color:var(--dim);font-size:12px">Click any render to view it full resolution. Use &larr; &rarr; to move between images.</p>
+</footer>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <div class="lb-counter" id="lbCount"></div>
+  <button class="lb-btn lb-close" id="lbClose" aria-label="Close">&times;</button>
+  <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous">&#8249;</button>
+  <button class="lb-btn lb-next" id="lbNext" aria-label="Next">&#8250;</button>
+  <div class="lb-stage">
+    <img class="lb-img" id="lbImg" alt="">
+    <div class="lb-cap" id="lbCap"></div>
+  </div>
+</div>
+
+<script>
+const ITEMS = [{"full": "BUTOMS/01_We_Need_Jobs.png", "cap": "01 We Need Jobs", "chapter": "Building Blocks"}, {"full": "BUTOMS/02_Getting_Started.png", "cap": "02 Getting Started", "chapter": "Building Blocks"}, {"full": "BUTOMS/07_Project_Workflow.png", "cap": "07 Project Workflow", "chapter": "Building Blocks"}, {"full": "BUTOMS/10_Full_Operation.png", "cap": "10 Full Operation", "chapter": "Building Blocks"}, {"full": "BUTOMS/Image%202%20-%20Interactive%20Path%20Hologram.png", "cap": "Image 2 \u2014 Interactive Path Hologram", "chapter": "Building Blocks"}, {"full": "BUTOMS/Image%203%20-%20The%20Branching%20Crossroads.png", "cap": "Image 3 \u2014 The Branching Crossroads", "chapter": "Building Blocks"}, {"full": "BUTOMS/3D%20Button%20-%20CHARACTER.png", "cap": "3D Button \u2014 CHARACTER", "chapter": "Building Blocks"}, {"full": "BUTOMS/3D%20Button%20-%20CHARACTER%20%281%29.png", "cap": "3D Button \u2014 CHARACTER", "chapter": "Building Blocks"}, {"full": "BUTOMS/3D%20Button%20-%20USERS%20Rescaled.png", "cap": "3D Button \u2014 USERS Rescaled", "chapter": "Building Blocks"}, {"full": "BUTOMS/3D%20Button%20-%20CONNECTOR.png", "cap": "3D Button \u2014 CONNECTOR", "chapter": "Building Blocks"}, {"full": "BUTOMS/3D%20Button%20-%20FILES.png", "cap": "3D Button \u2014 FILES", "chapter": "Building Blocks"}, {"full": "BUTOMS/3D%20Button%20-%20GOALS.png", "cap": "3D Button \u2014 GOALS", "chapter": "Building Blocks"}, {"full": "BUTOMS/3D%20Button%20-%20TASKS.png", "cap": "3D Button \u2014 TASKS", "chapter": "Building Blocks"}, {"full": "BUTOMS/3D%20Button%20-%20WORKSTATIONS.png", "cap": "3D Button \u2014 WORKSTATIONS", "chapter": "Building Blocks"}, {"full": "BUTOMS/3D%20Button%20-%20WORLD%20STYLING.png", "cap": "3D Button \u2014 WORLD STYLING", "chapter": "Building Blocks"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_02_10%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:02 PM", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_create-a-clean-profession_hEYy4z9vqL.png", "cap": "\u201cCreate a clean profession\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_create-mobile-friendly-ve_9R1D7F5NYZ.png", "cap": "\u201cCreate mobile friendly ve\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_make-these-more-3d-more-a_kL8YxP816B.png", "cap": "\u201cMake these more 3d more a\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_make-these-more-3d-more-a_LUvTLxTswO.png", "cap": "\u201cMake these more 3d more a\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_make-these-more-3d-more-a_LUvVg4tswO.png", "cap": "\u201cMake these more 3d more a\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_make-these-more-3d-more-a_Pi5IPB642C.png", "cap": "\u201cMake these more 3d more a\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_make-these-more-3d-more-a_SOEewPTUb8.png", "cap": "\u201cMake these more 3d more a\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_now-instead-of-just-float_DBNLj0Ypcl.png", "cap": "\u201cNow instead of just float\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_now-instead-of-just-float_kL8YnLl16B.png", "cap": "\u201cNow instead of just float\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_now-instead-of-just-float_rltcWkzxtc.png", "cap": "\u201cNow instead of just float\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_please-restyle-all-this-i_Kj89v2Skqp.png", "cap": "\u201cPlease restyle all this i\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_show-me-a-3d-user-interfa_brXAeSv5Y2.png", "cap": "\u201cShow me a 3d user interfa\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_show-me-a-3d-user-interfa_dI3l4MWXSL.png", "cap": "\u201cShow me a 3d user interfa\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_show-me-a-3d-user-interfa_Pi5Ibz242C.png", "cap": "\u201cShow me a 3d user interfa\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_show-me-a-highly-detailed_e8isWhAdqL.png", "cap": "\u201cShow me a highly detailed\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_show-me-a-highly-detailed_mCnOAi0hJQ.png", "cap": "\u201cShow me a highly detailed\u2026\u201d", "chapter": "Template Studies"}, {"full": "NIKELODEON%20%3A%20PLAY%20SET%20TEMPLATE/magnific_the-term-agent-is-no-diff_74H0WZ8JAL.png", "cap": "\u201cThe term agent is no diff\u2026\u201d", "chapter": "Template Studies"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/1000294610.png", "cap": "Concept study", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/1000294611.jpg", "cap": "Concept study", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/1000294612.png", "cap": "Concept study", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/Aleja_Justin_Superhero_Duo.png", "cap": "Aleja Justin Superhero Duo", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/Aleja_Superhero_Fashionable.png", "cap": "Aleja Superhero Fashionable", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2014%2C%202026%2C%2001_37_40%20PM.png", "cap": "Concept study \u00b7 Jun 14 \u00b7 1:37 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2007_44_49%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 7:44 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2007_44_54%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 7:44 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2007_47_17%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 7:47 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2007_47_30%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 7:47 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2007_47_33%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 7:47 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2007_49_31%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 7:49 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_02_34%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:02 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_04_54%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:04 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_05_30%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:05 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_06_29%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:06 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_07_45%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:07 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_09_24%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:09 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_12_32%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:12 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_13_11%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:13 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_20_05%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:20 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_20_39%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:20 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_21_13%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:21 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_23_00%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:23 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_23_12%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:23 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_23_22%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:23 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_23_41%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:23 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_23_49%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:23 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_23_57%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:23 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_24_10%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:24 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_25_10%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:25 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_25_40%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:25 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_27_50%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:27 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_28_13%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:28 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_28_24%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:28 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_28_38%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:28 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_28_49%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:28 PM", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/Content_Calendar_Visual_Rich.png", "cap": "Content Calendar Visual Rich", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/Design_Tower_Full_Overview.png", "cap": "Design Tower Full Overview", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/magnific_consider-how-we-break-dow_poiHiOJehw.png", "cap": "\u201cConsider how we break dow\u2026\u201d", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/magnific_microsoft-windows-3d-styl_jSvZ7gcLD0.png", "cap": "\u201cMicrosoft windows 3d styl\u2026\u201d", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/magnific_mockup-the-next-page-of-t_IazSXGktvE.png", "cap": "\u201cMockup the next page of t\u2026\u201d", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/magnific_please-restyle-all-this-i_Kj89q5Vkqp.png", "cap": "\u201cPlease restyle all this i\u2026\u201d", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/Page_05_Architecture_Lab.png", "cap": "Page 05 Architecture Lab", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/Page_06_AI_Workforce_Part1.png", "cap": "Page 06 AI Workforce Part1", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/Page_07_AI_Workforce_Part2.png", "cap": "Page 07 AI Workforce Part2", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/Page_08_Strategy_Command_Center.png", "cap": "Page 08 Strategy Command Center", "chapter": "The Company System"}, {"full": "PLAY%20SET%20TEMPLATES%20COMPANY%20SISTEM/Page_09_Implementation_Guide.png", "cap": "Page 09 Implementation Guide", "chapter": "The Company System"}, {"full": "FOR%20PLAYSET%20AND%20NOT%20CLIENTS/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_13_52%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:13 PM", "chapter": "Internal Pipeline"}, {"full": "FOR%20PLAYSET%20AND%20NOT%20CLIENTS/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_22_04%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:22 PM", "chapter": "Internal Pipeline"}, {"full": "FOR%20PLAYSET%20AND%20NOT%20CLIENTS/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_26_15%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:26 PM", "chapter": "Internal Pipeline"}, {"full": "FOR%20PLAYSET%20AND%20NOT%20CLIENTS/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_26_31%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:26 PM", "chapter": "Internal Pipeline"}, {"full": "FOR%20PLAYSET%20AND%20NOT%20CLIENTS/Playset_Spatial_Process_Flow_UE7.png", "cap": "Playset Spatial Process Flow", "chapter": "Internal Pipeline"}, {"full": "FOR%20PLAYSET%20AND%20NOT%20CLIENTS/Project_Pipeline_Clean_3D_Environment%20%281%29.png", "cap": "Project Pipeline Clean 3D Environment", "chapter": "Internal Pipeline"}, {"full": "FOR%20PLAYSET%20AND%20NOT%20CLIENTS/Project_Pipeline_Clean_3D_Environment.png", "cap": "Project Pipeline Clean 3D Environment", "chapter": "Internal Pipeline"}, {"full": "FOR%20PLAYSET%20AND%20NOT%20CLIENTS/Sales_Pipeline_Visual_Rich.png", "cap": "Sales Pipeline Visual Rich", "chapter": "Internal Pipeline"}, {"full": "FOR%20PLAYSET%20AND%20NOT%20CLIENTS/Task_Management_Visual_Rich.png", "cap": "Task Management Visual Rich", "chapter": "Internal Pipeline"}, {"full": "FOR%20PLAYSET%20AND%20NOT%20CLIENTS/Team_Roster_Clean_3D_Environment.png", "cap": "Team Roster Clean 3D Environment", "chapter": "Internal Pipeline"}, {"full": "FOR%20PLAYSET%20AND%20NOT%20CLIENTS/UX_Flow_Map_Complete_System.png", "cap": "UX Flow Map Complete System", "chapter": "Internal Pipeline"}, {"full": "Westcol/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2007_44_23%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 7:44 PM", "chapter": "Westcol"}, {"full": "Westcol/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2007_45_04%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 7:45 PM", "chapter": "Westcol"}, {"full": "Westcol/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2007_45_11%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 7:45 PM", "chapter": "Westcol"}, {"full": "Westcol/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_11_05%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:11 PM", "chapter": "Westcol"}, {"full": "Westcol/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_15_02%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:15 PM", "chapter": "Westcol"}, {"full": "Westcol/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_15_18%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:15 PM", "chapter": "Westcol"}, {"full": "Westcol/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_16_24%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:16 PM", "chapter": "Westcol"}, {"full": "Westcol/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_17_11%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:17 PM", "chapter": "Westcol"}, {"full": "Westcol/ChatGPT%20Image%20Jun%2025%2C%202026%2C%2008_17_39%20PM.png", "cap": "Concept study \u00b7 Jun 25 \u00b7 8:17 PM", "chapter": "Westcol"}];
+let cur = 0;
+const lb=document.getElementById('lb'), lbImg=document.getElementById('lbImg'),
+  lbCap=document.getElementById('lbCap'), lbCount=document.getElementById('lbCount');
+
+function show(i){
+  cur=(i+ITEMS.length)%ITEMS.length;
+  const it=ITEMS[cur];
+  lbImg.classList.remove('ready');
+  const im=new Image();
+  im.onload=()=>{lbImg.src=it.full;lbImg.classList.add('ready');};
+  im.src=it.full;
+  lbImg.src=it.full;
+  requestAnimationFrame(()=>lbImg.classList.add('ready'));
+  lbCap.innerHTML='<span class="ch">'+it.chapter+'</span>'+it.cap;
+  lbCount.innerHTML='<b>'+String(cur+1).padStart(3,'0')+'</b> / '+String(ITEMS.length).padStart(3,'0');
+  // preload neighbours
+  [1,-1].forEach(d=>{const n=new Image();n.src=ITEMS[(cur+d+ITEMS.length)%ITEMS.length].full;});
+}
+function open(i){show(i);lb.classList.add('open');document.body.style.overflow='hidden';}
+function close(){lb.classList.remove('open');document.body.style.overflow='';}
+
+document.querySelectorAll('.card').forEach(c=>{
+  c.addEventListener('click',()=>open(+c.dataset.idx));
+});
+document.getElementById('lbClose').onclick=close;
+document.getElementById('lbNext').onclick=e=>{e.stopPropagation();show(cur+1);};
+document.getElementById('lbPrev').onclick=e=>{e.stopPropagation();show(cur-1);};
+lb.addEventListener('click',e=>{if(e.target===lb)close();});
+document.addEventListener('keydown',e=>{
+  if(!lb.classList.contains('open'))return;
+  if(e.key==='Escape')close();
+  else if(e.key==='ArrowRight')show(cur+1);
+  else if(e.key==='ArrowLeft')show(cur-1);
+});
+
+// scroll reveal
+const io=new IntersectionObserver((es)=>{
+  es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}});
+},{rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.card').forEach(c=>io.observe(c));
+
+// topbar + rail
+const topbar=document.getElementById('topbar'), rail=document.getElementById('rail');
+function onScroll(){
+  topbar.classList.toggle('solid',scrollY>60);
+  const h=document.documentElement.scrollHeight-innerHeight;
+  rail.style.height=(h>0?(scrollY/h*100):0)+'%';
+}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+</script>
+</body>
+</html>

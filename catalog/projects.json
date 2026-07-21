@@ -1060,6 +1060,38 @@
         "Marketing site for the Stream Deck plugin — Style Lab, device shop, billing sections",
         "The actual plugin source (TypeScript, Rollup) lives in the original folder"
       ]
+    },
+    {
+      "slug": "aleja-favorites",
+      "name": "The Play Set — Favorites",
+      "category": "Sites & Case Studies",
+      "tagline": "101 curated renders, sequenced as a build",
+      "description": "A curated visual gallery of AI-generated concept art for 'The Play Set' company system — hand-picked by Aleja from every image the generators produced. Sequenced as five chapters: raw building-block components, template studies, the full company system, internal pipeline maps, and the Westcol client work.",
+      "tech": [
+        "HTML",
+        "CSS",
+        "Vanilla JS",
+        "Masonry Grid"
+      ],
+      "status": "live",
+      "embed": {
+        "type": "local",
+        "path": "p/aleja-favorites/"
+      },
+      "source": "AntiGravity Rebuild/projects/aleja-favorites (original Desktop folder removed after migration)",
+      "thumbnail": "thumbnails/aleja-favorites.jpg",
+      "depth": 2,
+      "explore": [
+        "Scroll through all five chapters, or jump via the top nav",
+        "Click any image to open the full-res lightbox — arrow keys or the side buttons page through all 101",
+        "Chapter 01 (Building Blocks) shows the raw 3D button/figure components everything else is built from",
+        "The Company System chapter is the deepest — full page mockups for the AI workforce and strategy command center"
+      ],
+      "highlights": [
+        "101 hand-picked renders across 5 chapters, masonry grid with scroll-reveal",
+        "Full-res lightbox with keyboard navigation and neighbor preloading",
+        "A living archive: the original folder is gone, this is now the only copy"
+      ]
     }
   ]
 }

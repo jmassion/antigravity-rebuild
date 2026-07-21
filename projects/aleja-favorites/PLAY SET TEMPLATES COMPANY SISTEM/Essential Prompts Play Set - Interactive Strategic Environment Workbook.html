@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Essential Prompts Play Set Workbook</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'MiSans-Regular';
+            src: url('https://assets-persist.lovart.ai/agent-static-assets/MiSans-Regular.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'MiSans-Demibold';
+            src: url('https://assets-persist.lovart.ai/agent-static-assets/MiSans-Demibold.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'MiSans-Bold';
+            src: url('https://assets-persist.lovart.ai/agent-static-assets/MiSans-Bold.ttf') format('truetype');
+        }
+
+        :root {
+            --pink: #FF6B9D;
+            --cyan: #00D4FF;
+            --blue: #4A90E2;
+            --purple: #9B59B6;
+            --dark-bg: #0B0C10;
+            --dark-card: #1F2833;
+            --light-text: #C5C6C7;
+            --white: #FFFFFF;
+            --gradient-1: linear-gradient(135deg, var(--pink), var(--purple));
+            --gradient-2: linear-gradient(135deg, var(--cyan), var(--blue));
+            --gradient-3: linear-gradient(135deg, var(--dark-bg), var(--dark-card));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MiSans-Regular', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            width: 1920px;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'MiSans-Bold', sans-serif;
+        }
+
+        .page {
+            width: 1920px;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        /* Cover Page */
+        .cover-page {
+            height: 1080px;
+            background: linear-gradient(135deg, #111 0%, #2a2a35 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+            text-align: center;
+            position: relative;
+        }
+
+        .cover-bg-accents {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .accent-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+        }
+
+        .cover-content {
+            z-index: 2;
+            max-width: 1400px;
+        }
+
+        .cover-title {
+            font-size: 120px;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            background: -webkit-linear-gradient(0deg, var(--cyan), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        .cover-subtitle {
+            font-size: 48px;
+            font-family: 'MiSans-Demibold';
+            margin-bottom: 20px;
+            color: var(--cyan);
+        }
+
+        .cover-tagline {
+            font-size: 32px;
+            color: var(--light-text);
+            margin-bottom: 80px;
+        }
+
+        .cover-credits {
+            font-size: 24px;
+            color: #888;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 20px;
+            display: inline-block;
+        }
+
+        /* TOC Page */
+        .toc-page {
+            padding: 120px 200px;
+            background: #fafafa;
+        }
+
+        .section-header-main {
+            font-size: 72px;
+            margin-bottom: 80px;
+            color: #111;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .section-header-main::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 150px;
+            height: 8px;
+            background: var(--gradient-1);
+            border-radius: 4px;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 60px;
+        }
+
+        .toc-item {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: flex-start;
+            transition: transform 0.3s ease;
+            border-left: 8px solid;
+        }
+
+        .toc-item:nth-child(1) { border-color: var(--pink); }
+        .toc-item:nth-child(2) { border-color: var(--cyan); }
+        .toc-item:nth-child(3) { border-color: var(--blue); }
+        .toc-item:nth-child(4) { border-color: var(--purple); }
+        .toc-item:nth-child(5) { border-color: #f39c12; }
+        .toc-item:nth-child(6) { border-color: #2ecc71; }
+
+        .toc-icon {
+            font-size: 48px;
+            margin-right: 30px;
+            color: #555;
+        }
+
+        .toc-content h3 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #222;
+        }
+
+        .toc-content p {
+            font-size: 20px;
+            color: #666;
+        }
+
+        /* Common Content Page Styles */
+        .content-page {
+            padding: 100px 160px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 60px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 30px;
+        }
+
+        .page-icon {
+            font-size: 64px;
+            margin-right: 30px;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-title {
+            font-size: 56px;
+            color: #111;
+        }
+
+        .intro-text {
+            font-size: 28px;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 50px;
+            font-family: 'MiSans-Demibold';
+        }
+
+        .hero-image {
+            width: 100%;
+            border-radius: 24px;
+            margin-bottom: 60px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            object-fit: cover;
+        }
+
+        /* Highlight Boxes */
+        .highlight-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .highlight-box {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 6px; height: 100%;
+            background: var(--gradient-1);
+        }
+
+        .highlight-box h4 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #222;
+        }
+
+        .highlight-box p {
+            font-size: 20px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Section 2: Discovery Zone */
+        .question-box {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .q-number {
+            position: absolute;
+            top: -25px;
+            left: 40px;
+            background: var(--gradient-2);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-family: 'MiSans-Bold';
+            box-shadow: 0 5px 15px rgba(0,212,255,0.4);
+        }
+
+        .question-box h3 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #111;
+            margin-top: 10px;
+        }
+
+        .answer-lines {
+            margin-top: 30px;
+        }
+
+        .line {
+            border-bottom: 2px dashed #ccc;
+            height: 40px;
+            width: 100%;
+        }
+
+        /* Section 3: Architecture Lab */
+        .layer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .layer-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-top: 6px solid;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .layer-card:nth-child(3n+1) { border-color: var(--pink); }
+        .layer-card:nth-child(3n+2) { border-color: var(--cyan); }
+        .layer-card:nth-child(3n+3) { border-color: var(--purple); }
+
+        .layer-number {
+            font-size: 20px;
+            color: #888;
+            font-family: 'MiSans-Bold';
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .layer-card h3 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #222;
+        }
+
+        .layer-card p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .layer-q {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #444;
+            font-style: italic;
+        }
+
+        /* Section 4: AI Agents */
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .agent-card {
+            background: #1F2833;
+            color: #fff;
+            border-radius: 16px;
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 100px; height: 100px;
+            background: var(--gradient-2);
+            opacity: 0.1;
+            border-radius: 0 0 0 100%;
+        }
+
+        .agent-role {
+            font-size: 24px;
+            font-family: 'MiSans-Bold';
+            color: var(--cyan);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .agent-role i {
+            margin-right: 15px;
+            font-size: 32px;
+            color: var(--pink);
+        }
+
+        .agent-detail {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: var(--light-text);
+            line-height: 1.5;
+        }
+        
+        .agent-detail strong {
+            color: #fff;
+        }
+
+        .worksheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 50px;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .worksheet-table th {
+            background: #2a2a35;
+            color: #fff;
+            padding: 20px;
+            text-align: left;
+            font-size: 20px;
+            font-family: 'MiSans-Demibold';
+        }
+
+        .worksheet-table td {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            font-size: 18px;
+        }
+
+        /* Back Cover */
+        .back-cover {
+            height: 1080px;
+            background: #111;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 100px;
+            text-align: center;
+        }
+
+        .takeaway-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 60px;
+            max-width: 1000px;
+            margin-bottom: 60px;
+        }
+
+        .takeaway-box h2 {
+            font-size: 48px;
+            margin-bottom: 40px;
+            color: var(--cyan);
+        }
+
+        .takeaway-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .takeaway-list li {
+            font-size: 26px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        .takeaway-list li i {
+            color: var(--pink);
+            margin-right: 20px;
+            font-size: 32px;
+        }
+
+        .cta-text {
+            font-size: 56px;
+            font-family: 'MiSans-Bold';
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 40px;
+        }
+        
+        .page-footer {
+            position: absolute;
+            bottom: 40px;
+            right: 80px;
+            font-size: 24px;
+            color: #999;
+            font-family: 'MiSans-Bold';
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Cover Page -->
+    <div class="page cover-page">
+        <div class="cover-bg-accents">
+            <div class="accent-circle" style="width: 600px; height: 600px; background: var(--pink); top: -100px; left: -100px;"></div>
+            <div class="accent-circle" style="width: 800px; height: 800px; background: var(--cyan); bottom: -200px; right: -200px;"></div>
+            <div class="accent-circle" style="width: 500px; height: 500px; background: var(--purple); top: 30%; left: 40%;"></div>
+        </div>
+        <div class="cover-content">
+            <h1 class="cover-title">Essential Prompts<br>Play Set</h1>
+            <h2 class="cover-subtitle">Interactive Strategic Environment Workbook</h2>
+            <p class="cover-tagline">Transform Your Organization into a Living Operating System</p>
+            <div class="cover-credits">Featuring Justin Massion & Aleja Guerra</div>
+        </div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="page toc-page">
+        <h2 class="section-header-main">Table of Contents</h2>
+        <div class="toc-grid">
+            <div class="toc-item">
+                <i class="ri-compass-3-line toc-icon"></i>
+                <div class="toc-content">
+                    <h3>Section 1: Welcome & Navigation</h3>
+                    <p>Introduction to your living strategic environment</p>
+                </div>
+            </div>
+            <div class="toc-item">
+                <i class="ri-search-eye-line toc-icon"></i>
+                <div class="toc-content">
+                    <h3>Section 2: Discovery Zone</h3>
+                    <p>10 Core Questions - Your Strategic Intake Process</p>
+                </div>
+            </div>
+            <div class="toc-item">
+                <i class="ri-building-4-line toc-icon"></i>
+                <div class="toc-content">
+                    <h3>Section 3: Architecture Lab</h3>
+                    <p>9 Layers - Building Your Operating System</p>
+                </div>
+            </div>
+            <div class="toc-item">
+                <i class="ri-robot-2-line toc-icon"></i>
+                <div class="toc-content">
+                    <h3>Section 4: AI Agent Workforce</h3>
+                    <p>15 Roles - Your Virtual Workforce</p>
+                </div>
+            </div>
+            <div class="toc-item">
+                <i class="ri-dashboard-3-line toc-icon"></i>
+                <div class="toc-content">
+                    <h3>Section 5: Strategy Command Center</h3>
+                    <p>Strategic Planning & Execution Framework</p>
+                </div>
+            </div>
+            <div class="toc-item">
+                <i class="ri-route-line toc-icon"></i>
+                <div class="toc-content">
+                    <h3>Section 6: Implementation Guide</h3>
+                    <p>Getting Started - Your 5-Phase Roadmap</p>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">02</div>
+    </div>
+
+    <!-- Section 1: Welcome -->
+    <div class="page content-page">
+        <div class="page-header">
+            <i class="ri-compass-3-fill page-icon"></i>
+            <h2 class="page-title">Section 1: Welcome & Navigation</h2>
+        </div>
+        
+        <p class="intro-text">Welcome to Your Living Strategic Environment. This workbook transforms traditional 2D dashboards into navigable 3D operating environments. Think of this as your virtual headquarters with unlimited office space and AI workforce.</p>
+        
+        <img src="https://a.lovart.ai/artifacts/agent/zCWfQgROWXLBjjWi.png" alt="Welcome and Navigation Hub" class="hero-image">
+        
+        <div class="highlight-grid">
+            <div class="highlight-box">
+                <h4>Physical 3D Workstations</h4>
+                <p>Interact with realistic mechanics that bring your data and processes to life in a spatial environment.</p>
+            </div>
+            <div class="highlight-box">
+                <h4>Spatial Navigation</h4>
+                <p>Move fluidly through different departmental zones, creating a natural flow of information and strategy.</p>
+            </div>
+            <div class="highlight-box">
+                <h4>Grounded Aesthetics</h4>
+                <p>Designed with a tangible feel—no floating holograms—ensuring a professional, focused workspace.</p>
+            </div>
+            <div class="highlight-box">
+                <h4>Interactive Environment</h4>
+                <p>A living system where every component reacts and adapts to your strategic inputs.</p>
+            </div>
+        </div>
+        <div class="page-footer">03</div>
+    </div>
+
+    <!-- Section 2: Discovery Zone -->
+    <div class="page content-page">
+        <div class="page-header">
+            <i class="ri-search-eye-fill page-icon"></i>
+            <h2 class="page-title">Section 2: Discovery Zone</h2>
+        </div>
+        
+        <p class="intro-text">10 Core Discovery Questions - Your Strategic Intake Process. Complete these questions before moving to the Architecture Lab.</p>
+        
+        <img src="https://a.lovart.ai/artifacts/agent/nhvfGFOb5h3Q41Ds.png" alt="Discovery Zone" class="hero-image">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+            <div class="question-box">
+                <div class="q-number">1</div>
+                <h3>What is the company's core purpose?</h3>
+                <div class="answer-lines">
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                </div>
+            </div>
+            <div class="question-box">
+                <div class="q-number">2</div>
+                <h3>What are the key problems to solve?</h3>
+                <div class="answer-lines">
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                </div>
+            </div>
+        </div>
+        <div class="page-footer">04</div>
+    </div>
+
+    <!-- Section 3: Architecture Lab -->
+    <div class="page content-page">
+        <div class="page-header">
+            <i class="ri-building-4-fill page-icon"></i>
+            <h2 class="page-title">Section 3: Architecture Lab</h2>
+        </div>
+        
+        <p class="intro-text">9 Architectural Layers - Building Your Operating System.</p>
+        
+        <img src="https://a.lovart.ai/artifacts/agent/7RfCafs9gvKDoX2P.png" alt="Architecture Lab" class="hero-image">
+        
+        <div class="layer-grid">
+            <div class="layer-card">
+                <div class="layer-number">Layer 1</div>
+                <h3>Purpose & Vision</h3>
+                <p>Define core mission and long-term vision of the organization.</p>
+                <div class="layer-q">What drives the organization? What's the north star?</div>
+            </div>
+            <div class="layer-card">
+                <div class="layer-number">Layer 2</div>
+                <h3>System Model</h3>
+                <p>Establish overall structure and interconnecting components.</p>
+                <div class="layer-q">What are the main subsystems? How do they relate?</div>
+            </div>
+            <div class="layer-card">
+                <div class="layer-number">Layer 3</div>
+                <h3>Flow & Processes</h3>
+                <p>Design workflows and map processes for efficiency.</p>
+                <div class="layer-q">What are the critical workflows? Where are bottlenecks?</div>
+            </div>
+        </div>
+        <div class="page-footer">06</div>
+    </div>
+
+    <!-- Section 4: AI Agents -->
+    <div class="page content-page">
+        <div class="page-header">
+            <i class="ri-robot-2-fill page-icon"></i>
+            <h2 class="page-title">Section 4: AI Agent Workforce</h2>
+        </div>
+        
+        <p class="intro-text">Your Virtual Workforce - 15 AI Agent Roles.<br>Unlimited AI agents ready to work for pennies in your virtual office.</p>
+        
+        <img src="https://a.lovart.ai/artifacts/agent/GJ2bO57Pjw84fruN.png" alt="AI Agent Workforce" class="hero-image">
+        
+        <div class="agent-grid">
+            <div class="agent-card">
+                <div class="agent-role"><i class="ri-user-star-line"></i> Executive Chief of Staff</div>
+                <div class="agent-detail"><strong>Role:</strong> Strategic coordination and executive support</div>
+                <div class="agent-detail"><strong>Tasks:</strong> Prioritization, decision support, cross-functional alignment</div>
+            </div>
+            <div class="agent-card">
+                <div class="agent-role"><i class="ri-cpu-line"></i> Systems Architect</div>
+                <div class="agent-detail"><strong>Role:</strong> System design and technical architecture</div>
+                <div class="agent-detail"><strong>Tasks:</strong> Blueprint creation, technical strategy, integration design</div>
+            </div>
+            <div class="agent-card">
+                <div class="agent-role"><i class="ri-palette-line"></i> Creative Director</div>
+                <div class="agent-detail"><strong>Role:</strong> Brand and creative vision</div>
+                <div class="agent-detail"><strong>Tasks:</strong> Visual identity, creative strategy, brand consistency</div>
+            </div>
+        </div>
+        <div class="page-footer">09</div>
+    </div>
+
+    <!-- Section 5: Strategy Command Center -->
+    <div class="page content-page">
+        <div class="page-header">
+            <i class="ri-dashboard-3-fill page-icon"></i>
+            <h2 class="page-title">Section 5: Strategy Command Center</h2>
+        </div>
+        
+        <p class="intro-text">Strategic Planning & Execution Framework.</p>
+        
+        <img src="https://a.lovart.ai/artifacts/agent/6YwC5W9NWf1hazi4.png" alt="Strategy Command Center" class="hero-image">
+        
+        <div style="column-count: 2; column-gap: 60px; margin-top: 40px;">
+            <div style="margin-bottom: 30px; background: #fff; padding: 25px; border-radius: 12px; border-left: 5px solid var(--blue); box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <h3 style="font-size: 24px; margin-bottom: 10px;">1. Executive Summary</h3>
+                <p style="color: #666; margin-bottom: 15px;">Overview of the strategic initiative, key objectives and expected outcomes.</p>
+                <div style="font-size: 18px;"><i class="ri-checkbox-blank-line"></i> Completed</div>
+            </div>
+            <div style="margin-bottom: 30px; background: #fff; padding: 25px; border-radius: 12px; border-left: 5px solid var(--cyan); box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <h3 style="font-size: 24px; margin-bottom: 10px;">2. System Architecture</h3>
+                <p style="color: #666; margin-bottom: 15px;">Visual blueprint of the complete system, component relationships.</p>
+                <div style="font-size: 18px;"><i class="ri-checkbox-blank-line"></i> Completed</div>
+            </div>
+            <div style="margin-bottom: 30px; background: #fff; padding: 25px; border-radius: 12px; border-left: 5px solid var(--pink); box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <h3 style="font-size: 24px; margin-bottom: 10px;">3. Workflow Maps</h3>
+                <p style="color: #666; margin-bottom: 15px;">Detailed process flows, user journeys and touchpoints.</p>
+                <div style="font-size: 18px;"><i class="ri-checkbox-blank-line"></i> Completed</div>
+            </div>
+        </div>
+        <div class="page-footer">12</div>
+    </div>
+
+    <!-- Back Cover -->
+    <div class="page back-cover">
+        <div class="takeaway-box">
+            <h2>Key Takeaways</h2>
+            <ul class="takeaway-list">
+                <li><i class="ri-check-double-line"></i> Transform 2D dashboards into 3D operating environments</li>
+                <li><i class="ri-check-double-line"></i> Deploy unlimited AI workforce in virtual office spaces</li>
+                <li><i class="ri-check-double-line"></i> Navigate spatially through strategic departments</li>
+                <li><i class="ri-check-double-line"></i> Build living, interactive organizational systems</li>
+            </ul>
+        </div>
+        <div class="cta-text">Transform Your Organization Today</div>
+        <p style="font-size: 20px; color: #888; margin-top: 40px;">Created by Justin Massion & Aleja Guerra<br>© 2024 Essential Prompts Play Set. All rights reserved.</p>
+    </div>
+
+</body>
+</html>
